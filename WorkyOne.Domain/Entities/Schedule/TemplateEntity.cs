@@ -1,0 +1,42 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using WorkyOne.Domain.Abstractions;
+
+namespace WorkyOne.Domain.Entities.Schedule
+{
+    /// <summary>
+    /// Сущность, описывающая шаблон для рабочего расписания
+    /// </summary>
+    public class TemplateEntity : EntityBase
+    {
+        /// <summary>
+        /// Наименование шаблона
+        /// </summary>
+        [Required]
+        [MaxLength(50)]
+        public string Name { get; set; }
+
+        /// <summary>
+        /// Идентификатор информации пользователя, к которому относится данный шаблон
+        /// </summary>
+        [ForeignKey(nameof(UserData))]
+        public string UserDataId { get; set; }
+
+        /// <summary>
+        /// Информация пользователя, к которому относится данный шаблон
+        /// </summary>
+        [Required]
+        public UserDataEntity UserData { get; set; }
+
+        /// <summary>
+        /// Список повторений смен в текущем шаблоне
+        /// </summary>
+        public List<RepititionEntity> Repititions { get; set; } = new List<RepititionEntity>();
+
+        /// <summary>
+        /// Список смен, которые выставляются без повторений
+        /// </summary>
+        public List<SingleDayShiftEntity> SingleDayShifts { get; set; } =
+            new List<SingleDayShiftEntity>();
+    }
+}

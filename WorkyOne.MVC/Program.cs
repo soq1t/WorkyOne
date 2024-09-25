@@ -1,3 +1,8 @@
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using WorkyOne.DependencyRegister;
+using WorkyOne.Domain.Entities;
+
 namespace WorkyOne.MVC
 {
     public class Program
@@ -8,6 +13,9 @@ namespace WorkyOne.MVC
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
+            builder.Services.AddHttpContextAccessor();
+
+            DependencyRegistrer.RegisterAll(builder.Services, builder.Configuration);
 
             var app = builder.Build();
 
@@ -24,13 +32,29 @@ namespace WorkyOne.MVC
 
             app.UseRouting();
 
+            app.UseAntiforgery();
             app.UseAuthorization();
+            app.UseAuthentication();
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}"
+            );
 
+            //Test(app.Services).Wait();
             app.Run();
+        }
+
+        private static async Task Test(IServiceProvider services)
+        {
+            using (IServiceScope scope = services.CreateScope())
+            {
+                UserManager<UserEntity> userManager = scope.ServiceProvider.GetRequiredService<
+                    UserManager<UserEntity>
+                >();
+
+                var users = await userManager.Users.ToListAsync();
+            }
         }
     }
 }
