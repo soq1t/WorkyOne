@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using WorkyOne.Domain.Entities;
 using WorkyOne.Domain.Entities.Schedule;
 
 namespace WorkyOne.Repositories.Contextes
@@ -20,6 +21,8 @@ namespace WorkyOne.Repositories.Contextes
         public DbSet<TemplateEntity> Templates { get; set; }
 
         public DbSet<SingleDayShiftEntity> SingleDayShifts { get; set; }
+
+        public DbSet<UserDataEntity> UserDatas { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
