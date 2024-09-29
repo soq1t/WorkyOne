@@ -25,5 +25,14 @@ namespace WorkyOne.Domain.Entities
         /// Список шаблонов рабочих расписаний, которыми управляет пользователь
         /// </summary>
         public List<TemplateEntity> Templates { get; set; } = new List<TemplateEntity>();
+
+        /// <summary>
+        /// Конструктор сущности
+        /// </summary>
+        /// <param name="userId">Идентификатор пользователя, к которому относятся данные</param>
+        public UserDataEntity(string userId)
+        {
+            UserId = userId;
+        }
     }
 }

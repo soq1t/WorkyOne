@@ -39,7 +39,7 @@ namespace WorkyOne.Repositories.Repositories
 
             if (userData == null)
             {
-                userData = new UserDataEntity() { UserId = userId };
+                userData = new UserDataEntity(userId);
                 _context.UserDatas.Add(userData);
                 await _context.SaveChangesAsync();
             }
