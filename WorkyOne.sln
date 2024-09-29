@@ -11,17 +11,17 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{2DBB6A
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Hosts", "Hosts", "{ADDBFA96-B1B4-483A-B752-950C51338C15}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkyOne.AppServices", "WorkyOne.AppServices\WorkyOne.AppServices.csproj", "{365A287F-56E0-4E35-B076-FE61FDC7C407}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkyOne.AppServices", "WorkyOne.AppServices\WorkyOne.AppServices.csproj", "{365A287F-56E0-4E35-B076-FE61FDC7C407}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkyOne.Domain", "WorkyOne.Domain\WorkyOne.Domain.csproj", "{A881F95D-4036-4D82-A67E-CD99C429EAAE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkyOne.Domain", "WorkyOne.Domain\WorkyOne.Domain.csproj", "{A881F95D-4036-4D82-A67E-CD99C429EAAE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkyOne.Repositories", "WorkyOne.Repositories\WorkyOne.Repositories.csproj", "{37E2BE0C-1D6C-4079-876C-B782B47BA7E2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkyOne.Repositories", "WorkyOne.Repositories\WorkyOne.Repositories.csproj", "{37E2BE0C-1D6C-4079-876C-B782B47BA7E2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkyOne.Infrastructure", "WorkyOne.Infrastructure\WorkyOne.Infrastructure.csproj", "{99DE905A-8DD8-484F-A80A-81B36D0692C4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkyOne.Infrastructure", "WorkyOne.Infrastructure\WorkyOne.Infrastructure.csproj", "{99DE905A-8DD8-484F-A80A-81B36D0692C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkyOne.MVC", "WorkyOne.MVC\WorkyOne.MVC.csproj", "{B39660E6-7E9F-421C-B017-EE16AE0AD9EC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkyOne.MVC", "WorkyOne.MVC\WorkyOne.MVC.csproj", "{B39660E6-7E9F-421C-B017-EE16AE0AD9EC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkyOne.DependencyRegister", "WorkyOne.DependencyRegister\WorkyOne.DependencyRegister.csproj", "{ABB5A299-94E9-4CEF-9663-5BCA5CE440CA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkyOne.DependencyRegister", "WorkyOne.DependencyRegister\WorkyOne.DependencyRegister.csproj", "{ABB5A299-94E9-4CEF-9663-5BCA5CE440CA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

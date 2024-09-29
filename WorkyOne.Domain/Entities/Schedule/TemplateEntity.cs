@@ -58,6 +58,11 @@ namespace WorkyOne.Domain.Entities.Schedule
         public bool IsMirrored { get; set; } = false;
 
         /// <summary>
+        /// Конструктор без параметров для EF
+        /// </summary>
+        public TemplateEntity() { }
+
+        /// <summary>
         /// Конструктор сущности шаблона расписания
         /// </summary>
         /// <param name="name">Название шаблона</param>

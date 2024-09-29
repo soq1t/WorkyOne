@@ -20,6 +20,8 @@ namespace WorkyOne.Domain.Entities.Schedule.Configuration
                 .HasMany(s => s.SingleDayShifts)
                 .WithOne(s => s.Shift)
                 .HasForeignKey(s => s.ShiftId);
+
+            builder.HasMany(s => s.Templates).WithMany(t => t.Shifts);
         }
     }
 }
