@@ -38,5 +38,10 @@ namespace WorkyOne.Domain.Entities.Schedule
         /// </summary>
         public List<SingleDayShiftEntity> SingleDayShifts { get; set; } =
             new List<SingleDayShiftEntity>();
+
+        /// <summary>
+        /// Список смен, используемых в данном шаблоне
+        /// </summary>
+        public List<ShiftEntity> Shifts { get; set; }
     }
 }

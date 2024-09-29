@@ -17,6 +17,10 @@ namespace WorkyOne.Repositories.Contextes
 
         public DbSet<RepititionEntity> ShiftRepititions { get; set; }
 
+        public DbSet<TemplateEntity> Templates { get; set; }
+
+        public DbSet<SingleDayShiftEntity> SingleDayShifts { get; set; }
+
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
 

@@ -52,6 +52,12 @@ namespace WorkyOne.Domain.Entities.Schedule
             new List<SingleDayShiftEntity>();
 
         /// <summary>
+        /// Список шаблонов, в которых используется данная схема
+        /// </summary>
+
+        public List<TemplateEntity> Templates { get; set; }
+
+        /// <summary>
         /// Возвращает длительность смены в формате TimeSpan
         /// </summary>
         public TimeSpan Duration()
