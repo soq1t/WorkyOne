@@ -36,7 +36,6 @@ namespace WorkyOne.AppServices.Mappers
             UserInfoDto dto = new UserInfoDto
             {
                 UserId = user.Id,
-                UserDataId = userData.Id,
                 UserName = user.UserName,
                 FirstName = user.FirstName,
                 Templates = new List<TemplateDto>()

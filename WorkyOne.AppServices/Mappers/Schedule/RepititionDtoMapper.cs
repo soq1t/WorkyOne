@@ -27,9 +27,9 @@ namespace WorkyOne.AppServices.Mappers.Schedule
                 Id = repitition.Id,
                 Position = repitition.Position,
                 RepetitionAmount = repitition.RepetitionAmount,
+                ShiftId = repitition.ShiftId,
             };
 
-            dto.Shift = _shiftDtoMapper.MapToShiftDto(repitition.Shift);
             return dto;
         }
     }

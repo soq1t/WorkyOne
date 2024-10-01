@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WorkyOne.AppServices.DTOs;
+using WorkyOne.Domain.Entities;
 using WorkyOne.Domain.Entities.Schedule;
 
 namespace WorkyOne.AppServices.Mappers.Schedule
@@ -15,14 +16,17 @@ namespace WorkyOne.AppServices.Mappers.Schedule
     {
         private readonly SingleDayShiftDtoMapper _singleDayShiftDtoMapper;
         private readonly RepititionDtoMapper _repititionDtoMapper;
+        private readonly ShiftDtoMapper _shiftDtoMapper;
 
         public TemplateDtoMapper(
             SingleDayShiftDtoMapper singleDayShiftDtoMapper,
-            RepititionDtoMapper repititionDtoMapper
+            RepititionDtoMapper repititionDtoMapper,
+            ShiftDtoMapper shiftDtoMapper
         )
         {
             _singleDayShiftDtoMapper = singleDayShiftDtoMapper;
             _repititionDtoMapper = repititionDtoMapper;
+            _shiftDtoMapper = shiftDtoMapper;
         }
 
         public TemplateDto MapToTemplateDto(TemplateEntity template)
@@ -38,7 +42,8 @@ namespace WorkyOne.AppServices.Mappers.Schedule
                 Name = template.Name,
                 StartDate = template.StartDate,
                 Repetitions = new List<RepititionDto>(),
-                SingleDayShifts = new List<SingleDayShiftDto>()
+                SingleDayShifts = new List<SingleDayShiftDto>(),
+                Shifts = new List<ShiftDto>()
             };
 
             foreach (SingleDayShiftEntity shift in template.SingleDayShifts)
@@ -51,6 +56,12 @@ namespace WorkyOne.AppServices.Mappers.Schedule
             {
                 var repititionDto = _repititionDtoMapper.MapToRepititionDto(repitition);
                 dto.Repetitions.Add(repititionDto);
+            }
+
+            foreach (ShiftEntity shift in template.Shifts)
+            {
+                var shiftDto = _shiftDtoMapper.MapToShiftDto(shift);
+                dto.Shifts.Add(shiftDto);
             }
 
             return dto;

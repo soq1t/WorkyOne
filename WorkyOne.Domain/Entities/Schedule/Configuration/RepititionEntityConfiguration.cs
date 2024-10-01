@@ -9,6 +9,10 @@ namespace WorkyOne.Domain.Entities.Schedule.Configuration
         {
             builder.HasKey(r => r.Id);
             builder.HasOne(r => r.Shift).WithMany(s => s.Repetitions).HasForeignKey(r => r.ShiftId);
+            builder
+                .HasOne(r => r.Template)
+                .WithMany(t => t.Repititions)
+                .HasForeignKey(r => r.TemplateId);
         }
     }
 }

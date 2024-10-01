@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using WorkyOne.AppServices.DTOs.Abstractions;
 
 namespace WorkyOne.AppServices.DTOs
 {
     /// <summary>
     /// DTO "однодневной" смены
     /// </summary>
-    public class SingleDayShiftDto
+    public class SingleDayShiftDto : DtoBase
     {
         /// <summary>
         /// Идентификатор сущности

@@ -1,15 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using WorkyOne.AppServices.DTOs.Abstractions;
 
 namespace WorkyOne.AppServices.DTOs
 {
     /// <summary>
     /// DTO, описывающее повторение смены
     /// </summary>
-    public class RepititionDto
+    public class RepititionDto : DtoBase
     {
         /// <summary>
         /// Идентификатор сущности
@@ -17,12 +13,12 @@ namespace WorkyOne.AppServices.DTOs
         public string Id { get; set; }
 
         /// <summary>
-        /// Смена
+        /// Идентификатор смены
         /// </summary>
-        public ShiftDto Shift { get; set; }
+        public string ShiftId { get; set; }
 
         /// <summary>
-        /// Количество повторений смены, указанной в поле Shift
+        /// Количество повторений смены
         /// </summary>
         public int RepetitionAmount { get; set; }
 

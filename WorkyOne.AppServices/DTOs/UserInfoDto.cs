@@ -1,26 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using WorkyOne.AppServices.DTOs.Abstractions;
 
 namespace WorkyOne.AppServices.DTOs
 {
     /// <summary>
     /// DTO данных о пользователе
     /// </summary>
-    public class UserInfoDto
+    public class UserInfoDto : DtoBase
     {
         /// <summary>
         /// Идентификатор пользователя
         /// </summary>
         public string UserId { get; set; }
-
-        /// <summary>
-        /// Идентификатор пользовательских данных
-        /// </summary>
-        public string UserDataId { get; set; }
 
         /// <summary>
         /// Пользовательский юзернейм

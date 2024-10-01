@@ -22,6 +22,7 @@ namespace WorkyOne.AppServices.Mappers.Schedule
                 ColorCode = shift.ColorCode,
                 Beginning = shift.Beginning,
                 Ending = shift.Ending,
+                IsPredefined = shift.IsPredefined,
             };
 
             return dto;

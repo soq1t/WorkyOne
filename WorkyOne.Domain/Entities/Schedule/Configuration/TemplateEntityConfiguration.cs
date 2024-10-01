@@ -20,6 +20,11 @@ namespace WorkyOne.Domain.Entities.Schedule.Configuration
                 .HasForeignKey(s => s.TemplateId);
 
             builder.HasMany(t => t.Shifts).WithMany(u => u.Templates);
+
+            builder
+                .HasMany(t => t.Repititions)
+                .WithOne(r => r.Template)
+                .HasForeignKey(r => r.TemplateId);
         }
     }
 }

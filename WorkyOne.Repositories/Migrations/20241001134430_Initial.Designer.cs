@@ -12,8 +12,8 @@ using WorkyOne.Repositories.Contextes;
 namespace WorkyOne.Repositories.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240929110551_ShiftsTemplatesConnection")]
-    partial class ShiftsTemplatesConnection
+    [Migration("20241001134430_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -55,14 +55,15 @@ namespace WorkyOne.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("TemplateEntityId")
+                    b.Property<string>("TemplateId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ShiftId");
 
-                    b.HasIndex("TemplateEntityId");
+                    b.HasIndex("TemplateId");
 
                     b.ToTable("ShiftRepititions");
                 });
@@ -121,10 +122,16 @@ namespace WorkyOne.Repositories.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsMirrored")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
 
                     b.Property<string>("UserDataId")
                         .IsRequired()
@@ -148,7 +155,7 @@ namespace WorkyOne.Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("UserDataEntity");
+                    b.ToTable("UserDatas");
                 });
 
             modelBuilder.Entity("ShiftEntityTemplateEntity", b =>
@@ -174,11 +181,15 @@ namespace WorkyOne.Repositories.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WorkyOne.Domain.Entities.Schedule.TemplateEntity", null)
+                    b.HasOne("WorkyOne.Domain.Entities.Schedule.TemplateEntity", "Template")
                         .WithMany("Repititions")
-                        .HasForeignKey("TemplateEntityId");
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Shift");
+
+                    b.Navigation("Template");
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.SingleDayShiftEntity", b =>

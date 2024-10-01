@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using WorkyOne.AppServices.DTOs.Abstractions;
 
 namespace WorkyOne.AppServices.DTOs
 {
     /// <summary>
     /// DTO шаблона рабочего расписания
     /// </summary>
-    public class TemplateDto
+    public class TemplateDto : DtoBase
     {
         /// <summary>
         /// Идентификатор шаблона
@@ -19,6 +16,8 @@ namespace WorkyOne.AppServices.DTOs
         /// <summary>
         /// Наименование шаблона
         /// </summary>
+        [Required]
+        [MaxLength(50)]
         public string Name { get; set; }
 
         /// <summary>
@@ -31,6 +30,11 @@ namespace WorkyOne.AppServices.DTOs
         /// </summary>
         public List<SingleDayShiftDto> SingleDayShifts { get; set; } =
             new List<SingleDayShiftDto>();
+
+        /// <summary>
+        /// Список смен, используемых в повторениях
+        /// </summary>
+        public List<ShiftDto> Shifts { get; set; }
 
         /// <summary>
         /// Дата, с которой начинается отсчёт повторений шаблона

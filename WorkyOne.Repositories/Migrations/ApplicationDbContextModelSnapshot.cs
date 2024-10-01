@@ -52,14 +52,15 @@ namespace WorkyOne.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("TemplateEntityId")
+                    b.Property<string>("TemplateId")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
                     b.HasIndex("ShiftId");
 
-                    b.HasIndex("TemplateEntityId");
+                    b.HasIndex("TemplateId");
 
                     b.ToTable("ShiftRepititions");
                 });
@@ -177,11 +178,15 @@ namespace WorkyOne.Repositories.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WorkyOne.Domain.Entities.Schedule.TemplateEntity", null)
+                    b.HasOne("WorkyOne.Domain.Entities.Schedule.TemplateEntity", "Template")
                         .WithMany("Repititions")
-                        .HasForeignKey("TemplateEntityId");
+                        .HasForeignKey("TemplateId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Shift");
+
+                    b.Navigation("Template");
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.SingleDayShiftEntity", b =>

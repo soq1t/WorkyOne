@@ -35,5 +35,18 @@ namespace WorkyOne.Domain.Entities.Schedule
         [Required]
         [Range(1, int.MaxValue)]
         public int Position { get; set; }
+
+        /// <summary>
+        /// ID шаблона, к которому относится повторение
+        /// </summary>
+        [Required]
+        [ForeignKey(nameof(Template))]
+        public string TemplateId { get; set; }
+
+        /// <summary>
+        /// Шаблон, к которому относится повторение
+        /// </summary>
+        [Required]
+        public TemplateEntity Template { get; set; }
     }
 }

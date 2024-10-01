@@ -55,7 +55,7 @@ namespace WorkyOne.Domain.Entities.Schedule
         /// Список шаблонов, в которых используется данная схема
         /// </summary>
 
-        public List<TemplateEntity> Templates { get; set; }
+        public List<TemplateEntity> Templates { get; set; } = new List<TemplateEntity>();
 
         /// <summary>
         /// Возвращает длительность смены в формате TimeSpan
@@ -85,5 +85,10 @@ namespace WorkyOne.Domain.Entities.Schedule
                 }
             }
         }
+
+        /// <summary>
+        /// Является ли смена стандатной для приложения
+        /// </summary>
+        public bool IsPredefined = false;
     }
 }

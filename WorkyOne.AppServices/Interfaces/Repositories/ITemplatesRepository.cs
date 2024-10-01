@@ -1,4 +1,5 @@
-﻿using WorkyOne.Domain.Entities.Schedule;
+﻿using WorkyOne.AppServices.Interfaces.Repositories.Requests;
+using WorkyOne.Domain.Entities.Schedule;
 
 namespace WorkyOne.AppServices.Interfaces.Repositories
 {
@@ -11,7 +12,14 @@ namespace WorkyOne.AppServices.Interfaces.Repositories
         /// Возвращает шаблон по его идентификатору
         /// </summary>
         /// <param name="id">Идентификатор шаблона</param>
-        public Task<TemplateEntity?> GetAsync(string id);
+        public Task<TemplateEntity?> GetAsync(TemplateRequest request);
+
+        /// <summary>
+        /// Возвращает шаблоны указанного пользователя
+        /// </summary>
+        /// <param name="userDataId">ID пользовательских данных</param>
+        /// <returns></returns>
+        public Task<List<TemplateEntity>> GetUserTemplatesAsync(TemplateRequest request);
 
         /// <summary>
         /// Добавляет шаблон в базу данных
