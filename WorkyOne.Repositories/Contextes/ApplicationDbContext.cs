@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WorkyOne.Domain.Entities;
 using WorkyOne.Domain.Entities.Schedule;
+using WorkyOne.Domain.Entities.Schedule.Shifts;
 
 namespace WorkyOne.Repositories.Contextes
 {
@@ -14,13 +15,13 @@ namespace WorkyOne.Repositories.Contextes
     /// </summary>
     public class ApplicationDbContext : DbContext
     {
-        public DbSet<ShiftEntity> Shifts { get; set; }
+        public DbSet<TemplatedShiftEntity> TemplatedShifts { get; set; }
+        public DbSet<DatedShiftEntity> DatedShifts { get; set; }
+        public DbSet<PeriodicShiftEntity> PeriodicShifts { get; set; }
+        public DbSet<ExampleShiftEntity> ExampleShifts { get; set; }
 
-        public DbSet<RepititionEntity> ShiftRepititions { get; set; }
-
+        public DbSet<ScheduleEntity> Schedules { get; set; }
         public DbSet<TemplateEntity> Templates { get; set; }
-
-        public DbSet<SingleDayShiftEntity> SingleDayShifts { get; set; }
 
         public DbSet<UserDataEntity> UserDatas { get; set; }
 

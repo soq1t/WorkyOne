@@ -55,7 +55,7 @@ namespace WorkyOne.Repositories.Repositories
 
             if (updatedData != null)
             {
-                updatedData.Templates = data.Templates;
+                updatedData.Schedules = data.Schedules;
                 _context.Update(updatedData);
                 await _context.SaveChangesAsync();
             }

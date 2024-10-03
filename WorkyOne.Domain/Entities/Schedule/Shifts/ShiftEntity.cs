@@ -1,20 +1,25 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using WorkyOne.Domain.Abstractions;
 using WorkyOne.Domain.Exceptions.Scedule;
 
-namespace WorkyOne.Domain.Entities.Schedule
+namespace WorkyOne.Domain.Entities.Schedule.Shifts
 {
     /// <summary>
-    /// Сущность, описывающая рабочую смену
+    /// Абстрактный класс, описывающий рабочую смену
     /// </summary>
-    public class ShiftEntity : EntityBase
+    public abstract class ShiftEntity : EntityBase
     {
         /// <summary>
-        /// Наименование смены
+        /// Название смены
         /// </summary>
         [Required]
-        [MaxLength(30)]
-        public string Name { get; set; }
+        [Length(1, 30)]
+        public string Name { get; set; } = "Смена";
 
         /// <summary>
         /// Цветовой код смены
@@ -39,23 +44,6 @@ namespace WorkyOne.Domain.Entities.Schedule
         /// Время окончания смены
         /// </summary>
         public TimeOnly? Ending { get; set; }
-
-        /// <summary>
-        /// Список повторений, в которых используется данная смена
-        /// </summary>
-        public List<RepititionEntity> Repetitions { get; set; } = new List<RepititionEntity>();
-
-        /// <summary>
-        /// Список дней, в которые эта смена используется отдельно от шаблона
-        /// </summary>
-        public List<SingleDayShiftEntity> SingleDayShifts { get; set; } =
-            new List<SingleDayShiftEntity>();
-
-        /// <summary>
-        /// Список шаблонов, в которых используется данная схема
-        /// </summary>
-
-        public List<TemplateEntity> Templates { get; set; } = new List<TemplateEntity>();
 
         /// <summary>
         /// Возвращает длительность смены в формате TimeSpan
@@ -85,10 +73,5 @@ namespace WorkyOne.Domain.Entities.Schedule
                 }
             }
         }
-
-        /// <summary>
-        /// Является ли смена стандатной для приложения
-        /// </summary>
-        public bool IsPredefined = false;
     }
 }

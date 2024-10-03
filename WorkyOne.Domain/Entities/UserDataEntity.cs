@@ -22,9 +22,9 @@ namespace WorkyOne.Domain.Entities
         public string UserId { get; set; }
 
         /// <summary>
-        /// Список шаблонов рабочих расписаний, которыми управляет пользователь
+        /// Список рабочих графиков, которые создал пользователь
         /// </summary>
-        public List<TemplateEntity> Templates { get; set; } = new List<TemplateEntity>();
+        public List<ScheduleEntity> Schedules { get; set; } = new List<ScheduleEntity>();
 
         /// <summary>
         /// Конструктор сущности

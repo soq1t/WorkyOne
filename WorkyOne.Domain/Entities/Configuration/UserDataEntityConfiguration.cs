@@ -15,7 +15,7 @@ namespace WorkyOne.Domain.Entities.Configuration
             builder.HasKey(u => u.Id);
 
             builder
-                .HasMany(u => u.Templates)
+                .HasMany(u => u.Schedules)
                 .WithOne(t => t.UserData)
                 .HasForeignKey(t => t.UserDataId);
         }

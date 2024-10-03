@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WorkyOne.AppServices.DTOs;
-using WorkyOne.AppServices.Mappers.Schedule;
+﻿using WorkyOne.AppServices.DTOs;
 using WorkyOne.Domain.Entities;
-using WorkyOne.Domain.Entities.Schedule;
 
 namespace WorkyOne.AppServices.Mappers
 {
@@ -15,13 +8,6 @@ namespace WorkyOne.AppServices.Mappers
     /// </summary>
     public class UserInfoDtoMapper
     {
-        private readonly TemplateDtoMapper _templateDtoMapper;
-
-        public UserInfoDtoMapper(TemplateDtoMapper templateDtoMapper)
-        {
-            _templateDtoMapper = templateDtoMapper;
-        }
-
         public UserInfoDto MapToUserInfoDto(UserEntity user, UserDataEntity userData)
         {
             if (user == null)
@@ -37,15 +23,8 @@ namespace WorkyOne.AppServices.Mappers
             {
                 UserId = user.Id,
                 UserName = user.UserName,
-                FirstName = user.FirstName,
-                Templates = new List<TemplateDto>()
+                FirstName = user.FirstName
             };
-
-            foreach (TemplateEntity template in userData.Templates)
-            {
-                TemplateDto templateDto = _templateDtoMapper.MapToTemplateDto(template);
-                dto.Templates.Add(templateDto);
-            }
 
             return dto;
         }

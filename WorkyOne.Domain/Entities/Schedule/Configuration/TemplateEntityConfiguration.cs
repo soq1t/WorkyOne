@@ -3,6 +3,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace WorkyOne.Domain.Entities.Schedule.Configuration
 {
+    /// <summary>
+    /// Конфигурация TemplateEntity для EntityFrameworkCore
+    /// </summary>
     public class TemplateEntityConfiguration : IEntityTypeConfiguration<TemplateEntity>
     {
         public void Configure(EntityTypeBuilder<TemplateEntity> builder)
@@ -10,21 +13,14 @@ namespace WorkyOne.Domain.Entities.Schedule.Configuration
             builder.HasKey(t => t.Id);
 
             builder
-                .HasOne(t => t.UserData)
-                .WithMany(u => u.Templates)
-                .HasForeignKey(t => t.UserDataId);
+                .HasMany(x => x.Shifts)
+                .WithOne(x => x.Template)
+                .HasForeignKey(x => x.TemplateId);
 
             builder
-                .HasMany(t => t.SingleDayShifts)
-                .WithOne(s => s.Template)
-                .HasForeignKey(s => s.TemplateId);
-
-            builder.HasMany(t => t.Shifts).WithMany(u => u.Templates);
-
-            builder
-                .HasMany(t => t.Repititions)
-                .WithOne(r => r.Template)
-                .HasForeignKey(r => r.TemplateId);
+                .HasOne(x => x.Schedule)
+                .WithOne(x => x.Template)
+                .HasForeignKey<TemplateEntity>(x => x.ScheduleId);
         }
     }
 }

@@ -2,58 +2,45 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using WorkyOne.Domain.Abstractions;
+using WorkyOne.Domain.Entities.Schedule.Shifts;
 
 namespace WorkyOne.Domain.Entities.Schedule
 {
     /// <summary>
-    /// Сущность, описывающая шаблон для рабочего расписания
+    /// Сущность, описывающая определённую последовательность смен
     /// </summary>
-    public class TemplateEntity : EntityBase
+    public sealed class TemplateEntity : EntityBase
     {
         /// <summary>
-        /// Наименование шаблона
+        /// ID расписания
         /// </summary>
         [Required]
-        [MaxLength(50)]
-        public string Name { get; set; }
+        [ForeignKey(nameof(Schedule))]
+        public string ScheduleId { get; set; }
 
         /// <summary>
-        /// Идентификатор информации пользователя, к которому относится данный шаблон
-        /// </summary>
-        [ForeignKey(nameof(UserData))]
-        public string UserDataId { get; set; }
-
-        /// <summary>
-        /// Информация пользователя, к которому относится данный шаблон
+        /// Расписание, к которому относится данный шаблон
         /// </summary>
         [Required]
-        public UserDataEntity UserData { get; set; }
+        public ScheduleEntity Schedule { get; set; }
 
         /// <summary>
-        /// Список повторений смен в текущем шаблоне
+        /// Строка, описывающая последовательность смен в виде символов (напр. "ДНВВ")
         /// </summary>
-        public List<RepititionEntity> Repititions { get; set; } = new List<RepititionEntity>();
+        [MaxLength(31)]
+        [Required]
+        public string ShiftsQuery { get; set; } = string.Empty;
 
         /// <summary>
-        /// Список смен, которые выставляются без повторений
+        /// Список рабочих смен, используемых в шаблоне
         /// </summary>
-        public List<SingleDayShiftEntity> SingleDayShifts { get; set; } =
-            new List<SingleDayShiftEntity>();
-
-        /// <summary>
-        /// Список смен, используемых в данном шаблоне
-        /// </summary>
-        public List<ShiftEntity> Shifts { get; set; } = new List<ShiftEntity>();
+        [Required]
+        public List<TemplatedShiftEntity> Shifts { get; set; } = new List<TemplatedShiftEntity>();
 
         /// <summary>
         /// Дата, с которой начинается отсчёт повторений шаблона
         /// </summary>
         [Required]
         public DateOnly StartDate { get; set; }
-
-        /// <summary>
-        /// Указывает, будет ли шаблон рассчитываться в обратную сторону (в прошлое) либо нет
-        /// </summary>
-        public bool IsMirrored { get; set; } = false;
     }
 }

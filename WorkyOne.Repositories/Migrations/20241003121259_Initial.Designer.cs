@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WorkyOne.Repositories.Contextes;
@@ -11,9 +12,11 @@ using WorkyOne.Repositories.Contextes;
 namespace WorkyOne.Repositories.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241003121259_Initial")]
+    partial class Initial
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -78,29 +81,6 @@ namespace WorkyOne.Repositories.Migrations
                     b.HasIndex("ScheduleId");
 
                     b.ToTable("DatedShifts");
-                });
-
-            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.ExampleShiftEntity", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly?>("Beginning")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<string>("ColorCode")
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly?>("Ending")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ExampleShifts");
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.PeriodicShiftEntity", b =>

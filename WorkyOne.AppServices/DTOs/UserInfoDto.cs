@@ -21,10 +21,5 @@ namespace WorkyOne.AppServices.DTOs
         /// Имя пользователя
         /// </summary>
         public string FirstName { get; set; }
-
-        /// <summary>
-        /// Шаблоны расписаний пользователя
-        /// </summary>
-        public List<TemplateDto> Templates { get; set; }
     }
 }

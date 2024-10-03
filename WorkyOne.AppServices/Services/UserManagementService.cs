@@ -14,20 +14,17 @@ namespace WorkyOne.AppServices.Services
     {
         private readonly IUsersRepository _usersRepository;
         private readonly IUserDatasRepository _userDatasRepository;
-        private readonly ITemplatesRepository _templatesRepository;
         private readonly UserInfoDtoMapper _userInfoDtoMapper;
 
         public UserManagementService(
             IUsersRepository usersRepository,
             UserInfoDtoMapper userInfoDtoMapper,
-            IUserDatasRepository userDatasRepository,
-            ITemplatesRepository templatesRepository
+            IUserDatasRepository userDatasRepository
         )
         {
             _usersRepository = usersRepository;
             _userInfoDtoMapper = userInfoDtoMapper;
             _userDatasRepository = userDatasRepository;
-            _templatesRepository = templatesRepository;
         }
 
         public async Task<UserInfoDto?> GetUserInfoAsync(string userId)
