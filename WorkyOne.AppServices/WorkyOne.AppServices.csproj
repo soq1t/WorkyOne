@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Interfaces\Repositories\Requests\" />
+    <Folder Include="Interfaces\Repositories\Abstractions\" />
     <Folder Include="Utilities\" />
   </ItemGroup>
 
