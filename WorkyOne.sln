@@ -23,6 +23,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkyOne.MVC", "WorkyOne.MV
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkyOne.DependencyRegister", "WorkyOne.DependencyRegister\WorkyOne.DependencyRegister.csproj", "{ABB5A299-94E9-4CEF-9663-5BCA5CE440CA}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contracts", "Contracts", "{C26024FF-6382-4DC1-8F91-26B142916FA8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkyOne.Contracts", "WorkyOne.Contracts\WorkyOne.Contracts.csproj", "{94E1206F-DC41-4B0D-88A4-ADF978576CBC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +57,10 @@ Global
 		{ABB5A299-94E9-4CEF-9663-5BCA5CE440CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ABB5A299-94E9-4CEF-9663-5BCA5CE440CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ABB5A299-94E9-4CEF-9663-5BCA5CE440CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{94E1206F-DC41-4B0D-88A4-ADF978576CBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{94E1206F-DC41-4B0D-88A4-ADF978576CBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{94E1206F-DC41-4B0D-88A4-ADF978576CBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{94E1206F-DC41-4B0D-88A4-ADF978576CBC}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +72,7 @@ Global
 		{99DE905A-8DD8-484F-A80A-81B36D0692C4} = {8D0EA17C-1C7A-45A0-A1BB-EC629C20D350}
 		{B39660E6-7E9F-421C-B017-EE16AE0AD9EC} = {ADDBFA96-B1B4-483A-B752-950C51338C15}
 		{ABB5A299-94E9-4CEF-9663-5BCA5CE440CA} = {8D0EA17C-1C7A-45A0-A1BB-EC629C20D350}
+		{94E1206F-DC41-4B0D-88A4-ADF978576CBC} = {C26024FF-6382-4DC1-8F91-26B142916FA8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D32037F1-D3BC-462A-8F75-235179F01996}

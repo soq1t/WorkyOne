@@ -33,6 +33,8 @@ namespace WorkyOne.Domain.Entities.Schedule
         [Required]
         public bool IsBusyDay { get; set; }
 
+        public DateOnly Date { get; set; }
+
         /// <summary>
         /// Время начала рабочей смены
         /// </summary>
