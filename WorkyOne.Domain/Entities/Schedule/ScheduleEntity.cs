@@ -56,5 +56,10 @@ namespace WorkyOne.Domain.Entities.Schedule
         /// </summary>
         public List<PeriodicShiftEntity> PeriodicShifts { get; set; } =
             new List<PeriodicShiftEntity>();
+
+        /// <summary>
+        /// Рабочий график, сформированный по данному расписанию
+        /// </summary>
+        public List<DailyInfoEntity> Timetable { get; set; } = new List<DailyInfoEntity>();
     }
 }

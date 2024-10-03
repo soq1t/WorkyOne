@@ -22,9 +22,9 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
         public TemplateEntity Template { get; set; }
 
         /// <summary>
-        /// Кодовое обозначение смены в шаблоне
+        /// Список последовательностей, которые включают в себя данную схему
         /// </summary>
         [Required]
-        public char QueryCode { get; set; }
+        public List<ShiftSequenceEntity> Sequences { get; set; } = new List<ShiftSequenceEntity>();
     }
 }

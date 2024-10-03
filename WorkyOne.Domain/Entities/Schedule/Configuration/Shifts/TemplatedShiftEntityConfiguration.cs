@@ -21,6 +21,8 @@ namespace WorkyOne.Domain.Entities.Schedule.Configuration.Shifts
                 .HasOne(s => s.Template)
                 .WithMany(s => s.Shifts)
                 .HasForeignKey(s => s.TemplateId);
+
+            builder.HasMany(s => s.Sequences).WithOne(s => s.Shift).HasForeignKey(s => s.ShiftId);
         }
     }
 }

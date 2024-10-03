@@ -31,6 +31,11 @@ namespace WorkyOne.Domain.Entities.Schedule.Configuration
                 .HasMany(x => x.PeriodicShifts)
                 .WithOne(x => x.Schedule)
                 .HasForeignKey(x => x.ScheduleId);
+
+            builder
+                .HasMany(s => s.Timetable)
+                .WithOne(d => d.Schedule)
+                .HasForeignKey(x => x.ScheduleId);
         }
     }
 }

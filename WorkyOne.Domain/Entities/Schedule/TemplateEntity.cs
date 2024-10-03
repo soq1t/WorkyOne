@@ -25,17 +25,16 @@ namespace WorkyOne.Domain.Entities.Schedule
         public ScheduleEntity Schedule { get; set; }
 
         /// <summary>
-        /// Строка, описывающая последовательность смен в виде символов (напр. "ДНВВ")
-        /// </summary>
-        [MaxLength(31)]
-        [Required]
-        public string ShiftsQuery { get; set; } = string.Empty;
-
-        /// <summary>
         /// Список рабочих смен, используемых в шаблоне
         /// </summary>
         [Required]
         public List<TemplatedShiftEntity> Shifts { get; set; } = new List<TemplatedShiftEntity>();
+
+        /// <summary>
+        /// Последовательность смен в шаблоне
+        /// </summary>
+        [Required]
+        public List<ShiftSequenceEntity> Sequences { get; set; } = new List<ShiftSequenceEntity>();
 
         /// <summary>
         /// Дата, с которой начинается отсчёт повторений шаблона

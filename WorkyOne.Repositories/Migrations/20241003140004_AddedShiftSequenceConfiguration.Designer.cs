@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using WorkyOne.Repositories.Contextes;
@@ -11,9 +12,11 @@ using WorkyOne.Repositories.Contextes;
 namespace WorkyOne.Repositories.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241003140004_AddedShiftSequenceConfiguration")]
+    partial class AddedShiftSequenceConfiguration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,34 +24,6 @@ namespace WorkyOne.Repositories.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.DailyInfoEntity", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly?>("Beginning")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<TimeOnly?>("Ending")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<bool>("IsBusyDay")
-                        .HasColumnType("boolean");
-
-                    b.Property<string>("ScheduleId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<TimeSpan?>("ShiftProlongation")
-                        .HasColumnType("interval");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ScheduleId");
-
-                    b.ToTable("DailyInfos");
-                });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.ScheduleEntity", b =>
                 {
@@ -253,17 +228,6 @@ namespace WorkyOne.Repositories.Migrations
                     b.ToTable("UserDatas");
                 });
 
-            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.DailyInfoEntity", b =>
-                {
-                    b.HasOne("WorkyOne.Domain.Entities.Schedule.ScheduleEntity", "Schedule")
-                        .WithMany("Timetable")
-                        .HasForeignKey("ScheduleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Schedule");
-                });
-
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.ScheduleEntity", b =>
                 {
                     b.HasOne("WorkyOne.Domain.Entities.Schedule.TemplateEntity", "Template")
@@ -349,8 +313,6 @@ namespace WorkyOne.Repositories.Migrations
                     b.Navigation("DatedShifts");
 
                     b.Navigation("PeriodicShifts");
-
-                    b.Navigation("Timetable");
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.TemplatedShiftEntity", b =>
