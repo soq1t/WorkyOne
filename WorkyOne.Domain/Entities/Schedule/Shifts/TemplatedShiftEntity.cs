@@ -1,12 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WorkyOne.Domain.Interfaces;
 
 namespace WorkyOne.Domain.Entities.Schedule.Shifts
 {
     /// <summary>
-    /// Сущность смены, используемой в Template
+    /// Сущность смены, используемой в <see cref="TemplateEntity"/>
     /// </summary>
-    public sealed class TemplatedShiftEntity : ShiftEntity
+    public sealed class TemplatedShiftEntity : ShiftEntity, IUpdatable<TemplatedShiftEntity>
     {
         /// <summary>
         /// ID шаблона
@@ -26,5 +27,11 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
         /// </summary>
         [Required]
         public List<ShiftSequenceEntity> Sequences { get; set; } = new List<ShiftSequenceEntity>();
+
+        public void UpdateFields(TemplatedShiftEntity entity)
+        {
+            TemplateId = entity.TemplateId;
+            base.UpdateFields(entity);
+        }
     }
 }

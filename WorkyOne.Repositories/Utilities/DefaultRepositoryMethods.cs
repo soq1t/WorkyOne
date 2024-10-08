@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories;
+using WorkyOne.Contracts.Interfaces;
+using WorkyOne.Contracts.Repositories;
 using WorkyOne.Contracts.Requests.Common;
-using WorkyOne.Domain.Abstractions;
+using WorkyOne.Domain.Interfaces;
 
 namespace WorkyOne.Repositories.Utilities
 {
@@ -23,13 +21,13 @@ namespace WorkyOne.Repositories.Utilities
         /// <param name="oldValues">Список <typeparamref name="TEntity"/>, который должен обновляться</param>
         /// <param name="newValues"></param>
         /// <returns></returns>
-        public static async Task RenewAsync<TEntity, TRequest>(
+        public static async Task<RepositoryResult> RenewAsync<TEntity, TRequest>(
             IEntityRepository<TEntity, TRequest> repository,
             ICollection<TEntity> oldValues,
             ICollection<TEntity> newValues
         )
-            where TEntity : EntityBase
-            where TRequest : RequestBase
+            where TEntity : IEntity
+            where TRequest : IEntityRequest
         {
             IEnumerable<string> newValuesIds = newValues.Select(n => n.Id);
             IEnumerable<string> oldValuesIds = oldValues.Select(n => n.Id);
@@ -38,9 +36,33 @@ namespace WorkyOne.Repositories.Utilities
             List<TEntity> adding = newValues.Where(n => !oldValuesIds.Contains(n.Id)).ToList();
             List<TEntity> updating = newValues.Where(n => oldValuesIds.Contains(n.Id)).ToList();
 
-            await repository.DeleteManyAsync(removing.Select(r => r.Id).ToList());
-            await repository.CreateManyAsync(adding);
-            await repository.UpdateManyAsync(updating);
+            var operationResult = await repository.DeleteManyAsync(
+                removing.Select(r => r.Id).ToList()
+            );
+            var result = new RepositoryResult();
+            result.SucceedIds.AddRange(operationResult.SucceedIds);
+
+            if (!operationResult.IsSuccess)
+            {
+                result.IsSuccess = false;
+                result.Errors.AddRange(operationResult.Errors);
+                return result;
+            }
+
+            operationResult = await repository.CreateManyAsync(adding);
+            result.SucceedIds.AddRange(operationResult.SucceedIds);
+
+            if (!result.IsSuccess)
+            {
+                result.IsSuccess = false;
+                result.Errors.AddRange(operationResult.Errors);
+                return result;
+            }
+
+            operationResult = await repository.UpdateManyAsync(updating);
+            result.SucceedIds.AddRange(operationResult.SucceedIds);
+
+            return result;
         }
     }
 }

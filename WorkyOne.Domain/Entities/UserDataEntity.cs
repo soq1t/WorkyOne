@@ -34,5 +34,10 @@ namespace WorkyOne.Domain.Entities
         {
             UserId = userId;
         }
+
+        /// <summary>
+        /// Стандартный конструктор сущности (для EF)
+        /// </summary>
+        public UserDataEntity() { }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WorkyOne.Contracts.Interfaces;
 using WorkyOne.Contracts.Requests.Common;
 
 namespace WorkyOne.Contracts.Requests.Schedule.Shifts
@@ -10,8 +11,8 @@ namespace WorkyOne.Contracts.Requests.Schedule.Shifts
     /// <summary>
     /// Абстрактный запрос на получение информации о смене
     /// </summary>
-    public abstract class ShiftRequest : RequestBase
+    public abstract class ShiftRequest : IEntityRequest
     {
-        public string ShiftId { get; set; }
+        public string Id { get; set; }
     }
 }

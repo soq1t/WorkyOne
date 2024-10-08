@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WorkyOne.Contracts.Interfaces;
+using WorkyOne.Contracts.Repositories;
 using WorkyOne.Contracts.Requests.Common;
+using WorkyOne.Domain.Interfaces;
 
 namespace WorkyOne.AppServices.Interfaces.Repositories
 {
@@ -13,8 +16,8 @@ namespace WorkyOne.AppServices.Interfaces.Repositories
     /// <typeparam name="TEntity">Тип данных, с которыми работает репозиторий</typeparam>
     /// <typeparam name="TRequest">Тип запроса на получение данных из базы</typeparam>
     public interface IEntityRepository<TEntity, TRequest>
-        where TEntity : class
-        where TRequest : RequestBase
+        where TEntity : IEntity
+        where TRequest : IEntityRequest
     {
         /// <summary>
         /// Возвращает сущность типа <typeparamref name="TEntity"/> из базы данных
@@ -32,38 +35,38 @@ namespace WorkyOne.AppServices.Interfaces.Repositories
         /// Создаёт сущность <typeparamref name="TEntity"/> в базе данных
         /// </summary>
         /// <param name="entity">Создаваемая сущность</param>
-        public Task CreateAsync(TEntity entity);
+        public Task<RepositoryResult> CreateAsync(TEntity entity);
 
         /// <summary>
         /// Создаёт множество сущностей <typeparamref name="TEntity"/> в базе данных
         /// </summary>
         /// <param name="entities">Список создаваемых сущностей</param>
-        public Task CreateManyAsync(ICollection<TEntity> entities);
+        public Task<RepositoryResult> CreateManyAsync(ICollection<TEntity> entities);
 
         /// <summary>
         /// Обновляет сущность <typeparamref name="TEntity"/> в базе данных
         /// </summary>
         /// <param name="entity">Обновляемая сущность</param>
-        public Task UpdateAsync(TEntity entity);
+        public Task<RepositoryResult> UpdateAsync(TEntity entity);
 
         /// <summary>
         /// Обновляет список сущностей <typeparamref name="TEntity"/> в базе данных
         /// </summary>
         /// <param name="entities">Список обновляемых сущностей</param>
         /// <returns></returns>
-        public Task UpdateManyAsync(ICollection<TEntity> entities);
+        public Task<RepositoryResult> UpdateManyAsync(ICollection<TEntity> entities);
 
         /// <summary>
         /// Удаляет сущность <typeparamref name="TEntity"/> из базы данных согласно её ID
         /// </summary>
         /// <param name="entityId">ID удаляемой сущности</param>
-        public Task DeleteAsync(string entityId);
+        public Task<RepositoryResult> DeleteAsync(string entityId);
 
         /// <summary>
         /// Удаляет список сущностей <typeparamref name="TEntity"/> из базы данных согласно их ID
         /// </summary>
         /// <param name="entityIds">Список ID удаляемых сущностей</param>
-        public Task DeleteManyAsync(ICollection<string> entityIds);
+        public Task<RepositoryResult> DeleteManyAsync(ICollection<string> entityIds);
 
         /// <summary>
         /// Производит операции удаления, добавления и обновления с сущностями из списка <paramref name="oldEntities"/> относительно сущностей из списка <paramref name="newEntities"/>
@@ -71,6 +74,9 @@ namespace WorkyOne.AppServices.Interfaces.Repositories
         /// <param name="oldEntities">Обновляемая коллекция сущностей</param>
         /// <param name="newEntities">Коллекция сущностей, относительно которой происходит обновление</param>
         /// <returns></returns>
-        public Task RenewAsync(ICollection<TEntity> oldEntities, ICollection<TEntity> newEntities);
+        public Task<RepositoryResult> RenewAsync(
+            ICollection<TEntity> oldEntities,
+            ICollection<TEntity> newEntities
+        );
     }
 }

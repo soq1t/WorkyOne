@@ -6,13 +6,14 @@ using System.Text;
 using System.Threading.Tasks;
 using WorkyOne.Domain.Abstractions;
 using WorkyOne.Domain.Exceptions.Scedule;
+using WorkyOne.Domain.Interfaces;
 
 namespace WorkyOne.Domain.Entities.Schedule.Shifts
 {
     /// <summary>
     /// Абстрактный класс, описывающий рабочую смену
     /// </summary>
-    public abstract class ShiftEntity : EntityBase
+    public abstract class ShiftEntity : EntityBase, IUpdatable<ShiftEntity>
     {
         /// <summary>
         /// Название смены
@@ -72,6 +73,14 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
                     return duration;
                 }
             }
+        }
+
+        public void UpdateFields(ShiftEntity entity)
+        {
+            Name = entity.Name;
+            ColorCode = entity.ColorCode;
+            Beginning = entity.Beginning;
+            Ending = entity.Ending;
         }
     }
 }

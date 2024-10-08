@@ -1,11 +1,12 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using WorkyOne.Domain.Interfaces;
 
 namespace WorkyOne.Domain.Abstractions
 {
     /// <summary>
     /// Основа для сущностей
     /// </summary>
-    public abstract class EntityBase
+    public abstract class EntityBase : IEntity
     {
         /// <summary>
         /// Идентификатор сущности

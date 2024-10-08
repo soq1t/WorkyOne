@@ -5,10 +5,11 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using WorkyOne.Domain.Entities.Schedule;
+using WorkyOne.Domain.Interfaces;
 
 namespace WorkyOne.Domain.Entities
 {
-    public class UserEntity : IdentityUser
+    public class UserEntity : IdentityUser, IEntity
     {
         /// <summary>
         /// Имя пользователя

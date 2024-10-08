@@ -3,13 +3,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using WorkyOne.Domain.Abstractions;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Interfaces;
 
 namespace WorkyOne.Domain.Entities.Schedule
 {
     /// <summary>
     /// Сущность, описывающая определённую последовательность смен
     /// </summary>
-    public sealed class TemplateEntity : EntityBase
+    public sealed class TemplateEntity : EntityBase, IUpdatable<TemplateEntity>
     {
         /// <summary>
         /// ID расписания
@@ -41,5 +42,11 @@ namespace WorkyOne.Domain.Entities.Schedule
         /// </summary>
         [Required]
         public DateOnly StartDate { get; set; }
+
+        public void UpdateFields(TemplateEntity entity)
+        {
+            ScheduleId = entity.ScheduleId;
+            StartDate = entity.StartDate;
+        }
     }
 }

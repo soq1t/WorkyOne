@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories;
+using WorkyOne.Contracts.Enums.Reposistories;
+using WorkyOne.Contracts.Repositories;
 using WorkyOne.Contracts.Requests.Schedule;
 using WorkyOne.Contracts.Requests.Schedule.Shifts;
 using WorkyOne.Domain.Entities.Schedule;
@@ -24,12 +26,21 @@ namespace WorkyOne.Repositories.Repositories.Schedule
             ShiftSequenceRequest
         > _shiftSequencesRepository;
 
-        public TemplatesRepository(ApplicationDbContext context)
+        public TemplatesRepository(
+            ApplicationDbContext context,
+            IEntityRepository<
+                TemplatedShiftEntity,
+                TemplatedShiftRequest
+            > templatedShiftsRepository,
+            IEntityRepository<ShiftSequenceEntity, ShiftSequenceRequest> shiftSequencesRepository
+        )
         {
             _context = context;
+            _templatedShiftsRepository = templatedShiftsRepository;
+            _shiftSequencesRepository = shiftSequencesRepository;
         }
 
-        public async Task CreateAsync(TemplateEntity entity)
+        public async Task<RepositoryResult> CreateAsync(TemplateEntity entity)
         {
             bool entityExists = await _context.Templates.AnyAsync(t => t.Id == entity.Id);
 
@@ -37,13 +48,16 @@ namespace WorkyOne.Repositories.Repositories.Schedule
             {
                 _context.Templates.Add(entity);
                 await _context.SaveChangesAsync();
+                return new RepositoryResult(entity.Id);
+            }
+            else
+            {
+                return new RepositoryResult(RepositoryErrorType.EntityAlreadyExists, entity.Id);
             }
         }
 
-        public async Task CreateManyAsync(ICollection<TemplateEntity> entities)
+        public async Task<RepositoryResult> CreateManyAsync(ICollection<TemplateEntity> entities)
         {
-            bool changesPerformed = false;
-
             List<string> entitiesIds = entities.Select(e => e.Id).ToList();
 
             List<string> existedEntitiesIds = await _context
@@ -51,24 +65,25 @@ namespace WorkyOne.Repositories.Repositories.Schedule
                 .Select(t => t.Id)
                 .ToListAsync();
 
-            foreach (TemplateEntity entity in entities)
+            if (existedEntitiesIds.Count == entities.Count)
             {
-                bool entityExists = existedEntitiesIds.Contains(entity.Id);
-
-                if (!entityExists)
-                {
-                    _context.Templates.Add(entity);
-                    changesPerformed = true;
-                }
+                return new RepositoryResult(RepositoryErrorType.EntityAlreadyExists);
             }
 
-            if (changesPerformed)
+            var result = new RepositoryResult();
+            foreach (
+                TemplateEntity entity in entities.Where(e => !existedEntitiesIds.Contains(e.Id))
+            )
             {
-                await _context.SaveChangesAsync();
+                result.SucceedIds.Add(entity.Id);
+                _context.Templates.Add(entity);
             }
+
+            await _context.SaveChangesAsync();
+            return result;
         }
 
-        public async Task DeleteAsync(string entityId)
+        public async Task<RepositoryResult> DeleteAsync(string entityId)
         {
             TemplateEntity? deletedEntity = await _context.Templates.FirstOrDefaultAsync(t =>
                 t.Id == entityId
@@ -78,28 +93,38 @@ namespace WorkyOne.Repositories.Repositories.Schedule
             {
                 _context.Remove(deletedEntity);
                 await _context.SaveChangesAsync();
+                return new RepositoryResult(entityId);
+            }
+            else
+            {
+                return new RepositoryResult(RepositoryErrorType.EntityNotExists, entityId);
             }
         }
 
-        public async Task DeleteManyAsync(ICollection<string> entityIds)
+        public async Task<RepositoryResult> DeleteManyAsync(ICollection<string> entityIds)
         {
-            List<TemplateEntity> deletedEntities = await _context
+            List<TemplateEntity> deleted = await _context
                 .Templates.Where(t => entityIds.Contains(t.Id))
                 .ToListAsync();
 
-            if (deletedEntities.Count > 0)
+            if (deleted.Count == 0)
             {
-                _context.RemoveRange(deletedEntities);
+                return new RepositoryResult(RepositoryErrorType.EntityNotExists);
+            }
+            else
+            {
+                _context.RemoveRange(deleted);
                 await _context.SaveChangesAsync();
+                return new RepositoryResult(deleted.Select(e => e.Id));
             }
         }
 
         public Task<TemplateEntity?> GetAsync(TemplateRequest request)
         {
-            if (!string.IsNullOrEmpty(request.TemplateId))
+            if (!string.IsNullOrEmpty(request.Id))
             {
                 IQueryable<TemplateEntity> query = _context.Templates.Where(t =>
-                    t.Id == request.TemplateId
+                    t.Id == request.Id
                 );
                 query.Include(t => t.Sequences);
                 query.Include(t => t.Shifts);
@@ -118,7 +143,7 @@ namespace WorkyOne.Repositories.Repositories.Schedule
                 return query.FirstOrDefaultAsync();
             }
 
-            return null;
+            return Task.FromResult<TemplateEntity?>(null);
         }
 
         public async Task<ICollection<TemplateEntity>?> GetManyAsync(TemplateRequest request)
@@ -133,101 +158,82 @@ namespace WorkyOne.Repositories.Repositories.Schedule
             return result;
         }
 
-        public async Task UpdateAsync(TemplateEntity entity)
+        public async Task<RepositoryResult> UpdateAsync(TemplateEntity entity)
         {
-            TemplateEntity? updatedEntity = await GetAsync(
-                new TemplateRequest { TemplateId = entity.Id }
-            );
-
-            if (updatedEntity != null)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                await _templatedShiftsRepository.RenewAsync(updatedEntity.Shifts, entity.Shifts);
-                updatedEntity.Shifts = entity.Shifts;
-
-                await _shiftSequencesRepository.RenewAsync(
-                    updatedEntity.Sequences,
-                    entity.Sequences
-                );
-                updatedEntity.Sequences = entity.Sequences;
-            }
-        }
-
-        public async Task UpdateManyAsync(ICollection<TemplateEntity> entities)
-        {
-            foreach (TemplateEntity entity in entities)
-            {
-                await UpdateAsync(entity);
-            }
-        }
-
-        private async Task DeleteShifts(List<string> shiftsIds, TemplateEntity entity)
-        {
-            List<TemplatedShiftEntity> deletedShifts = entity
-                .Shifts.Where(s => !shiftsIds.Contains(s.Id))
-                .ToList();
-
-            if (deletedShifts.Count > 0)
-            {
-                foreach (TemplatedShiftEntity shift in deletedShifts)
+                try
                 {
-                    entity.Shifts.Remove(shift);
+                    TemplateEntity? updatedEntity = await GetAsync(
+                        new TemplateRequest { Id = entity.Id, ScheduleId = entity.ScheduleId }
+                    );
 
-                    List<string> deletedShiftsIds = deletedShifts.Select(s => s.Id).ToList();
+                    if (updatedEntity == null)
+                    {
+                        return new RepositoryResult(RepositoryErrorType.EntityNotExists, entity.Id);
+                    }
 
-                    await _templatedShiftsRepository.DeleteManyAsync(deletedShiftsIds);
+                    updatedEntity.UpdateFields(entity);
+                    _context.Update(updatedEntity);
+
+                    await _templatedShiftsRepository.RenewAsync(
+                        updatedEntity.Shifts,
+                        entity.Shifts
+                    );
+
+                    await _shiftSequencesRepository.RenewAsync(
+                        updatedEntity.Sequences,
+                        entity.Sequences
+                    );
+
+                    await transaction.CommitAsync();
+                    return new RepositoryResult(entity.Id);
+                }
+                catch
+                {
+                    await transaction.RollbackAsync();
+                    throw;
                 }
             }
         }
 
-        private async Task UpdateShifts(List<TemplatedShiftEntity> shifts, TemplateEntity entity)
+        public async Task<RepositoryResult> UpdateManyAsync(ICollection<TemplateEntity> entities)
         {
-            List<TemplatedShiftEntity> adding = new List<TemplatedShiftEntity>();
-            List<TemplatedShiftEntity> updating = new List<TemplatedShiftEntity>();
-
-            foreach (TemplatedShiftEntity shift in shifts)
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
-                if (entity.Shifts.Any(s => s.Id == shift.Id))
+                try
                 {
-                    updating.Add(shift);
+                    var result = new RepositoryResult();
+
+                    foreach (TemplateEntity entity in entities)
+                    {
+                        var operationResult = await UpdateAsync(entity);
+
+                        if (operationResult.IsSuccess)
+                        {
+                            result.SucceedIds.AddRange(operationResult.SucceedIds);
+                        }
+                    }
+
+                    if (result.SucceedIds.Count == 0)
+                    {
+                        result.IsSuccess = false;
+                        await transaction.RollbackAsync();
+                        return result;
+                    }
+
+                    await transaction.CommitAsync();
+                    return result;
                 }
-                else
+                catch
                 {
-                    adding.Add(shift);
+                    await transaction.RollbackAsync();
+                    throw;
                 }
-            }
-
-            if (adding.Count > 0)
-            {
-                entity.Shifts.AddRange(adding);
-                await _templatedShiftsRepository.CreateManyAsync(adding);
-            }
-
-            if (updating.Count > 0)
-            {
-                await _templatedShiftsRepository.UpdateManyAsync(updating);
-
-                entity.Shifts = (
-                    await _templatedShiftsRepository.GetManyAsync(
-                        new TemplatedShiftRequest { TemplateId = entity.Id }
-                    )
-                ).ToList();
             }
         }
 
-        private async Task UpdateSequences(
-            List<ShiftSequenceEntity> sequences,
-            TemplateEntity entity
-        )
-        {
-            List<string> deletingIds = entity.Sequences.Select(s => s.Id).ToList();
-
-            await _shiftSequencesRepository.DeleteManyAsync(deletingIds);
-            await _shiftSequencesRepository.CreateManyAsync(sequences);
-
-            entity.Sequences = sequences;
-        }
-
-        public Task RenewAsync(
+        public Task<RepositoryResult> RenewAsync(
             ICollection<TemplateEntity> oldEntities,
             ICollection<TemplateEntity> newEntities
         ) => DefaultRepositoryMethods.RenewAsync(this, oldEntities, newEntities);

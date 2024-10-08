@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace WorkyOne.Contracts.Requests.Schedule.Shifts
 {
     /// <summary>
-    /// Запрос на получение информации о "шаблонной" смене
+    /// Запрос на получение информации о TemplatedShiftEntity
     /// </summary>
     public sealed class TemplatedShiftRequest : ShiftRequest
     {
