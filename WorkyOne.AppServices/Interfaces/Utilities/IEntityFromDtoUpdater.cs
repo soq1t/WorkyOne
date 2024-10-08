@@ -1,4 +1,4 @@
-﻿using WorkyOne.AppServices.DTOs.Abstractions;
+﻿using WorkyOne.Contracts.DTOs.Abstractions;
 
 namespace WorkyOne.AppServices.Interfaces.Utilities
 {

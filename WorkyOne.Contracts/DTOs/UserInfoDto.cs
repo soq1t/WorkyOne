@@ -1,6 +1,6 @@
-﻿using WorkyOne.AppServices.DTOs.Abstractions;
+﻿using WorkyOne.Contracts.DTOs.Abstractions;
 
-namespace WorkyOne.AppServices.DTOs
+namespace WorkyOne.Contracts.DTOs
 {
     /// <summary>
     /// DTO данных о пользователе

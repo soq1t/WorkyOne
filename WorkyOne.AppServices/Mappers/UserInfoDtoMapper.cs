@@ -1,4 +1,4 @@
-﻿using WorkyOne.AppServices.DTOs;
+﻿using WorkyOne.Contracts.DTOs;
 using WorkyOne.Domain.Entities;
 
 namespace WorkyOne.AppServices.Mappers

@@ -25,7 +25,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkyOne.DependencyRegister
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Contracts", "Contracts", "{C26024FF-6382-4DC1-8F91-26B142916FA8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkyOne.Contracts", "WorkyOne.Contracts\WorkyOne.Contracts.csproj", "{94E1206F-DC41-4B0D-88A4-ADF978576CBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkyOne.Contracts", "WorkyOne.Contracts\WorkyOne.Contracts.csproj", "{94E1206F-DC41-4B0D-88A4-ADF978576CBC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

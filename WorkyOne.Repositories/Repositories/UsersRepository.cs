@@ -37,12 +37,12 @@ namespace WorkyOne.Repositories.Repositories
                     if (result.Succeeded)
                     {
                         await transaction.CommitAsync();
-                        return new RepositoryResult();
+                        return new RepositoryResult(entity.Id);
                     }
                     else
                     {
                         await transaction.RollbackAsync();
-                        return new RepositoryResult(RepositoryErrorType.Unknown);
+                        return new RepositoryResult(RepositoryErrorType.Unknown, entity.Id);
                     }
                 }
                 catch
@@ -55,25 +55,28 @@ namespace WorkyOne.Repositories.Repositories
 
         public async Task<RepositoryResult> CreateManyAsync(ICollection<UserEntity> entities)
         {
-            using (
-                IDbContextTransaction transaction = await _context.Database.BeginTransactionAsync()
-            )
+            using (var transaction = await _context.Database.BeginTransactionAsync())
             {
                 try
                 {
+                    var result = new RepositoryResult();
                     foreach (UserEntity entity in entities)
                     {
-                        RepositoryResult result = await CreateAsync(entity);
+                        RepositoryResult operationResult = await CreateAsync(entity);
 
-                        if (!result.IsSuccess)
-                        {
-                            await transaction.RollbackAsync();
-                            return new RepositoryResult(result);
-                        }
+                        result.AddInfo(operationResult);
                     }
 
-                    await transaction.CommitAsync();
-                    return new RepositoryResult();
+                    if (result.IsSuccess)
+                    {
+                        await transaction.CommitAsync();
+                    }
+                    else
+                    {
+                        await transaction.RollbackAsync();
+                    }
+
+                    return result;
                 }
                 catch
                 {
@@ -96,9 +99,18 @@ namespace WorkyOne.Repositories.Repositories
                         return new RepositoryResult(RepositoryErrorType.EntityNotExists, entityId);
                     }
 
-                    await _userManager.DeleteAsync(deletedUser);
-                    await transaction.CommitAsync();
-                    return new RepositoryResult();
+                    var operationResult = await _userManager.DeleteAsync(deletedUser);
+
+                    if (operationResult.Succeeded)
+                    {
+                        await transaction.CommitAsync();
+                        return new RepositoryResult(entityId);
+                    }
+                    else
+                    {
+                        await transaction.RollbackAsync();
+                        return new RepositoryResult(RepositoryErrorType.Unknown, entityId);
+                    }
                 }
                 catch
                 {
@@ -114,19 +126,25 @@ namespace WorkyOne.Repositories.Repositories
             {
                 try
                 {
+                    var result = new RepositoryResult();
+
                     foreach (string entityId in entityIds)
                     {
-                        RepositoryResult result = await DeleteAsync(entityId);
+                        RepositoryResult operationResult = await DeleteAsync(entityId);
 
-                        if (!result.IsSuccess)
-                        {
-                            await transaction.RollbackAsync();
-                            return new RepositoryResult(result);
-                        }
+                        result.AddInfo(operationResult);
                     }
 
-                    await transaction.CommitAsync();
-                    return new RepositoryResult();
+                    if (result.IsSuccess)
+                    {
+                        await transaction.CommitAsync();
+                    }
+                    else
+                    {
+                        await transaction.RollbackAsync();
+                    }
+
+                    return result;
                 }
                 catch
                 {
@@ -176,12 +194,9 @@ namespace WorkyOne.Repositories.Repositories
                         return new RepositoryResult(RepositoryErrorType.EntityNotExists, entity.Id);
                     }
 
-                    updatedUser.UserName = entity.UserName;
-                    updatedUser.FirstName = entity.FirstName;
-                    updatedUser.IsActivated = entity.IsActivated;
-
+                    updatedUser.UpdateFields(entity);
                     await transaction.CommitAsync();
-                    return new RepositoryResult();
+                    return new RepositoryResult(entity.Id);
                 }
                 catch
                 {
@@ -197,19 +212,23 @@ namespace WorkyOne.Repositories.Repositories
             {
                 try
                 {
+                    var result = new RepositoryResult();
                     foreach (var entity in entities)
                     {
-                        RepositoryResult result = await UpdateAsync(entity);
+                        RepositoryResult operationResult = await UpdateAsync(entity);
 
-                        if (!result.IsSuccess)
-                        {
-                            await transaction.RollbackAsync();
-                            return new RepositoryResult(result);
-                        }
+                        result.AddInfo(operationResult);
                     }
 
-                    await transaction.CommitAsync();
-                    return new RepositoryResult();
+                    if (result.IsSuccess)
+                    {
+                        await transaction.CommitAsync();
+                    }
+                    else
+                    {
+                        await transaction.RollbackAsync();
+                    }
+                    return result;
                 }
                 catch
                 {

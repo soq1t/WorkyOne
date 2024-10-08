@@ -15,7 +15,7 @@ namespace WorkyOne.Contracts.Repositories
         /// <summary>
         /// Показывает, успешно ли выполнилось действие
         /// </summary>
-        public bool IsSuccess { get; set; }
+        public bool IsSuccess => SucceedIds.Any();
 
         /// <summary>
         /// Список ID сущностей, с которыми удалось успешно совершить действие в базе данных
@@ -27,43 +27,49 @@ namespace WorkyOne.Contracts.Repositories
         /// </summary>
         public List<RepositoryError> Errors { get; set; } = new List<RepositoryError>();
 
-        public RepositoryResult(bool isSuccess = true)
+        /// <summary>
+        /// Добавляет информацию об ошибках и ID сущностей, с которыми удалось успешно выполнить операцию
+        /// </summary>
+        /// <param name="repositoryResult"><see cref="RepositoryResult"/>, из которого берётся информация</param>
+        public void AddInfo(RepositoryResult repositoryResult)
         {
-            IsSuccess = isSuccess;
+            SucceedIds.AddRange(repositoryResult.SucceedIds);
+            Errors.AddRange(repositoryResult.Errors);
         }
 
+        /// <summary>
+        /// Добавляет <see cref="RepositoryError"/> с указанными <paramref name="errorType"/> и <paramref name="entityId"/> в список ошибок
+        /// </summary>
+        /// <param name="errorType">Тип ошибки</param>
+        /// <param name="entityId">ID сущности, с которой связана <paramref name="errorType"/></param>
+        public void AddError(RepositoryErrorType errorType, string? entityId = null)
+        {
+            Errors.Add(new RepositoryError(errorType, entityId));
+        }
+
+        public RepositoryResult() { }
+
         public RepositoryResult(string succeedId)
-            : this(true)
         {
             SucceedIds.Add(succeedId);
         }
 
         public RepositoryResult(IEnumerable<string> suceedIds)
-            : this(true)
         {
             SucceedIds.AddRange(suceedIds);
         }
 
         public RepositoryResult(RepositoryError error)
-            : this(false)
         {
             Errors.Add(error);
         }
 
         public RepositoryResult(IEnumerable<RepositoryError> errors)
-            : this(false)
         {
             Errors = new List<RepositoryError>(errors);
         }
 
-        public RepositoryResult(RepositoryResult repositoryResult)
-        {
-            IsSuccess = repositoryResult.IsSuccess;
-            Errors = repositoryResult.Errors;
-        }
-
         public RepositoryResult(RepositoryErrorType errorType, string? entityId = null)
-            : this(false)
         {
             RepositoryError error = new RepositoryError(errorType, entityId);
             Errors.Add(error);

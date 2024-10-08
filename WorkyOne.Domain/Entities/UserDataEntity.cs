@@ -7,13 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using WorkyOne.Domain.Abstractions;
 using WorkyOne.Domain.Entities.Schedule;
+using WorkyOne.Domain.Interfaces;
 
 namespace WorkyOne.Domain.Entities
 {
     /// <summary>
     /// Сущность, описывающая необходимую приложению информацию о пользователе
     /// </summary>
-    public class UserDataEntity : EntityBase
+    public class UserDataEntity : EntityBase, IUpdatable<UserDataEntity>
     {
         /// <summary>
         /// Идентификатор пользователя, к которому относится информация
@@ -39,5 +40,10 @@ namespace WorkyOne.Domain.Entities
         /// Стандартный конструктор сущности (для EF)
         /// </summary>
         public UserDataEntity() { }
+
+        public void UpdateFields(UserDataEntity entity)
+        {
+            UserId = entity.UserId;
+        }
     }
 }

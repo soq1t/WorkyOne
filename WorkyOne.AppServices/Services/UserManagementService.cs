@@ -1,9 +1,8 @@
-﻿using WorkyOne.AppServices.DTOs;
-using WorkyOne.AppServices.Interfaces.Repositories;
+﻿using WorkyOne.AppServices.Interfaces.Repositories;
 using WorkyOne.AppServices.Interfaces.Services;
 using WorkyOne.AppServices.Mappers;
+using WorkyOne.Contracts.DTOs;
 using WorkyOne.Domain.Entities;
-using WorkyOne.Domain.Entities.Schedule;
 
 namespace WorkyOne.AppServices.Services
 {
