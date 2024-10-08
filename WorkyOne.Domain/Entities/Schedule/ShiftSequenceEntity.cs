@@ -29,7 +29,7 @@ namespace WorkyOne.Domain.Entities.Schedule
         public TemplateEntity Template { get; set; }
 
         /// <summary>
-        /// ID смена
+        /// ID смены
         /// </summary>
         [Required]
         [ForeignKey(nameof(Shift))]
@@ -45,6 +45,7 @@ namespace WorkyOne.Domain.Entities.Schedule
         /// Указатель позиции смены в последовательности
         /// </summary>
         [Range(1, 31)]
+        [Required]
         public int Position { get; set; }
     }
 }

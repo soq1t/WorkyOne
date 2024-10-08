@@ -3,19 +3,40 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using WorkyOne.AppServices.Interfaces.Repositories;
+using WorkyOne.Contracts.Requests.Common;
+using WorkyOne.Contracts.Requests.Schedule;
+using WorkyOne.Contracts.Requests.Schedule.Shifts;
 using WorkyOne.Domain.Entities;
+using WorkyOne.Domain.Entities.Schedule;
+using WorkyOne.Domain.Entities.Schedule.Shifts;
 using WorkyOne.Repositories.Contextes;
 
 namespace WorkyOne.DependencyRegister
 {
+    /// <summary>
+    /// Компонент, осуществляющий регистрацию зависимостей в приложении
+    /// </summary>
     public static class DependencyRegistrer
     {
+        /// <summary>
+        /// Регистрирует все необходимые зависимости
+        /// </summary>
+        /// <param name="services">Сервисы приложения</param>
+        /// <param name="configuration">Конфигурация приложения</param>
         public static void RegisterAll(IServiceCollection services, IConfiguration configuration)
         {
-            RegisterContextes(services, configuration);
+            RegisterOther(services);
             RegisterAuth(services);
+            RegisterContextes(services, configuration);
+            RegisterRepositories(services);
         }
 
+        /// <summary>
+        /// Регистрирует контексты баз данных, используемых приложением
+        /// </summary>
+        /// <param name="services">Сервисы приложения</param>
+        /// <param name="configuration">Конфигурация приложения</param>
         private static void RegisterContextes(
             IServiceCollection services,
             IConfiguration configuration
@@ -34,6 +55,10 @@ namespace WorkyOne.DependencyRegister
             );
         }
 
+        /// <summary>
+        /// Регистрирует систему авторизации и аутентификации приложения
+        /// </summary>
+        /// <param name="services">Сервисы приложения</param>
         private static void RegisterAuth(IServiceCollection services)
         {
             //services
@@ -56,6 +81,27 @@ namespace WorkyOne.DependencyRegister
                 })
                 .AddEntityFrameworkStores<UsersDbContext>()
                 .AddDefaultTokenProviders();
+        }
+
+        /// <summary>
+        /// Регистрирует репозитории, используемые приложением
+        /// </summary>
+        /// <param name="services">Сервисы приложения</param>
+        private static void RegisterRepositories(IServiceCollection services)
+        {
+            services.AddScoped<IEntityRepository<UserEntity, UserRequest>>();
+            services.AddScoped<IEntityRepository<UserDataEntity, UserDataRequest>>();
+            services.AddScoped<IEntityRepository<TemplateEntity, TemplateRequest>>();
+            services.AddScoped<IEntityRepository<TemplatedShiftEntity, TemplatedShiftRequest>>();
+        }
+
+        /// <summary>
+        /// Регистрирует иные компоненты, используемые в приложении
+        /// </summary>
+        /// <param name="services">Сервисы приложения</param>
+        private static void RegisterOther(IServiceCollection services)
+        {
+            services.AddAutoMapper(typeof(DependencyRegistrer).Assembly);
         }
     }
 }
