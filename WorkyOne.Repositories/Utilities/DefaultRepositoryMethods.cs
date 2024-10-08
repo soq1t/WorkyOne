@@ -36,31 +36,19 @@ namespace WorkyOne.Repositories.Utilities
             List<TEntity> adding = newValues.Where(n => !oldValuesIds.Contains(n.Id)).ToList();
             List<TEntity> updating = newValues.Where(n => oldValuesIds.Contains(n.Id)).ToList();
 
+            var result = new RepositoryResult();
+
             var operationResult = await repository.DeleteManyAsync(
                 removing.Select(r => r.Id).ToList()
             );
-            var result = new RepositoryResult();
-            result.SucceedIds.AddRange(operationResult.SucceedIds);
 
-            if (!operationResult.IsSuccess)
-            {
-                result.IsSuccess = false;
-                result.Errors.AddRange(operationResult.Errors);
-                return result;
-            }
+            result.AddInfo(operationResult);
 
             operationResult = await repository.CreateManyAsync(adding);
-            result.SucceedIds.AddRange(operationResult.SucceedIds);
-
-            if (!result.IsSuccess)
-            {
-                result.IsSuccess = false;
-                result.Errors.AddRange(operationResult.Errors);
-                return result;
-            }
+            result.AddInfo(operationResult);
 
             operationResult = await repository.UpdateManyAsync(updating);
-            result.SucceedIds.AddRange(operationResult.SucceedIds);
+            result.AddInfo(operationResult);
 
             return result;
         }

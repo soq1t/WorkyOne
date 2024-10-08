@@ -9,7 +9,7 @@ using WorkyOne.Domain.Interfaces;
 
 namespace WorkyOne.Domain.Entities
 {
-    public class UserEntity : IdentityUser, IEntity
+    public class UserEntity : IdentityUser, IEntity, IUpdatable<UserEntity>
     {
         /// <summary>
         /// Имя пользователя
@@ -20,5 +20,13 @@ namespace WorkyOne.Domain.Entities
         /// Активирован ли пользователь
         /// </summary>
         public bool IsActivated { get; set; }
+
+        public void UpdateFields(UserEntity entity)
+        {
+            FirstName = entity.FirstName;
+            IsActivated = entity.IsActivated;
+            UserName = entity.UserName;
+            Email = entity.Email;
+        }
     }
 }

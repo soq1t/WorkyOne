@@ -209,20 +209,18 @@ namespace WorkyOne.Repositories.Repositories.Schedule
                     {
                         var operationResult = await UpdateAsync(entity);
 
-                        if (operationResult.IsSuccess)
-                        {
-                            result.SucceedIds.AddRange(operationResult.SucceedIds);
-                        }
+                        result.AddInfo(operationResult);
                     }
 
-                    if (result.SucceedIds.Count == 0)
+                    if (result.IsSuccess)
                     {
-                        result.IsSuccess = false;
+                        await transaction.CommitAsync();
+                    }
+                    else
+                    {
                         await transaction.RollbackAsync();
-                        return result;
                     }
 
-                    await transaction.CommitAsync();
                     return result;
                 }
                 catch
