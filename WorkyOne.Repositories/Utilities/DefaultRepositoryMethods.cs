@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WorkyOne.AppServices.Interfaces.Repositories;
-using WorkyOne.Contracts.Interfaces;
+using WorkyOne.AppServices.Interfaces.Repositories.Common;
+using WorkyOne.Contracts.Interfaces.Repositories;
 using WorkyOne.Contracts.Repositories;
 using WorkyOne.Contracts.Requests.Common;
-using WorkyOne.Domain.Interfaces;
+using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.Repositories.Utilities
 {

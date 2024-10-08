@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using WorkyOne.Domain.Entities;
+using WorkyOne.Domain.Entities.Users;
 
 namespace WorkyOne.Repositories.Contextes
 {

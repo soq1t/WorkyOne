@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using WorkyOne.Domain.Entities;
-using WorkyOne.Domain.Entities.Schedule;
+using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Entities.Users;
 
 namespace WorkyOne.Repositories.Contextes
 {

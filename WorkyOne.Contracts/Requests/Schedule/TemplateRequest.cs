@@ -1,4 +1,4 @@
-﻿using WorkyOne.Contracts.Interfaces;
+﻿using WorkyOne.Contracts.Interfaces.Repositories;
 using WorkyOne.Contracts.Requests.Common;
 
 namespace WorkyOne.Contracts.Requests.Schedule

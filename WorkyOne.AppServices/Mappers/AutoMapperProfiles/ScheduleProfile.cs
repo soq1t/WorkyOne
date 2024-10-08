@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using WorkyOne.Contracts.DTOs.Schedule;
-using WorkyOne.Domain.Entities.Schedule;
+using WorkyOne.Domain.Entities.Schedule.Common;
 
 namespace WorkyOne.AppServices.Mappers.AutoMapperProfiles
 {

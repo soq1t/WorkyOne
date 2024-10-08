@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WorkyOne.Domain.Interfaces;
+using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.Domain.Abstractions
 {

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using WorkyOne.Domain.Interfaces;
+using WorkyOne.Domain.Entities.Schedule.Common;
+using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.Domain.Entities.Schedule.Shifts
 {
