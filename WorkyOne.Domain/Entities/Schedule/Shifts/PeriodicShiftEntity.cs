@@ -16,11 +16,13 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
         /// <summary>
         /// Дата начала действия смены
         /// </summary>
+        [Required]
         public DateOnly StartDate { get; set; }
 
         /// <summary>
         /// Дата окончания действия смены
         /// </summary>
+        [Required]
         public DateOnly EndDate { get; set; }
 
         /// <summary>
