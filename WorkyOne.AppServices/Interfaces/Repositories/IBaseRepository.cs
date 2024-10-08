@@ -10,19 +10,11 @@ namespace WorkyOne.AppServices.Interfaces.Repositories
     public interface IBaseRepository
     {
         /// <summary>
-        /// Возвращает из базы данных сущность типа <typeparamref name="TEntity"/> согласно принимаемому запросу <paramref name="query"/>
+        /// Возвращает из базы сущность типа <typeparamref name="TEntity"/> согласно её идентификатору
         /// </summary>
-        /// <typeparam name="TEntity">Тип получаемой сущности</typeparam>
-        /// <param name="query">Запрос, согласно которому объект выбирается из базы</param>
-        public Task<TEntity?> GetAsync<TEntity>(IQueryable<TEntity> query)
-            where TEntity : EntityBase;
-
-        /// <summary>
-        /// Возвращает из базы данных множество сущностей типа <typeparamref name="TEntity"/> согласно принимаемому запросу <paramref name="query"/>
-        /// </summary>
-        /// <typeparam name="TEntity">Тип получаемой сущности</typeparam>
-        /// <param name="query">Запрос, согласно которому объект выбирается из базы</param>
-        public Task<IEnumerable<TEntity>> GetManyAsync<TEntity>(IQueryable<TEntity> query)
+        /// <typeparam name="TEntity">Тип возвращаемой сущности</typeparam>
+        /// <param name="entityId">Идентификатор запрашиваемой сущности</param>
+        public Task<TEntity?> GetByIdAsync<TEntity>(string entityId)
             where TEntity : EntityBase;
 
         /// <summary>
