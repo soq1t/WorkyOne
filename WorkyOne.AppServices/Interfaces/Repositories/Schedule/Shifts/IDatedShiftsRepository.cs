@@ -15,6 +15,6 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts
         /// </summary>
         /// <param name="request">Запрос на получение данных</param>
         /// <returns></returns>
-        public Task<ICollection<DatedShiftEntity>> GetByScheduleIdAsync(DatedShiftRequest request);
+        public Task<List<DatedShiftEntity>> GetByScheduleIdAsync(DatedShiftRequest request);
     }
 }

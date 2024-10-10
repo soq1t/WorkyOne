@@ -10,7 +10,7 @@ namespace WorkyOne.Domain.Interfaces.Common
     /// Интерфейс сущности <typeparamref name="TEntity"/>, которая может обновлять свои поля полями иной сущности <typeparamref name="TEntity"/>
     /// </summary>
     /// <typeparam name="TEntity">Класс сущности</typeparam>
-    interface IUpdatable<TEntity>
+    public interface IUpdatable<TEntity>
         where TEntity : class
     {
         /// <summary>
