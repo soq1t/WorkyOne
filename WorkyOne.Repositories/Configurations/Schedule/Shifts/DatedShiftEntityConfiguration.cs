@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 
-namespace WorkyOne.Domain.Configurations.Schedule.Shifts
+namespace WorkyOne.Repositories.Configurations.Schedule.Shifts
 {
     /// <summary>
     /// Конфигурация DatedShiftEntity для EntityFrameworkCore

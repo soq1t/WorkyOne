@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WorkyOne.Domain.Entities.Schedule.Common;
 
-namespace WorkyOne.Domain.Configurations.Schedule.Common
+namespace WorkyOne.Repositories.Configurations.Schedule.Common
 {
     /// <summary>
     /// Конфигурация DailyInfoEntity для EntityFrameworkCore

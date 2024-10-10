@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WorkyOne.Domain.Entities.Schedule.Common;
 
-namespace WorkyOne.Domain.Configurations.Schedule.Common
+namespace WorkyOne.Repositories.Configurations.Schedule.Common
 {
     /// <summary>
     /// Конфигурация ShiftSequenceEntity для EntityFrameworkCore
