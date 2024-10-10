@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 using WorkyOne.AppServices.Interfaces.Repositories.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
@@ -8,66 +7,44 @@ using WorkyOne.Contracts.Repositories;
 using WorkyOne.Contracts.Requests.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Repositories.Contextes;
-using WorkyOne.Repositories.Utilities;
 
 namespace WorkyOne.Repositories.Repositories.Schedule.Common
 {
     /// <summary>
     /// Репозиторий по работе с <see cref="ScheduleEntity"/>
     /// </summary>
-    public sealed class SchedulesRepository : ISchedulesRepository
+    public sealed class SchedulesRepository
+        : EntityRepository<ScheduleEntity, ScheduleRequest>,
+            ISchedulesRepository
     {
-        private readonly IBaseRepository _baseRepo;
-        private readonly ApplicationDbContext _context;
-
         private readonly ITemplatesRepository _templatesRepo;
         private readonly IDatedShiftsRepository _datedShiftsRepo;
         private readonly IPeriodicShiftsRepository _periodicShiftsRepo;
 
         public SchedulesRepository(
-            IBaseRepository baseRepository,
+            IBaseRepository baseRepo,
             ApplicationDbContext context,
-            ITemplatesRepository templatesRepository,
-            IDatedShiftsRepository datedShiftsRepository,
-            IPeriodicShiftsRepository periodicShiftsRepository
+            ITemplatesRepository templatesRepo,
+            IDatedShiftsRepository datedShiftsRepo,
+            IPeriodicShiftsRepository periodicShiftsRepo
         )
+            : base(baseRepo, context)
         {
-            _baseRepo = baseRepository;
-            _context = context;
-            _templatesRepo = templatesRepository;
-            _datedShiftsRepo = datedShiftsRepository;
-            _periodicShiftsRepo = periodicShiftsRepository;
+            _templatesRepo = templatesRepo;
+            _datedShiftsRepo = datedShiftsRepo;
+            _periodicShiftsRepo = periodicShiftsRepo;
         }
 
-        public Task<RepositoryResult> CreateAsync(ScheduleEntity entity)
+        public override Task<ScheduleEntity?> GetAsync(ScheduleRequest request)
         {
-            return _baseRepo.CreateAsync(entity);
-        }
-
-        public Task<RepositoryResult> CreateManyAsync(ICollection<ScheduleEntity> entities)
-        {
-            return _baseRepo.CreateManyAsync(entities);
-        }
-
-        public Task<RepositoryResult> DeleteAsync(string entityId)
-        {
-            return _baseRepo.DeleteAsync<ScheduleEntity>(entityId);
-        }
-
-        public Task<RepositoryResult> DeleteManyAsync(ICollection<string> entityIds)
-        {
-            return _baseRepo.DeleteManyAsync<ScheduleEntity>(entityIds);
-        }
-
-        public Task<ScheduleEntity?> GetAsync(ScheduleRequest request)
-        {
-            IQueryable<ScheduleEntity> query = _context.Schedules.Where(s => s.Id == request.Id);
+            var query = _context.Schedules.Where(s => s.Id == request.Id);
 
             QueryBuilder(request, query);
 
             return query.FirstOrDefaultAsync();
         }
 
+        /// <inheritdoc/>
         public async Task<ICollection<ScheduleEntity>> GetByUserAsync(ScheduleRequest request)
         {
             var query = _context.Schedules.Where(s => s.UserDataId == request.UserId);
@@ -104,15 +81,8 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             }
         }
 
-        public Task<RepositoryResult> RenewAsync(
-            ICollection<ScheduleEntity> oldEntities,
-            ICollection<ScheduleEntity> newEntities
-        )
-        {
-            return DefaultRepositoryMethods.RenewAsync(this, oldEntities, newEntities);
-        }
-
-        public async Task<RepositoryResult> UpdateAsync(ScheduleEntity entity)
+        /// <inheritdoc/>
+        public override async Task<RepositoryResult> UpdateAsync(ScheduleEntity entity)
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
@@ -189,7 +159,10 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             }
         }
 
-        public async Task<RepositoryResult> UpdateManyAsync(ICollection<ScheduleEntity> entities)
+        /// <inheritdoc/>
+        public override async Task<RepositoryResult> UpdateManyAsync(
+            ICollection<ScheduleEntity> entities
+        )
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {

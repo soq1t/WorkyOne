@@ -15,5 +15,8 @@ namespace WorkyOne.Contracts.Requests.Common
         public string Id { get; set; }
 
         public string UserId { get; set; }
+
+        public bool IncludeFullSchedulesInfo { get; set; } = false;
+        public bool IncludeShortSchedulesInfo { get; set; } = false;
     }
 }

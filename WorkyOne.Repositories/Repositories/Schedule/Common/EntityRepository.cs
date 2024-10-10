@@ -23,8 +23,8 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
         where TEntity : EntityBase, IUpdatable<TEntity>
         where TRequest : IEntityRequest
     {
-        private readonly IBaseRepository _baseRepo;
-        private readonly ApplicationDbContext _context;
+        protected readonly IBaseRepository _baseRepo;
+        protected readonly ApplicationDbContext _context;
 
         public EntityRepository(IBaseRepository baseRepo, ApplicationDbContext context)
         {
@@ -52,7 +52,7 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             return _baseRepo.DeleteManyAsync<TEntity>(entityIds);
         }
 
-        public Task<TEntity?> GetAsync(TRequest request)
+        public virtual Task<TEntity?> GetAsync(TRequest request)
         {
             return _context.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == request.Id);
         }

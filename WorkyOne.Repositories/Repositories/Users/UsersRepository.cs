@@ -1,21 +1,18 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore.Storage;
-using WorkyOne.AppServices.Interfaces.Repositories.Common;
+using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.Contracts.Enums.Reposistories;
 using WorkyOne.Contracts.Repositories;
 using WorkyOne.Contracts.Requests.Common;
-using WorkyOne.Contracts.Requests.Schedule;
-using WorkyOne.Domain.Entities.Schedule;
 using WorkyOne.Domain.Entities.Users;
+using WorkyOne.Domain.Interfaces.Common;
 using WorkyOne.Repositories.Contextes;
-using WorkyOne.Repositories.Utilities;
 
 namespace WorkyOne.Repositories.Repositories.Users
 {
     /// <summary>
     /// Репозиторий пользователей приложения
     /// </summary>
-    public class UsersRepository : IEntityRepository<UserEntity, UserRequest>
+    public class UsersRepository : IUsersRepository
     {
         private readonly UserManager<UserEntity> _userManager;
         private readonly UsersDbContext _context;
@@ -173,12 +170,35 @@ namespace WorkyOne.Repositories.Repositories.Users
             }
         }
 
-        public Task<RepositoryResult> RenewAsync(
+        public async Task<RepositoryResult> RenewAsync(
             ICollection<UserEntity> oldEntities,
             ICollection<UserEntity> newEntities
         )
         {
-            return DefaultRepositoryMethods.RenewAsync(this, oldEntities, newEntities);
+            IEnumerable<string> newValuesIds = newEntities.Select(n => n.Id);
+            IEnumerable<string> oldValuesIds = oldEntities.Select(n => n.Id);
+
+            List<UserEntity> removing = oldEntities
+                .Where(o => !newValuesIds.Contains(o.Id))
+                .ToList();
+            List<UserEntity> adding = newEntities.Where(n => !oldValuesIds.Contains(n.Id)).ToList();
+            List<UserEntity> updating = newEntities
+                .Where(n => oldValuesIds.Contains(n.Id))
+                .ToList();
+
+            var result = new RepositoryResult();
+
+            var operationResult = await DeleteManyAsync(removing.Select(r => r.Id).ToList());
+
+            result.AddInfo(operationResult);
+
+            operationResult = await CreateManyAsync(adding);
+            result.AddInfo(operationResult);
+
+            operationResult = await UpdateManyAsync(updating);
+            result.AddInfo(operationResult);
+
+            return result;
         }
 
         public async Task<RepositoryResult> UpdateAsync(UserEntity entity)

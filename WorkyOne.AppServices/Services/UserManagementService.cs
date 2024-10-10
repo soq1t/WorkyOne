@@ -13,12 +13,12 @@ namespace WorkyOne.AppServices.Services
     public class UserManagementService : IUserManagementService
     {
         private readonly IUsersRepository _usersRepo;
-        private readonly IUsersDataRepository _usersDataRepo;
+        private readonly IUserDatasRepository _usersDataRepo;
         private readonly IMapper _mapper;
 
         public UserManagementService(
             IUsersRepository usersRepo,
-            IUsersDataRepository usersDataRepo,
+            IUserDatasRepository usersDataRepo,
             IMapper mapper
         )
         {
