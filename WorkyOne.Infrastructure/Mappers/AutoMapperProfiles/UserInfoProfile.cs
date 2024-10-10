@@ -2,7 +2,7 @@
 using WorkyOne.Contracts.DTOs.Common;
 using WorkyOne.Domain.Entities.Users;
 
-namespace WorkyOne.AppServices.Mappers.AutoMapperProfiles
+namespace WorkyOne.Infrastructure.Mappers.AutoMapperProfiles
 {
     /// <summary>
     /// Профиль <see cref="AutoMapper"/> для маппинга <see cref="UserInfoDto"/>

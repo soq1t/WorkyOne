@@ -2,7 +2,7 @@
 using WorkyOne.Contracts.DTOs.Schedule;
 using WorkyOne.Domain.Entities.Schedule.Common;
 
-namespace WorkyOne.AppServices.Mappers.AutoMapperProfiles
+namespace WorkyOne.Infrastructure.Mappers.AutoMapperProfiles
 {
     /// <summary>
     /// Профиль <see cref="AutoMapper"/> для маппинга <see cref="TemplateProfile"/>
