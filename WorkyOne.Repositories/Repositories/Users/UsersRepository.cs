@@ -4,7 +4,6 @@ using WorkyOne.Contracts.Enums.Reposistories;
 using WorkyOne.Contracts.Repositories;
 using WorkyOne.Contracts.Requests.Common;
 using WorkyOne.Domain.Entities.Users;
-using WorkyOne.Domain.Interfaces.Common;
 using WorkyOne.Repositories.Contextes;
 
 namespace WorkyOne.Repositories.Repositories.Users
