@@ -16,6 +16,6 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts
         /// </summary>
         /// <param name="request">Запрос на получение данных из базы</param>
         /// <returns></returns>
-        public Task<PeriodicShiftEntity> GetByScheduleIdAsync(PeriodicShiftRequest request);
+        public Task<List<PeriodicShiftEntity>> GetByScheduleIdAsync(PeriodicShiftRequest request);
     }
 }
