@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using WorkyOne.Domain.Abstractions;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 using WorkyOne.Domain.Entities.Users;
+using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.Domain.Entities.Schedule.Common
 {
     /// <summary>
     /// Сущность, описывающая расписание пользователя
     /// </summary>
-    public sealed class ScheduleEntity : EntityBase
+    public sealed class ScheduleEntity : EntityBase, IUpdatable<ScheduleEntity>
     {
         /// <summary>
         /// ID данных пользователя
@@ -62,5 +58,12 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// Рабочий график, сформированный по данному расписанию
         /// </summary>
         public List<DailyInfoEntity> Timetable { get; set; } = new List<DailyInfoEntity>();
+
+        public void UpdateFields(ScheduleEntity entity)
+        {
+            Name = entity.Name;
+            TemplateId = entity.TemplateId;
+            UserDataId = entity.UserDataId;
+        }
     }
 }

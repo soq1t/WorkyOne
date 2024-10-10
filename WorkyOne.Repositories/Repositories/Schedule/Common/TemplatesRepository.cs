@@ -1,10 +1,10 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories.Common;
-using WorkyOne.AppServices.Interfaces.Repositories.Schedule;
+using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
+using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.Contracts.Enums.Reposistories;
 using WorkyOne.Contracts.Repositories;
-using WorkyOne.Contracts.Requests.Schedule;
-using WorkyOne.Contracts.Requests.Schedule.Shifts;
+using WorkyOne.Contracts.Requests.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 using WorkyOne.Repositories.Contextes;
@@ -19,19 +19,19 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
     {
         private readonly ApplicationDbContext _context;
         private readonly IBaseRepository _baseRepo;
-        private readonly IEntityRepository<TemplatedShiftEntity, TemplatedShiftRequest> _templatedShiftsRepository;
-        private readonly IEntityRepository<ShiftSequenceEntity, ShiftSequenceRequest> _shiftSequencesRepository;
+        private readonly ITemplatedShiftsRepository _templatedShiftsRepo;
+        private readonly IShiftSequencesRepository _shiftSequencesRepo;
 
         public TemplatesRepository(
             ApplicationDbContext context,
-            IEntityRepository<TemplatedShiftEntity, TemplatedShiftRequest> templatedShiftsRepository,
-            IEntityRepository<ShiftSequenceEntity, ShiftSequenceRequest> shiftSequencesRepository,
+            ITemplatedShiftsRepository templatedShiftsRepository,
+            IShiftSequencesRepository shiftSequencesRepository,
             IBaseRepository baseRepository
         )
         {
             _context = context;
-            _templatedShiftsRepository = templatedShiftsRepository;
-            _shiftSequencesRepository = shiftSequencesRepository;
+            _templatedShiftsRepo = templatedShiftsRepository;
+            _shiftSequencesRepo = shiftSequencesRepository;
             _baseRepo = baseRepository;
         }
 
@@ -147,54 +147,53 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             return Task.FromResult<TemplateEntity?>(null);
         }
 
-        //public async Task<ICollection<TemplateEntity>?> GetManyAsync(TemplateRequest request)
-        //{
-        //    TemplateEntity? template = await GetAsync(request);
-
-        //    List<TemplateEntity> result = new List<TemplateEntity>();
-        //    if (template != null)
-        //    {
-        //        result.Add(template);
-        //    }
-        //    return result;
-        //}
-
         public async Task<RepositoryResult> UpdateAsync(TemplateEntity entity)
         {
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
             {
-                try
+                var updated = await GetAsync(
+                    new TemplateRequest { Id = entity.Id, ScheduleId = entity.ScheduleId }
+                );
+
+                if (updated == null)
                 {
-                    TemplateEntity? updatedEntity = await GetAsync(
-                        new TemplateRequest { Id = entity.Id, ScheduleId = entity.ScheduleId }
-                    );
-
-                    if (updatedEntity == null)
-                    {
-                        return new RepositoryResult(RepositoryErrorType.EntityNotExists, entity.Id);
-                    }
-
-                    updatedEntity.UpdateFields(entity);
-                    _context.Update(updatedEntity);
-
-                    await _templatedShiftsRepository.RenewAsync(
-                        updatedEntity.Shifts,
-                        entity.Shifts
-                    );
-
-                    await _shiftSequencesRepository.RenewAsync(
-                        updatedEntity.Sequences,
-                        entity.Sequences
-                    );
-
-                    await transaction.CommitAsync();
-                    return new RepositoryResult(entity.Id);
+                    return new RepositoryResult(RepositoryErrorType.EntityNotExists, entity.Id);
                 }
-                catch
+                var result = new RepositoryResult();
+                updated.UpdateFields(entity);
+                _context.Update(updated);
+
+                result.SucceedIds.Add(entity.Id);
+
+                var operationResult = await _templatedShiftsRepo.RenewAsync(
+                    updated.Shifts,
+                    entity.Shifts
+                );
+                result.AddInfo(operationResult);
+
+                operationResult = await _shiftSequencesRepo.RenewAsync(
+                    updated.Sequences,
+                    entity.Sequences
+                );
+                result.AddInfo(operationResult);
+
+                if (result.Errors.Any())
                 {
                     await transaction.RollbackAsync();
-                    throw;
+                    result.SucceedIds.Clear();
                 }
+                else
+                {
+                    await transaction.CommitAsync();
+                }
+                return result;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
             }
         }
 

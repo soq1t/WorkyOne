@@ -23,6 +23,8 @@ namespace WorkyOne.Repositories.Contextes
         public DbSet<ScheduleEntity> Schedules { get; set; }
         public DbSet<TemplateEntity> Templates { get; set; }
 
+        public DbSet<ShiftSequenceEntity> ShiftSequences { get; set; }
+
         public DbSet<DailyInfoEntity> DailyInfos { get; set; }
 
         public DbSet<UserDataEntity> UserDatas { get; set; }

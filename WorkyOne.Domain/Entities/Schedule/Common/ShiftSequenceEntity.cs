@@ -7,13 +7,14 @@ using System.Text;
 using System.Threading.Tasks;
 using WorkyOne.Domain.Abstractions;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.Domain.Entities.Schedule.Common
 {
     /// <summary>
     /// Сущность, описывающая последовательность TempladedShift в Template
     /// </summary>
-    public sealed class ShiftSequenceEntity : EntityBase
+    public sealed class ShiftSequenceEntity : EntityBase, IUpdatable<ShiftSequenceEntity>
     {
         /// <summary>
         /// ID шаблона
@@ -47,5 +48,12 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         [Range(1, 31)]
         [Required]
         public int Position { get; set; }
+
+        public void UpdateFields(ShiftSequenceEntity entity)
+        {
+            ShiftId = entity.ShiftId;
+            TemplateId = entity.TemplateId;
+            Position = entity.Position;
+        }
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using WorkyOne.AppServices.Interfaces.Repositories.Common;
 using WorkyOne.Contracts.Requests.Common;
-using WorkyOne.Contracts.Requests.Schedule;
+using WorkyOne.Contracts.Requests.Schedule.Common;
 using WorkyOne.Contracts.Requests.Schedule.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;

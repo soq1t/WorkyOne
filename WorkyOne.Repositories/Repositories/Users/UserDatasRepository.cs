@@ -3,7 +3,7 @@ using WorkyOne.AppServices.Interfaces.Repositories.Common;
 using WorkyOne.Contracts.Enums.Reposistories;
 using WorkyOne.Contracts.Repositories;
 using WorkyOne.Contracts.Requests.Common;
-using WorkyOne.Contracts.Requests.Schedule;
+using WorkyOne.Contracts.Requests.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Repositories.Contextes;
@@ -130,10 +130,8 @@ namespace WorkyOne.Repositories.Repositories.Users
 
         public async Task<UserDataEntity?> GetAsync(UserDataRequest request)
         {
-            return _context.UserDatas.FirstOrDefault(
-                d =>
-                    d.Id == request.Id ||
-                    d.UserId == request.UserId
+            return _context.UserDatas.FirstOrDefault(d =>
+                d.Id == request.Id || d.UserId == request.UserId
             );
 
             //var userData = await _context.UserDatas.FirstOrDefaultAsync(d =>

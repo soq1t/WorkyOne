@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories.Common;
+using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.Contracts.Enums.Reposistories;
 using WorkyOne.Contracts.Repositories;
 using WorkyOne.Contracts.Requests.Schedule.Shifts;
@@ -17,89 +18,39 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Shifts
     /// <summary>
     /// Репозиторий по работе с <see cref="TemplatedShiftEntity"/>
     /// </summary>
-    public sealed class TemplatedShiftsRepository
-        : IEntityRepository<TemplatedShiftEntity, TemplatedShiftRequest>
+    public sealed class TemplatedShiftsRepository : ITemplatedShiftsRepository
     {
+        private readonly IBaseRepository _baseRepo;
+
         private readonly ApplicationDbContext _context;
 
-        public TemplatedShiftsRepository(ApplicationDbContext context)
-        {
-            _context = context;
-        }
-
-        public async Task<RepositoryResult> CreateAsync(TemplatedShiftEntity entity)
-        {
-            bool entityExists = await _context.TemplatedShifts.AnyAsync(s => s.Id == entity.Id);
-
-            if (entityExists)
-            {
-                return new RepositoryResult(RepositoryErrorType.EntityAlreadyExists, entity.Id);
-            }
-
-            _context.TemplatedShifts.Add(entity);
-            await _context.SaveChangesAsync();
-            return new RepositoryResult(entity.Id);
-        }
-
-        public async Task<RepositoryResult> CreateManyAsync(
-            ICollection<TemplatedShiftEntity> entities
+        public TemplatedShiftsRepository(
+            ApplicationDbContext context,
+            IBaseRepository baseRepository
         )
         {
-            List<string> entitiesIds = entities.Select(e => e.Id).ToList();
-
-            List<string> existedEntitiesIds = await _context
-                .TemplatedShifts.Where(s => entitiesIds.Contains(s.Id))
-                .Select(s => s.Id)
-                .ToListAsync();
-
-            if (existedEntitiesIds.Count == entities.Count)
-            {
-                return new RepositoryResult(RepositoryErrorType.EntityAlreadyExists);
-            }
-
-            var result = new RepositoryResult();
-            foreach (
-                TemplatedShiftEntity entity in entities.Where(e =>
-                    !existedEntitiesIds.Contains(e.Id)
-                )
-            )
-            {
-                result.SucceedIds.Add(entity.Id);
-                _context.TemplatedShifts.Add(entity);
-            }
-
-            await _context.SaveChangesAsync();
-            return result;
+            _context = context;
+            _baseRepo = baseRepository;
         }
 
-        public async Task<RepositoryResult> DeleteAsync(string entityId)
+        public Task<RepositoryResult> CreateAsync(TemplatedShiftEntity entity)
         {
-            var deleted = await _context.TemplatedShifts.FirstOrDefaultAsync(s => s.Id == entityId);
-
-            if (deleted == null)
-            {
-                return new RepositoryResult(RepositoryErrorType.EntityNotExists, entityId);
-            }
-
-            _context.Remove(deleted);
-            await _context.SaveChangesAsync();
-            return new RepositoryResult(entityId);
+            return _baseRepo.CreateAsync(entity);
         }
 
-        public async Task<RepositoryResult> DeleteManyAsync(ICollection<string> entityIds)
+        public Task<RepositoryResult> CreateManyAsync(ICollection<TemplatedShiftEntity> entities)
         {
-            var deleted = await _context
-                .TemplatedShifts.Where(s => entityIds.Contains(s.Id))
-                .ToListAsync();
+            return _baseRepo.CreateManyAsync(entities);
+        }
 
-            if (deleted.Count == 0)
-            {
-                return new RepositoryResult(RepositoryErrorType.EntityNotExists);
-            }
+        public Task<RepositoryResult> DeleteAsync(string entityId)
+        {
+            return _baseRepo.DeleteAsync<TemplatedShiftEntity>(entityId);
+        }
 
-            _context.RemoveRange(deleted);
-            await _context.SaveChangesAsync();
-            return new RepositoryResult(deleted.Select(e => e.Id));
+        public Task<RepositoryResult> DeleteManyAsync(ICollection<string> entityIds)
+        {
+            return _baseRepo.DeleteManyAsync<TemplatedShiftEntity>(entityIds);
         }
 
         public Task<TemplatedShiftEntity?> GetAsync(TemplatedShiftRequest request)
@@ -107,13 +58,11 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Shifts
             return _context.TemplatedShifts.FirstOrDefaultAsync(e => e.Id == request.Id);
         }
 
-        public async Task<ICollection<TemplatedShiftEntity>?> GetManyAsync(
+        public Task<ICollection<TemplatedShiftEntity>> GetByTemplateIdAsync(
             TemplatedShiftRequest request
         )
         {
-            return await _context
-                .TemplatedShifts.Where(s => s.TemplateId == request.TemplateId)
-                .ToListAsync();
+            throw new NotImplementedException();
         }
 
         public Task<RepositoryResult> RenewAsync(
@@ -145,10 +94,15 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Shifts
             ICollection<TemplatedShiftEntity> entities
         )
         {
-            var updatedIds = entities.Select(s => s.TemplateId).ToList();
+            var ids = entities.Select(s => s.TemplateId).ToList();
+
             var updated = await _context
-                .TemplatedShifts.Where(s => updatedIds.Contains(s.Id))
+                .TemplatedShifts.Where(s => ids.Contains(s.Id))
                 .ToListAsync();
+
+            var updatedIds = updated.Select(x => x.Id);
+
+            var notExistedIds = ids.Except(updatedIds).ToList();
 
             if (updated.Count == 0)
             {
@@ -156,9 +110,11 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Shifts
             }
 
             var result = new RepositoryResult();
+            notExistedIds.ForEach(id => result.AddError(RepositoryErrorType.EntityNotExists, id));
+            result.SucceedIds.AddRange(updatedIds);
+
             foreach (var entity in updated)
             {
-                result.SucceedIds.Add(entity.Id);
                 entity.UpdateFields(entities.First(e => e.Id == entity.Id));
                 _context.Update(entity);
             }
