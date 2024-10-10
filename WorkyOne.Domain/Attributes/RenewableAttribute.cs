@@ -6,5 +6,6 @@ using System.Threading.Tasks;
 
 namespace WorkyOne.Domain.Attributes
 {
+    [AttributeUsage(AttributeTargets.Property)]
     public class RenewableAttribute : Attribute { }
 }

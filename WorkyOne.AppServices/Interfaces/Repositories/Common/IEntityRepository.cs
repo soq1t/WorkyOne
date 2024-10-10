@@ -11,7 +11,7 @@ using WorkyOne.Domain.Interfaces.Common;
 namespace WorkyOne.AppServices.Interfaces.Repositories.Common
 {
     /// <summary>
-    /// Интерфейс репозитория базы для работы с <typeparamref name="TEntity"/>
+    /// Интерфейс репозитория для работы с <typeparamref name="TEntity"/> в базе данных
     /// </summary>
     /// <typeparam name="TEntity">Тип данных, с которыми работает репозиторий</typeparam>
     /// <typeparam name="TRequest">Тип запроса на получение данных из базы</typeparam>
