@@ -15,7 +15,7 @@ namespace WorkyOne.Repositories.Contextes
     /// </summary>
     public class ApplicationDbContext : DbContext
     {
-        public DbSet<TemplatedShiftEntity> TemplatedShifts { get; set; }
+        public virtual DbSet<TemplatedShiftEntity> TemplatedShifts { get; set; }
         public DbSet<DatedShiftEntity> DatedShifts { get; set; }
         public DbSet<PeriodicShiftEntity> PeriodicShifts { get; set; }
         public DbSet<ExampleShiftEntity> ExampleShifts { get; set; }
@@ -28,6 +28,8 @@ namespace WorkyOne.Repositories.Contextes
         public DbSet<DailyInfoEntity> DailyInfos { get; set; }
 
         public DbSet<UserDataEntity> UserDatas { get; set; }
+
+        public ApplicationDbContext() { }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options) { }
