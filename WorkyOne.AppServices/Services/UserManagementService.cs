@@ -1,8 +1,9 @@
-﻿using WorkyOne.AppServices.Interfaces.Repositories;
+﻿using AutoMapper;
+using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services;
-using WorkyOne.AppServices.Mappers;
-using WorkyOne.Contracts.DTOs;
-using WorkyOne.Domain.Entities;
+using WorkyOne.Contracts.DTOs.Common;
+using WorkyOne.Contracts.Requests.Common;
+using WorkyOne.Domain.Entities.Users;
 
 namespace WorkyOne.AppServices.Services
 {
@@ -11,35 +12,44 @@ namespace WorkyOne.AppServices.Services
     /// </summary>
     public class UserManagementService : IUserManagementService
     {
-        private readonly IUsersRepository _usersRepository;
-        private readonly IUserDatasRepository _userDatasRepository;
-        private readonly UserInfoDtoMapper _userInfoDtoMapper;
+        private readonly IUsersRepository _usersRepo;
+        private readonly IUsersDataRepository _usersDataRepo;
+        private readonly IMapper _mapper;
 
         public UserManagementService(
-            IUsersRepository usersRepository,
-            UserInfoDtoMapper userInfoDtoMapper,
-            IUserDatasRepository userDatasRepository
+            IUsersRepository usersRepo,
+            IUsersDataRepository usersDataRepo,
+            IMapper mapper
         )
         {
-            _usersRepository = usersRepository;
-            _userInfoDtoMapper = userInfoDtoMapper;
-            _userDatasRepository = userDatasRepository;
+            _usersRepo = usersRepo;
+            _usersDataRepo = usersDataRepo;
+            _mapper = mapper;
         }
 
         public async Task<UserInfoDto?> GetUserInfoAsync(string userId)
         {
-            UserEntity? user = await _usersRepository.GetUserByIdAsync(userId);
+            UserEntity? user = await _usersRepo.GetAsync(new UserRequest { Id = userId });
 
             if (user == null)
             {
                 return null;
             }
 
-            UserDataEntity? userData = await _userDatasRepository.GetAsync(userId);
+            UserDataEntity? userData = await _usersDataRepo.GetAsync(
+                new UserDataRequest { UserId = userId }
+            );
 
-            UserInfoDto userInfo = _userInfoDtoMapper.MapToUserInfoDto(user, userData);
+            if (userData == null)
+            {
+                userData = new UserDataEntity(userId);
+                await _usersDataRepo.CreateAsync(userData);
+            }
+            UserInfoDto dto = new UserInfoDto();
+            _mapper.Map(user, dto);
+            _mapper.Map(userData, dto);
 
-            return userInfo;
+            return dto;
         }
     }
 }

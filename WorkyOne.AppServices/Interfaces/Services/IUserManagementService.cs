@@ -1,4 +1,4 @@
-﻿using WorkyOne.Contracts.DTOs;
+﻿using WorkyOne.Contracts.DTOs.Common;
 
 namespace WorkyOne.AppServices.Interfaces.Services
 {

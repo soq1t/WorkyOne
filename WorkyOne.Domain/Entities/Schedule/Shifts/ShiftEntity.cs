@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WorkyOne.Domain.Abstractions;
 using WorkyOne.Domain.Exceptions.Scedule;
-using WorkyOne.Domain.Interfaces;
+using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.Domain.Entities.Schedule.Shifts
 {

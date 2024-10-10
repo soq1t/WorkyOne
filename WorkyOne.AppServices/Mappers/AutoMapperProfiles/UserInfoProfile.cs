@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using WorkyOne.Contracts.DTOs;
-using WorkyOne.Domain.Entities;
+using WorkyOne.Contracts.DTOs.Common;
+using WorkyOne.Domain.Entities.Users;
 
 namespace WorkyOne.AppServices.Mappers.AutoMapperProfiles
 {

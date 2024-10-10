@@ -3,13 +3,13 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using WorkyOne.AppServices.Interfaces.Repositories;
+using WorkyOne.AppServices.Interfaces.Repositories.Common;
 using WorkyOne.Contracts.Requests.Common;
-using WorkyOne.Contracts.Requests.Schedule;
+using WorkyOne.Contracts.Requests.Schedule.Common;
 using WorkyOne.Contracts.Requests.Schedule.Shifts;
-using WorkyOne.Domain.Entities;
-using WorkyOne.Domain.Entities.Schedule;
+using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Repositories.Contextes;
 
 namespace WorkyOne.DependencyRegister

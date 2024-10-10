@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using WorkyOne.DependencyRegister;
-using WorkyOne.Domain.Entities;
+using WorkyOne.Domain.Entities.Users;
 
 namespace WorkyOne.MVC
 {

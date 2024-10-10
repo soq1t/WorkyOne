@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using WorkyOne.Domain.Entities;
-using WorkyOne.Domain.Entities.Schedule;
+using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Entities.Users;
 
 namespace WorkyOne.Repositories.Contextes
 {
@@ -22,6 +22,8 @@ namespace WorkyOne.Repositories.Contextes
 
         public DbSet<ScheduleEntity> Schedules { get; set; }
         public DbSet<TemplateEntity> Templates { get; set; }
+
+        public DbSet<ShiftSequenceEntity> ShiftSequences { get; set; }
 
         public DbSet<DailyInfoEntity> DailyInfos { get; set; }
 
