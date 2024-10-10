@@ -2,6 +2,7 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using WorkyOne.Domain.Abstractions;
+using WorkyOne.Domain.Attributes;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 using WorkyOne.Domain.Interfaces.Common;
 
@@ -29,12 +30,14 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// Список рабочих смен, используемых в шаблоне
         /// </summary>
         [Required]
+        [Renewable]
         public List<TemplatedShiftEntity> Shifts { get; set; } = new List<TemplatedShiftEntity>();
 
         /// <summary>
         /// Последовательность смен в шаблоне
         /// </summary>
         [Required]
+        [Renewable]
         public List<ShiftSequenceEntity> Sequences { get; set; } = new List<ShiftSequenceEntity>();
 
         /// <summary>

@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using WorkyOne.Domain.Abstractions;
+using WorkyOne.Domain.Attributes;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Interfaces.Common;
 
@@ -25,6 +20,7 @@ namespace WorkyOne.Domain.Entities.Users
         /// <summary>
         /// Список рабочих графиков, которые создал пользователь
         /// </summary>
+        [Renewable]
         public List<ScheduleEntity> Schedules { get; set; } = new List<ScheduleEntity>();
 
         /// <summary>

@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using WorkyOne.Domain.Abstractions;
+using WorkyOne.Domain.Attributes;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Domain.Interfaces.Common;
@@ -34,6 +35,7 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// <summary>
         /// Шаблон, который используется в текущем расписании
         /// </summary>
+        [Renewable]
         public TemplateEntity? Template { get; set; }
 
         /// <summary>
@@ -46,11 +48,13 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// <summary>
         /// Список смен, выставляемых на конкретную дату
         /// </summary>
+        [Renewable]
         public List<DatedShiftEntity> DatedShifts { get; set; } = new List<DatedShiftEntity>();
 
         /// <summary>
         /// Список смен, установленных на определённый период дней
         /// </summary>
+        [Renewable]
         public List<PeriodicShiftEntity> PeriodicShifts { get; set; } =
             new List<PeriodicShiftEntity>();
 
