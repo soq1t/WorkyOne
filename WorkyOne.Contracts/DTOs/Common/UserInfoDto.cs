@@ -1,11 +1,7 @@
 ﻿using WorkyOne.Contracts.DTOs.Abstractions;
 using WorkyOne.Contracts.DTOs.Schedule;
 
-<<<<<<<< HEAD:WorkyOne.Contracts/DTOs/UserInfoDto.cs
-namespace WorkyOne.Contracts.DTOs
-========
 namespace WorkyOne.Contracts.DTOs.Common
->>>>>>>> refactoring/repos:WorkyOne.Contracts/DTOs/Common/UserInfoDto.cs
 {
     /// <summary>
     /// DTO данных о пользователе
