@@ -7,7 +7,7 @@ namespace WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Common
     /// <summary>
     /// Профиль <see cref="AutoMapper"/> для маппинга <see cref="UserInfoDto"/>
     /// </summary>
-    public class UserInfoProfile : Profile
+    public sealed class UserInfoProfile : Profile
     {
         public UserInfoProfile()
         {
@@ -15,12 +15,14 @@ namespace WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Common
             CreateMap<UserEntity, UserInfoDto>()
                 .ForMember(dto => dto.UserId, opt => opt.MapFrom(e => e.Id));
 
-            CreateMap<UserDataEntity, UserInfoDto>();
+            CreateMap<UserDataEntity, UserInfoDto>()
+                .ForMember(dto => dto.UserDataId, opt => opt.MapFrom(e => e.Id));
 
             // Маппинг DTO в Entity
             CreateMap<UserInfoDto, UserEntity>()
                 .ForMember(e => e.Id, opt => opt.MapFrom(dto => dto.UserId));
-            CreateMap<UserInfoDto, UserDataEntity>();
+            CreateMap<UserInfoDto, UserDataEntity>()
+                .ForMember(e => e.Id, opt => opt.MapFrom(dto => dto.UserDataId));
         }
     }
 }

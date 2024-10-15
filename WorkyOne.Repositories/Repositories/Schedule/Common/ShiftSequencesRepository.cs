@@ -4,6 +4,7 @@ using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.Contracts.Requests.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Repositories.Contextes;
+using WorkyOne.Repositories.Repositories.Common;
 
 namespace WorkyOne.Repositories.Repositories.Schedule.Common
 {

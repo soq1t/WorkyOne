@@ -12,7 +12,7 @@ using WorkyOne.Domain.Interfaces.Common;
 using WorkyOne.Repositories.Contextes;
 using WorkyOne.Repositories.Extensions.Repositories;
 
-namespace WorkyOne.Repositories.Repositories.Schedule.Common
+namespace WorkyOne.Repositories.Repositories.Common
 {
     /// <summary>
     /// Абстрактный репозиторий для работы с <typeparamref name="TEntity"/> в базе данных

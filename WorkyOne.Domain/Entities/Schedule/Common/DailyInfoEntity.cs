@@ -6,13 +6,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WorkyOne.Domain.Abstractions;
+using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.Domain.Entities.Schedule.Common
 {
     /// <summary>
     /// Сущность, описывающая определённый день для определённого расписания
     /// </summary>
-    public sealed class DailyInfoEntity : EntityBase
+    public sealed class DailyInfoEntity : EntityBase, IUpdatable<DailyInfoEntity>
     {
         /// <summary>
         /// ID расписания
@@ -20,6 +22,11 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         [Required]
         [ForeignKey(nameof(Schedule))]
         public string ScheduleId { get; set; }
+
+        /// <summary>
+        /// Код цвета, которым выделяется данный день на графике
+        /// </summary>
+        public string ColorCode { get; set; } = "#FFFFFF";
 
         /// <summary>
         /// Расписание, которое описывает сущность
@@ -33,6 +40,10 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         [Required]
         public bool IsBusyDay { get; set; }
 
+        /// <summary>
+        /// Дата, которую описывает сущность
+        /// </summary>
+        [Required]
         public DateOnly Date { get; set; }
 
         /// <summary>
@@ -49,5 +60,36 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// Продолжительность рабочей смены
         /// </summary>
         public TimeSpan? ShiftProlongation { get; set; }
+
+        public void UpdateFields(DailyInfoEntity entity)
+        {
+            base.UpdateFields(entity);
+
+            ScheduleId = entity.ScheduleId;
+            ColorCode = entity.ColorCode;
+            IsBusyDay = entity.IsBusyDay;
+            Date = entity.Date;
+            Beginning = entity.Beginning;
+            Ending = entity.Ending;
+            ShiftProlongation = entity.ShiftProlongation;
+        }
+
+        public static DailyInfoEntity CreateFromShiftEntity(ShiftEntity shift, DateOnly date)
+        {
+            var info = new DailyInfoEntity();
+
+            info.ColorCode = shift.ColorCode ?? "#FFFFFF";
+            info.IsBusyDay = shift.Beginning.HasValue && shift.Ending.HasValue;
+            info.Date = date;
+
+            if (info.IsBusyDay)
+            {
+                info.Beginning = shift.Beginning.Value;
+                info.Ending = shift.Ending.Value;
+                info.ShiftProlongation = shift.Duration();
+            }
+
+            return info;
+        }
     }
 }

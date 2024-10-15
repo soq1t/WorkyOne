@@ -6,7 +6,7 @@ using WorkyOne.Contracts.Repositories;
 using WorkyOne.Contracts.Requests.Schedule.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 using WorkyOne.Repositories.Contextes;
-using WorkyOne.Repositories.Repositories.Schedule.Common;
+using WorkyOne.Repositories.Repositories.Common;
 
 namespace WorkyOne.Repositories.Repositories.Schedule.Shifts
 {

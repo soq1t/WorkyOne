@@ -7,7 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WorkyOne.Contracts.DTOs.Abstractions;
 
-namespace WorkyOne.Contracts.DTOs.Schedule
+namespace WorkyOne.Contracts.DTOs.Schedule.Common
 {
     /// <summary>
     /// DTO для ShiftSequenceEntity

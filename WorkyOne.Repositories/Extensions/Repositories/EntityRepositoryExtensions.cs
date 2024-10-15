@@ -12,7 +12,7 @@ using WorkyOne.Domain.Abstractions;
 using WorkyOne.Domain.Attributes;
 using WorkyOne.Domain.Interfaces.Common;
 using WorkyOne.Repositories.Contextes;
-using WorkyOne.Repositories.Repositories.Schedule.Common;
+using WorkyOne.Repositories.Repositories.Common;
 
 namespace WorkyOne.Repositories.Extensions.Repositories
 {

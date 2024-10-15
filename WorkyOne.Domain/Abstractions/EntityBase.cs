@@ -6,12 +6,17 @@ namespace WorkyOne.Domain.Abstractions
     /// <summary>
     /// Основа для сущностей
     /// </summary>
-    public abstract class EntityBase : IEntity
+    public abstract class EntityBase : IEntity, IUpdatable<EntityBase>
     {
         /// <summary>
         /// Идентификатор сущности
         /// </summary>
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
+
+        public void UpdateFields(EntityBase entity)
+        {
+            Id = entity.Id;
+        }
     }
 }

@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using WorkyOne.Contracts.DTOs.Schedule;
+using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 
 namespace WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Schedule.Common

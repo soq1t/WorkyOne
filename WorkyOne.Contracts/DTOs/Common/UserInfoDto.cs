@@ -1,5 +1,5 @@
 ﻿using WorkyOne.Contracts.DTOs.Abstractions;
-using WorkyOne.Contracts.DTOs.Schedule;
+using WorkyOne.Contracts.DTOs.Schedule.Common;
 
 namespace WorkyOne.Contracts.DTOs.Common
 {
@@ -12,6 +12,11 @@ namespace WorkyOne.Contracts.DTOs.Common
         /// Идентификатор пользователя
         /// </summary>
         public string UserId { get; set; }
+
+        /// <summary>
+        /// Идентификатор данных пользователя
+        /// </summary>
+        public string UserDataId { get; set; }
 
         /// <summary>
         /// Пользовательский юзернейм

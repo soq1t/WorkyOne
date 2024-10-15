@@ -7,7 +7,7 @@ using WorkyOne.Contracts.Repositories;
 using WorkyOne.Contracts.Requests.Common;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Repositories.Contextes;
-using WorkyOne.Repositories.Repositories.Schedule.Common;
+using WorkyOne.Repositories.Repositories.Common;
 
 namespace WorkyOne.Repositories.Repositories.Users
 {
