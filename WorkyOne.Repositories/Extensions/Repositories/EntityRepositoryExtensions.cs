@@ -76,7 +76,7 @@ namespace WorkyOne.Repositories.Extensions.Repositories
             where TEntity : EntityBase, IUpdatable<TEntity>
             where TRequest : IEntityRequest
         {
-            var updated = await context.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == entity.Id);
+            var updated = await context.Set<TEntity>().FindAsync(entity.Id);
 
             if (updated == null)
             {

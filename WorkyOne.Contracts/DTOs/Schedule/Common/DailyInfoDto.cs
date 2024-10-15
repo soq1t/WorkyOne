@@ -19,6 +19,12 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
         public string Id { get; set; }
 
         /// <summary>
+        /// Название рабочего дня
+        /// </summary>
+        [Required]
+        public string Name { get; set; }
+
+        /// <summary>
         /// Указывает, является ли день рабочим
         /// </summary>
         [Required]

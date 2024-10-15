@@ -24,6 +24,12 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         public string ScheduleId { get; set; }
 
         /// <summary>
+        /// Название рабочего дня
+        /// </summary>
+        [Required]
+        public string Name { get; set; }
+
+        /// <summary>
         /// Код цвета, которым выделяется данный день на графике
         /// </summary>
         public string ColorCode { get; set; } = "#FFFFFF";
@@ -78,6 +84,7 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         {
             var info = new DailyInfoEntity();
 
+            info.Name = shift.Name;
             info.ColorCode = shift.ColorCode ?? "#FFFFFF";
             info.IsBusyDay = shift.Beginning.HasValue && shift.Ending.HasValue;
             info.Date = date;

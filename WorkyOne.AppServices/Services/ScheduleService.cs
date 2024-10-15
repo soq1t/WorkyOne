@@ -80,14 +80,12 @@ namespace WorkyOne.AppServices.Services
             return _schedulesRepository.DeleteManyAsync(schedulesIds);
         }
 
-        public async Task GenerateDailyAsync(
+        public async Task<List<DailyInfoDto>> GenerateDailyAsync(
             string scheduleId,
             DateOnly startDate,
             DateOnly endDate
         )
         {
-            var infos = new List<DailyInfoEntity>();
-
             var schedule = await _schedulesRepository.GetAsync(
                 new ScheduleRequest
                 {
@@ -100,8 +98,10 @@ namespace WorkyOne.AppServices.Services
 
             if (schedule == null)
             {
-                return;
+                return new List<DailyInfoDto>();
             }
+
+            var infos = new List<DailyInfoEntity>(endDate.DayNumber - startDate.DayNumber + 1);
 
             for (DateOnly date = startDate; date <= endDate; date = date.AddDays(1))
             {
@@ -110,6 +110,10 @@ namespace WorkyOne.AppServices.Services
             }
 
             await _dailyInfosRepository.CreateManyAsync(infos);
+
+            var dto = _mapper.Map<DailyInfoDto>(infos[0]);
+
+            return _mapper.Map<List<DailyInfoDto>>(infos);
         }
 
         public async Task<ICollection<DailyInfoDto>> GetDailyAsync(string scheduleId)

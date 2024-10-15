@@ -42,7 +42,11 @@ namespace WorkyOne.AppServices.Interfaces.Services
         /// <param name="startDate">Дата, с которой начинается расчёт графика</param>
         /// <param name="endDate">Дата, которой оканчивается расчёт графика</param>
         /// <returns></returns>
-        public Task GenerateDailyAsync(string scheduleId, DateOnly startDate, DateOnly endDate);
+        public Task<List<DailyInfoDto>> GenerateDailyAsync(
+            string scheduleId,
+            DateOnly startDate,
+            DateOnly endDate
+        );
 
         /// <summary>
         /// Удаляет из базы данных рассчитанный рабочий график для указанного расписания
