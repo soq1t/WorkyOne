@@ -70,6 +70,8 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
                 {
                     TimeSpan duration = TimeOnly.MaxValue - Beginning.Value;
                     duration += Ending.Value.ToTimeSpan();
+                    duration =
+                        new TimeSpan(duration.Hours, duration.Minutes, 0) + new TimeSpan(0, 1, 0);
                     return duration;
                 }
             }

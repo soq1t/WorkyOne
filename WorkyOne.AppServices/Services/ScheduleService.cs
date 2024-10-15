@@ -103,7 +103,7 @@ namespace WorkyOne.AppServices.Services
                 return;
             }
 
-            for (DateOnly date = startDate; date <= endDate; date.AddDays(1))
+            for (DateOnly date = startDate; date <= endDate; date = date.AddDays(1))
             {
                 DailyInfoEntity info = GetDailyInfo(schedule, date);
                 infos.Add(info);
@@ -194,7 +194,7 @@ namespace WorkyOne.AppServices.Services
             }
             else
             {
-                position = position == 0 ? sequenceLength - 1 : position--;
+                position = position == 0 ? sequenceLength - 1 : position - 1;
 
                 var sequence = template.Sequences.OrderByDescending(s => s.Position).ToList();
                 var shift = sequence[position].Shift;
