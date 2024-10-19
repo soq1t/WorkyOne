@@ -27,7 +27,7 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
         /// <param name="cancellation">Токен отмены задания</param>
         /// <returns></returns>
         public Task<bool> DeleteManyAsync(
-            IEnumerable<string> ids,
+            ICollection<string> ids,
             CancellationToken cancellation = default
         );
 

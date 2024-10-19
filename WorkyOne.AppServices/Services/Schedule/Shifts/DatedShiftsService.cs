@@ -2,6 +2,7 @@
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts;
+using WorkyOne.Contracts.Requests.Schedule.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 
 namespace WorkyOne.AppServices.Services.Schedule.Shifts
@@ -37,38 +38,65 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
             return result.IsSuccess;
         }
 
-        public Task<bool> DeleteAsync(string id, CancellationToken cancellation = default)
+        public async Task<bool> DeleteAsync(string id, CancellationToken cancellation = default)
         {
-            throw new NotImplementedException();
+            var result = await _repository.DeleteAsync(id, cancellation);
+            return result.IsSuccess;
         }
 
-        public Task<bool> DeleteForScheduleAsync(
+        public async Task<bool> DeleteForScheduleAsync(
             string scheduleId,
             CancellationToken cancellation = default
         )
         {
-            throw new NotImplementedException();
+            var request = new DatedShiftRequest { ScheduleId = scheduleId };
+
+            var deleted = await _repository.GetByScheduleIdAsync(request, cancellation);
+
+            if (cancellation.IsCancellationRequested)
+            {
+                return false;
+            }
+
+            var result = await _repository.DeleteManyAsync(
+                deleted.Select(e => e.Id).ToList(),
+                cancellation
+            );
+
+            return result.IsSuccess;
         }
 
-        public Task<bool> DeleteManyAsync(
-            IEnumerable<string> ids,
+        public async Task<bool> DeleteManyAsync(
+            ICollection<string> ids,
             CancellationToken cancellation = default
         )
         {
-            throw new NotImplementedException();
+            var result = await _repository.DeleteManyAsync(ids, cancellation);
+            return result.IsSuccess;
         }
 
-        public Task<List<DatedShiftDto>> GetForScheduleAsync(
+        public async Task<List<DatedShiftDto>> GetForScheduleAsync(
             string scheduleId,
             CancellationToken cancellation = default
         )
         {
-            throw new NotImplementedException();
+            var request = new DatedShiftRequest { ScheduleId = scheduleId };
+
+            var entities = await _repository.GetByScheduleIdAsync(request, cancellation);
+            var dtos = _mapper.Map<List<DatedShiftDto>>(entities);
+
+            return dtos;
         }
 
-        public Task<bool> UpdateAsync(DatedShiftDto dto, CancellationToken cancel = default)
+        public async Task<bool> UpdateAsync(
+            DatedShiftDto dto,
+            CancellationToken cancellation = default
+        )
         {
-            throw new NotImplementedException();
+            var entity = _mapper.Map<DatedShiftEntity>(dto);
+
+            var result = await _repository.UpdateAsync(entity, cancellation);
+            return result.IsSuccess;
         }
     }
 }
