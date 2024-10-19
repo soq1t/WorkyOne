@@ -22,7 +22,10 @@ namespace WorkyOne.Repositories.Repositories.Users
             _context = usersDbContext;
         }
 
-        public async Task<RepositoryResult> CreateAsync(UserEntity entity)
+        public async Task<RepositoryResult> CreateAsync(
+            UserEntity entity,
+            CancellationToken cancellation = default
+        )
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
@@ -49,7 +52,10 @@ namespace WorkyOne.Repositories.Repositories.Users
             }
         }
 
-        public async Task<RepositoryResult> CreateManyAsync(ICollection<UserEntity> entities)
+        public async Task<RepositoryResult> CreateManyAsync(
+            ICollection<UserEntity> entities,
+            CancellationToken cancellation = default
+        )
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
@@ -58,14 +64,19 @@ namespace WorkyOne.Repositories.Repositories.Users
                     var result = new RepositoryResult();
                     foreach (UserEntity entity in entities)
                     {
-                        RepositoryResult operationResult = await CreateAsync(entity);
+                        if (cancellation.IsCancellationRequested)
+                        {
+                            await transaction.RollbackAsync();
+                            return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+                        }
+                        RepositoryResult operationResult = await CreateAsync(entity, cancellation);
 
                         result.AddInfo(operationResult);
                     }
 
                     if (result.IsSuccess)
                     {
-                        await transaction.CommitAsync();
+                        await transaction.CommitAsync(cancellation);
                     }
                     else
                     {
@@ -82,7 +93,10 @@ namespace WorkyOne.Repositories.Repositories.Users
             }
         }
 
-        public async Task<RepositoryResult> DeleteAsync(string entityId)
+        public async Task<RepositoryResult> DeleteAsync(
+            string entityId,
+            CancellationToken cancellation = default
+        )
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
@@ -99,7 +113,7 @@ namespace WorkyOne.Repositories.Repositories.Users
 
                     if (operationResult.Succeeded)
                     {
-                        await transaction.CommitAsync();
+                        await transaction.CommitAsync(cancellation);
                         return new RepositoryResult(entityId);
                     }
                     else
@@ -116,7 +130,10 @@ namespace WorkyOne.Repositories.Repositories.Users
             }
         }
 
-        public async Task<RepositoryResult> DeleteManyAsync(ICollection<string> entityIds)
+        public async Task<RepositoryResult> DeleteManyAsync(
+            ICollection<string> entityIds,
+            CancellationToken cancellation = default
+        )
         {
             using (var transaction = await _context.Database.BeginTransactionAsync())
             {
@@ -126,14 +143,23 @@ namespace WorkyOne.Repositories.Repositories.Users
 
                     foreach (string entityId in entityIds)
                     {
-                        RepositoryResult operationResult = await DeleteAsync(entityId);
+                        if (cancellation.IsCancellationRequested)
+                        {
+                            await transaction.RollbackAsync();
+                            return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+                        }
+
+                        RepositoryResult operationResult = await DeleteAsync(
+                            entityId,
+                            cancellation
+                        );
 
                         result.AddInfo(operationResult);
                     }
 
                     if (result.IsSuccess)
                     {
-                        await transaction.CommitAsync();
+                        await transaction.CommitAsync(cancellation);
                     }
                     else
                     {
@@ -150,12 +176,18 @@ namespace WorkyOne.Repositories.Repositories.Users
             }
         }
 
-        public async Task<UserEntity?> GetAsync(UserRequest request)
+        public async Task<UserEntity?> GetAsync(
+            UserRequest request,
+            CancellationToken cancellation = default
+        )
         {
             return await _userManager.FindByIdAsync(request.Id);
         }
 
-        public async Task<ICollection<UserEntity>?> GetManyAsync(UserRequest request)
+        public async Task<ICollection<UserEntity>?> GetManyAsync(
+            UserRequest request,
+            CancellationToken cancellation = default
+        )
         {
             UserEntity? user = await _userManager.FindByIdAsync(request.Id);
 
@@ -171,89 +203,122 @@ namespace WorkyOne.Repositories.Repositories.Users
 
         public async Task<RepositoryResult> RenewAsync(
             ICollection<UserEntity> oldEntities,
-            ICollection<UserEntity> newEntities
+            ICollection<UserEntity> newEntities,
+            CancellationToken cancellation = default
         )
         {
-            IEnumerable<string> newValuesIds = newEntities.Select(n => n.Id);
-            IEnumerable<string> oldValuesIds = oldEntities.Select(n => n.Id);
+            using var transaction = await _context.Database.BeginTransactionAsync(cancellation);
 
-            List<UserEntity> removing = oldEntities
-                .Where(o => !newValuesIds.Contains(o.Id))
-                .ToList();
-            List<UserEntity> adding = newEntities.Where(n => !oldValuesIds.Contains(n.Id)).ToList();
-            List<UserEntity> updating = newEntities
-                .Where(n => oldValuesIds.Contains(n.Id))
-                .ToList();
+            var newValuesIds = newEntities.Select(n => n.Id);
+            var oldValuesIds = oldEntities.Select(n => n.Id);
+
+            var removing = oldEntities.Where(o => !newValuesIds.Contains(o.Id)).ToList();
+            var adding = newEntities.Where(n => !oldValuesIds.Contains(n.Id)).ToList();
+            var updating = newEntities.Where(n => oldValuesIds.Contains(n.Id)).ToList();
 
             var result = new RepositoryResult();
 
-            var operationResult = await DeleteManyAsync(removing.Select(r => r.Id).ToList());
-
+            if (cancellation.IsCancellationRequested)
+            {
+                await transaction.RollbackAsync();
+                return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+            }
+            var operationResult = await DeleteManyAsync(
+                removing.Select(r => r.Id).ToList(),
+                cancellation
+            );
             result.AddInfo(operationResult);
 
-            operationResult = await CreateManyAsync(adding);
+            if (cancellation.IsCancellationRequested)
+            {
+                await transaction.RollbackAsync();
+                return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+            }
+            operationResult = await CreateManyAsync(adding, cancellation);
             result.AddInfo(operationResult);
 
-            operationResult = await UpdateManyAsync(updating);
+            if (cancellation.IsCancellationRequested)
+            {
+                await transaction.RollbackAsync();
+                return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+            }
+            operationResult = await UpdateManyAsync(updating, cancellation);
             result.AddInfo(operationResult);
 
             return result;
         }
 
-        public async Task<RepositoryResult> UpdateAsync(UserEntity entity)
+        public async Task<RepositoryResult> UpdateAsync(
+            UserEntity entity,
+            CancellationToken cancellation = default
+        )
         {
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
             {
-                try
+                UserEntity? updatedUser = await _userManager.FindByIdAsync(entity.Id);
+
+                if (updatedUser == null)
                 {
-                    UserEntity? updatedUser = await _userManager.FindByIdAsync(entity.Id);
-
-                    if (updatedUser == null)
-                    {
-                        return new RepositoryResult(RepositoryErrorType.EntityNotExists, entity.Id);
-                    }
-
-                    updatedUser.UpdateFields(entity);
-                    await transaction.CommitAsync();
-                    return new RepositoryResult(entity.Id);
+                    return new RepositoryResult(RepositoryErrorType.EntityNotExists, entity.Id);
                 }
-                catch
+
+                updatedUser.UpdateFields(entity);
+                await _userManager.UpdateAsync(updatedUser);
+
+                if (cancellation.IsCancellationRequested)
                 {
                     await transaction.RollbackAsync();
-                    throw;
+                    return new RepositoryResult(RepositoryErrorType.OperationCanceled);
                 }
+                await transaction.CommitAsync();
+                return new RepositoryResult(entity.Id);
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
             }
         }
 
-        public async Task<RepositoryResult> UpdateManyAsync(ICollection<UserEntity> entities)
+        public async Task<RepositoryResult> UpdateManyAsync(
+            ICollection<UserEntity> entities,
+            CancellationToken cancellation = default
+        )
         {
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
             {
-                try
+                var result = new RepositoryResult();
+                foreach (var entity in entities)
                 {
-                    var result = new RepositoryResult();
-                    foreach (var entity in entities)
-                    {
-                        RepositoryResult operationResult = await UpdateAsync(entity);
-
-                        result.AddInfo(operationResult);
-                    }
-
-                    if (result.IsSuccess)
-                    {
-                        await transaction.CommitAsync();
-                    }
-                    else
+                    if (cancellation.IsCancellationRequested)
                     {
                         await transaction.RollbackAsync();
+                        return new RepositoryResult(RepositoryErrorType.OperationCanceled);
                     }
-                    return result;
+
+                    RepositoryResult operationResult = await UpdateAsync(entity, cancellation);
+
+                    result.AddInfo(operationResult);
                 }
-                catch
+
+                if (result.IsSuccess)
+                {
+                    await transaction.CommitAsync();
+                }
+                else
                 {
                     await transaction.RollbackAsync();
-                    throw;
                 }
+                return result;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
             }
         }
     }

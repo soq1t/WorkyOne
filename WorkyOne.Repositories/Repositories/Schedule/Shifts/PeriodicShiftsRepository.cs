@@ -18,11 +18,14 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Shifts
         public PeriodicShiftsRepository(IBaseRepository baseRepo, ApplicationDbContext context)
             : base(baseRepo, context) { }
 
-        public Task<List<PeriodicShiftEntity>> GetByScheduleIdAsync(PeriodicShiftRequest request)
+        public Task<List<PeriodicShiftEntity>> GetByScheduleIdAsync(
+            PeriodicShiftRequest request,
+            CancellationToken cancellation = default
+        )
         {
             return _context
                 .PeriodicShifts.Where(s => s.ScheduleId == request.ScheduleId)
-                .ToListAsync();
+                .ToListAsync(cancellation);
         }
     }
 }

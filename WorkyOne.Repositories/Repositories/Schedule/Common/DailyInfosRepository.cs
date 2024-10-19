@@ -15,9 +15,14 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
         public DailyInfosRepository(IBaseRepository baseRepo, ApplicationDbContext context)
             : base(baseRepo, context) { }
 
-        public Task<List<DailyInfoEntity>> GetByScheduleIdAsync(DailyInfoRequest request)
+        public Task<List<DailyInfoEntity>> GetByScheduleIdAsync(
+            DailyInfoRequest request,
+            CancellationToken cancellation = default
+        )
         {
-            return _context.DailyInfos.Where(x => x.ScheduleId == request.ScheduleId).ToListAsync();
+            return _context
+                .DailyInfos.Where(x => x.ScheduleId == request.ScheduleId)
+                .ToListAsync(cancellation);
         }
     }
 }

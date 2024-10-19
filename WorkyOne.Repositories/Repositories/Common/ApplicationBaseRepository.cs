@@ -1,15 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories.Common;
 using WorkyOne.Contracts.Enums.Reposistories;
 using WorkyOne.Contracts.Repositories;
 using WorkyOne.Domain.Abstractions;
-using WorkyOne.Domain.Entities.Schedule;
-using WorkyOne.Domain.Interfaces;
 using WorkyOne.Repositories.Contextes;
 
 namespace WorkyOne.Repositories.Repositories.Common
@@ -26,27 +19,40 @@ namespace WorkyOne.Repositories.Repositories.Common
             _context = context;
         }
 
-        public async Task<RepositoryResult> CreateAsync<TEntity>(TEntity entity)
+        public async Task<RepositoryResult> CreateAsync<TEntity>(
+            TEntity entity,
+            CancellationToken cancellation = default
+        )
             where TEntity : EntityBase
         {
             var result = new RepositoryResult();
 
-            var existed = await _context.Set<TEntity>().AnyAsync(e => e.Id == entity.Id);
+            var existed = await _context
+                .Set<TEntity>()
+                .AnyAsync(e => e.Id == entity.Id, cancellation);
+
             if (existed)
             {
                 result.AddError(RepositoryErrorType.EntityAlreadyExists, entity.Id);
             }
             else
             {
+                if (cancellation.IsCancellationRequested)
+                {
+                    return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+                }
                 _context.Set<TEntity>().Add(entity);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellation);
                 result.SucceedIds.Add(entity.Id);
             }
 
             return result;
         }
 
-        public async Task<RepositoryResult> CreateManyAsync<TEntity>(IEnumerable<TEntity> entities)
+        public async Task<RepositoryResult> CreateManyAsync<TEntity>(
+            IEnumerable<TEntity> entities,
+            CancellationToken cancellation = default
+        )
             where TEntity : EntityBase
         {
             var result = new RepositoryResult();
@@ -55,7 +61,7 @@ namespace WorkyOne.Repositories.Repositories.Common
             var existed = await _context
                 .Set<TEntity>()
                 .Where(e => ids.Contains(e.Id))
-                .ToListAsync();
+                .ToListAsync(cancellation);
 
             var existedIds = existed.Select(e => e.Id).ToList();
             var newIds = ids.Except(existedIds);
@@ -64,25 +70,36 @@ namespace WorkyOne.Repositories.Repositories.Common
 
             if (newIds.Any())
             {
+                if (cancellation.IsCancellationRequested)
+                {
+                    return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+                }
                 _context.Set<TEntity>().AddRange(entities.Where(e => newIds.Contains(e.Id)));
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellation);
                 result.SucceedIds.AddRange(newIds);
             }
 
             return result;
         }
 
-        public async Task<RepositoryResult> DeleteAsync<TEntity>(string entityId)
+        public async Task<RepositoryResult> DeleteAsync<TEntity>(
+            string entityId,
+            CancellationToken cancellation = default
+        )
             where TEntity : EntityBase
         {
             var result = new RepositoryResult();
 
-            var deleted = await _context.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == entityId);
+            var deleted = await _context.Set<TEntity>().FindAsync(entityId, cancellation);
 
             if (deleted != null)
             {
+                if (cancellation.IsCancellationRequested)
+                {
+                    return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+                }
                 _context.Remove(deleted);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellation);
                 result.SucceedIds.Add(entityId);
             }
             else
@@ -94,7 +111,8 @@ namespace WorkyOne.Repositories.Repositories.Common
         }
 
         public async Task<RepositoryResult> DeleteManyAsync<TEntity>(
-            IEnumerable<string> entitiesIds
+            IEnumerable<string> entitiesIds,
+            CancellationToken cancellation = default
         )
             where TEntity : EntityBase
         {
@@ -103,7 +121,7 @@ namespace WorkyOne.Repositories.Repositories.Common
             var deleted = await _context
                 .Set<TEntity>()
                 .Where(e => entitiesIds.Contains(e.Id))
-                .ToListAsync();
+                .ToListAsync(cancellation);
 
             var existedIds = deleted.Select(e => e.Id).ToList();
             var notExistedIds = entitiesIds.Except(existedIds).ToList();
@@ -112,18 +130,25 @@ namespace WorkyOne.Repositories.Repositories.Common
 
             if (existedIds.Any())
             {
+                if (cancellation.IsCancellationRequested)
+                {
+                    return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+                }
                 _context.Remove(deleted);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellation);
                 result.SucceedIds.AddRange(existedIds);
             }
 
             return result;
         }
 
-        public Task<TEntity?> GetByIdAsync<TEntity>(string entityId)
+        public Task<TEntity?> GetByIdAsync<TEntity>(
+            string entityId,
+            CancellationToken cancellation = default
+        )
             where TEntity : EntityBase
         {
-            return _context.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == entityId);
+            return _context.Set<TEntity>().FirstOrDefaultAsync(e => e.Id == entityId, cancellation);
         }
     }
 }

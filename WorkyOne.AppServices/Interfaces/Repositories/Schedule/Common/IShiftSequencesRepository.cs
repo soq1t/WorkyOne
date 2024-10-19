@@ -20,8 +20,10 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common
         /// </summary>
         /// <param name="request">Запрос на получение <see cref="ShiftSequenceEntity"/></param>
         /// <returns></returns>
+        /// <param name="cancellation">Токен отмены задания</param>
         public Task<ICollection<ShiftSequenceEntity>> GetByTemplateIdAsync(
-            ShiftSequenceRequest request
+            ShiftSequenceRequest request,
+            CancellationToken cancellation = default
         );
     }
 }

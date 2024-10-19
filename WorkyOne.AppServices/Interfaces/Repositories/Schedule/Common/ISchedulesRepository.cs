@@ -13,6 +13,10 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common
         /// Возвращает список расписаний для указанного в запросе пользователя
         /// </summary>
         /// <param name="request">Запрос на получение данных из базы</param>
-        public Task<ICollection<ScheduleEntity>> GetByUserAsync(ScheduleRequest request);
+        /// <param name="cancellation">Токен отмены задания</param>
+        public Task<ICollection<ScheduleEntity>> GetByUserAsync(
+            ScheduleRequest request,
+            CancellationToken cancellation = default
+        );
     }
 }

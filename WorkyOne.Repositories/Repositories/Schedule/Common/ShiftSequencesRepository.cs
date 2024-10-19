@@ -20,12 +20,13 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
 
         /// <inheritdoc/>
         public async Task<ICollection<ShiftSequenceEntity>> GetByTemplateIdAsync(
-            ShiftSequenceRequest request
+            ShiftSequenceRequest request,
+            CancellationToken cancellation = default
         )
         {
             return await _context
                 .ShiftSequences.Where(s => s.TemplateId == request.TemplateId)
-                .ToListAsync();
+                .ToListAsync(cancellation);
         }
     }
 }

@@ -15,7 +15,11 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts
         /// Возвращает список "перидичных" смен для указанного <see cref="ScheduleEntity"/>
         /// </summary>
         /// <param name="request">Запрос на получение данных из базы</param>
-        /// <returns></returns>
-        public Task<List<PeriodicShiftEntity>> GetByScheduleIdAsync(PeriodicShiftRequest request);
+        /// <param name="cancellation">Токен отмены задания</param>
+
+        public Task<List<PeriodicShiftEntity>> GetByScheduleIdAsync(
+            PeriodicShiftRequest request,
+            CancellationToken cancellation = default
+        );
     }
 }

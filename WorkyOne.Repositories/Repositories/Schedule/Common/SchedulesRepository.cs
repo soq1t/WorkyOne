@@ -36,9 +36,12 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             _periodicShiftsRepo = periodicShiftsRepo;
         }
 
-        public override Task<ScheduleEntity?> GetAsync(ScheduleRequest request)
+        public override Task<ScheduleEntity?> GetAsync(
+            ScheduleRequest request,
+            CancellationToken cancellation = default
+        )
         {
-            var query = _context.Schedules.Where(s => s.Id == request.Id);
+            IQueryable<ScheduleEntity> query = _context.Schedules.Where(s => s.Id == request.Id);
 
             QueryBuilder(request, query);
 
@@ -46,13 +49,18 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
         }
 
         /// <inheritdoc/>
-        public async Task<ICollection<ScheduleEntity>> GetByUserAsync(ScheduleRequest request)
+        public async Task<ICollection<ScheduleEntity>> GetByUserAsync(
+            ScheduleRequest request,
+            CancellationToken cancellation = default
+        )
         {
-            var query = _context.Schedules.Where(s => s.UserDataId == request.UserId);
+            IQueryable<ScheduleEntity> query = _context.Schedules.Where(s =>
+                s.UserDataId == request.UserId
+            );
 
             QueryBuilder(request, query);
 
-            return await query.ToListAsync();
+            return await query.ToListAsync(cancellation);
         }
 
         /// <summary>
@@ -83,108 +91,152 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
         }
 
         /// <inheritdoc/>
-        public override async Task<RepositoryResult> UpdateAsync(ScheduleEntity entity)
+        public override async Task<RepositoryResult> UpdateAsync(
+            ScheduleEntity entity,
+            CancellationToken cancellation = default
+        )
         {
-            using (var transaction = await _context.Database.BeginTransactionAsync())
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
             {
-                try
+                var request = new ScheduleRequest
                 {
-                    var request = new ScheduleRequest
-                    {
-                        Id = entity.Id,
-                        IncludeDatedShifts = true,
-                        IncludePeriodicShifts = true,
-                        IncludeTemplate = true,
-                    };
-                    var updated = await GetAsync(request);
+                    Id = entity.Id,
+                    IncludeDatedShifts = true,
+                    IncludePeriodicShifts = true,
+                    IncludeTemplate = true,
+                };
 
-                    if (updated == null)
-                    {
-                        return new RepositoryResult(RepositoryErrorType.EntityNotExists, entity.Id);
-                    }
-                    var result = new RepositoryResult();
+                var updated = await GetAsync(request, cancellation);
 
-                    updated.UpdateFields(entity);
-                    _context.Update(updated);
-
-                    result.SucceedIds.Add(entity.Id);
-
-                    var oldTemplates = new List<TemplateEntity>();
-
-                    if (updated.Template != null)
-                    {
-                        oldTemplates.Add(updated.Template);
-                    }
-
-                    var newTemplates = new List<TemplateEntity>();
-
-                    if (entity.Template != null)
-                    {
-                        oldTemplates.Add(entity.Template);
-                    }
-
-                    var operationResult = await _templatesRepo.RenewAsync(
-                        oldTemplates,
-                        newTemplates
-                    );
-                    result.AddInfo(operationResult);
-
-                    operationResult = await _datedShiftsRepo.RenewAsync(
-                        updated.DatedShifts,
-                        entity.DatedShifts
-                    );
-
-                    result.AddInfo(operationResult);
-
-                    operationResult = await _periodicShiftsRepo.RenewAsync(
-                        updated.PeriodicShifts,
-                        entity.PeriodicShifts
-                    );
-
-                    result.AddInfo(operationResult);
-
-                    if (result.Errors.Any())
-                    {
-                        await transaction.RollbackAsync();
-                        result.SucceedIds.Clear();
-                        return result;
-                    }
-
-                    return result;
+                if (updated == null)
+                {
+                    return new RepositoryResult(RepositoryErrorType.EntityNotExists, entity.Id);
                 }
-                catch
+                var result = new RepositoryResult();
+
+                updated.UpdateFields(entity);
+                _context.Update(updated);
+                await _context.SaveChangesAsync(cancellation);
+
+                if (cancellation.IsCancellationRequested)
                 {
                     await transaction.RollbackAsync();
-                    throw;
+                    return new RepositoryResult(RepositoryErrorType.OperationCanceled);
                 }
+
+                result.SucceedIds.Add(entity.Id);
+
+                var oldTemplates = new List<TemplateEntity>();
+
+                if (updated.Template != null)
+                {
+                    oldTemplates.Add(updated.Template);
+                }
+
+                var newTemplates = new List<TemplateEntity>();
+
+                if (entity.Template != null)
+                {
+                    oldTemplates.Add(entity.Template);
+                }
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    await transaction.RollbackAsync();
+                    return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+                }
+
+                var operationResult = await _templatesRepo.RenewAsync(
+                    oldTemplates,
+                    newTemplates,
+                    cancellation
+                );
+                result.AddInfo(operationResult);
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    await transaction.RollbackAsync();
+                    return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+                }
+
+                operationResult = await _datedShiftsRepo.RenewAsync(
+                    updated.DatedShifts,
+                    entity.DatedShifts
+                );
+                result.AddInfo(operationResult);
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    await transaction.RollbackAsync();
+                    return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+                }
+
+                operationResult = await _periodicShiftsRepo.RenewAsync(
+                    updated.PeriodicShifts,
+                    entity.PeriodicShifts
+                );
+                result.AddInfo(operationResult);
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    await transaction.RollbackAsync();
+                    return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+                }
+
+                if (result.Errors.Any())
+                {
+                    await transaction.RollbackAsync();
+                    result.SucceedIds.Clear();
+                    return result;
+                }
+
+                return result;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
             }
         }
 
         /// <inheritdoc/>
         public override async Task<RepositoryResult> UpdateManyAsync(
-            ICollection<ScheduleEntity> entities
+            ICollection<ScheduleEntity> entities,
+            CancellationToken cancellation = default
         )
         {
-            using (var transaction = await _context.Database.BeginTransactionAsync())
-            {
-                try
-                {
-                    var result = new RepositoryResult();
+            using var transaction = await _context.Database.BeginTransactionAsync();
 
-                    foreach (var entity in entities)
+            try
+            {
+                var result = new RepositoryResult();
+
+                foreach (var entity in entities)
+                {
+                    if (cancellation.IsCancellationRequested)
                     {
-                        var operationResult = await UpdateAsync(entity);
-                        result.AddInfo(operationResult);
+                        await transaction.RollbackAsync();
+                        return new RepositoryResult(RepositoryErrorType.OperationCanceled);
                     }
 
-                    await transaction.CommitAsync();
-                    return result;
+                    var operationResult = await UpdateAsync(entity, cancellation);
+                    result.AddInfo(operationResult);
                 }
-                catch
+
+                if (cancellation.IsCancellationRequested)
                 {
                     await transaction.RollbackAsync();
-                    throw;
+                    return new RepositoryResult(RepositoryErrorType.OperationCanceled);
                 }
+                await transaction.CommitAsync();
+                return result;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
             }
         }
     }

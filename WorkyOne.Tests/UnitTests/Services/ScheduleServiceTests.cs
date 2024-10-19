@@ -4,6 +4,7 @@ using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services;
 using WorkyOne.AppServices.Services;
+using WorkyOne.AppServices.Services.Schedule.Common;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Repositories;
 using WorkyOne.Contracts.Requests.Schedule.Common;
@@ -69,10 +70,10 @@ namespace WorkyOne.Tests.UnitTests.Services
             var schedule = new ScheduleEntity { Name = "Расписание", Template = template };
 
             _schedulesRepoMock
-                .Setup(r => r.GetAsync(It.IsAny<ScheduleRequest>()))
+                .Setup(r => r.GetAsync(It.IsAny<ScheduleRequest>(), default))
                 .Returns(Task.FromResult(schedule));
             _dailyInfosRepoMock
-                .Setup(r => r.CreateManyAsync(It.IsAny<List<DailyInfoEntity>>()))
+                .Setup(r => r.CreateManyAsync(It.IsAny<List<DailyInfoEntity>>(), default))
                 .Returns(Task.FromResult(new RepositoryResult("1")));
 
             var service = new ScheduleService(
@@ -140,10 +141,10 @@ namespace WorkyOne.Tests.UnitTests.Services
             var schedule = new ScheduleEntity { Name = "Расписание", Template = template };
 
             _schedulesRepoMock
-                .Setup(r => r.GetAsync(It.IsAny<ScheduleRequest>()))
+                .Setup(r => r.GetAsync(It.IsAny<ScheduleRequest>(), default))
                 .Returns(Task.FromResult(schedule));
             _dailyInfosRepoMock
-                .Setup(r => r.CreateManyAsync(It.IsAny<List<DailyInfoEntity>>()))
+                .Setup(r => r.CreateManyAsync(It.IsAny<List<DailyInfoEntity>>(), default))
                 .Returns(Task.FromResult(new RepositoryResult("1")));
 
             var service = new ScheduleService(

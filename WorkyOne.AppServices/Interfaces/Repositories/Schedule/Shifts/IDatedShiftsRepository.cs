@@ -14,7 +14,11 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts
         /// Возвращает все "датированные" смены для указанного <see cref="ScheduleEntity"/>
         /// </summary>
         /// <param name="request">Запрос на получение данных</param>
-        /// <returns></returns>
-        public Task<List<DatedShiftEntity>> GetByScheduleIdAsync(DatedShiftRequest request);
+        /// <param name="cancellation">Токен отмены задания</param>
+
+        public Task<List<DatedShiftEntity>> GetByScheduleIdAsync(
+            DatedShiftRequest request,
+            CancellationToken cancellation = default
+        );
     }
 }

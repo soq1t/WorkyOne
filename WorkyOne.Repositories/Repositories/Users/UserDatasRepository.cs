@@ -30,7 +30,10 @@ namespace WorkyOne.Repositories.Repositories.Users
             _schedulesRepository = schedulesRepository;
         }
 
-        public override Task<UserDataEntity?> GetAsync(UserDataRequest request)
+        public override Task<UserDataEntity?> GetAsync(
+            UserDataRequest request,
+            CancellationToken cancellation = default
+        )
         {
             var query = _context.UserDatas.Where(d =>
                 d.Id == request.Id || d.UserId == request.UserId
@@ -55,11 +58,12 @@ namespace WorkyOne.Repositories.Repositories.Users
                 query.Include(d => d.Schedules);
             }
 
-            return query.FirstOrDefaultAsync();
+            return query.FirstOrDefaultAsync(cancellation);
         }
 
         public override async Task<RepositoryResult> UpdateManyAsync(
-            ICollection<UserDataEntity> entities
+            ICollection<UserDataEntity> entities,
+            CancellationToken cancellation = default
         )
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
@@ -70,9 +74,20 @@ namespace WorkyOne.Repositories.Repositories.Users
 
                 foreach (var entity in entities)
                 {
-                    var operationResult = await UpdateAsync(entity);
+                    if (cancellation.IsCancellationRequested)
+                    {
+                        await transaction.RollbackAsync();
+                        return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+                    }
 
+                    var operationResult = await UpdateAsync(entity);
                     result.AddInfo(operationResult);
+                }
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    await transaction.RollbackAsync();
+                    return new RepositoryResult(RepositoryErrorType.OperationCanceled);
                 }
 
                 if (result.IsSuccess)
@@ -93,13 +108,16 @@ namespace WorkyOne.Repositories.Repositories.Users
             }
         }
 
-        public override async Task<RepositoryResult> UpdateAsync(UserDataEntity entity)
+        public override async Task<RepositoryResult> UpdateAsync(
+            UserDataEntity entity,
+            CancellationToken cancellation = default
+        )
         {
             using var transaction = await _context.Database.BeginTransactionAsync();
 
             try
             {
-                var updated = await _context.UserDatas.FirstOrDefaultAsync(e => e.Id == entity.Id);
+                var updated = await _context.UserDatas.FindAsync(entity.Id);
 
                 if (updated == null)
                 {
@@ -107,7 +125,14 @@ namespace WorkyOne.Repositories.Repositories.Users
                 }
 
                 updated.UpdateFields(entity);
-                await _context.SaveChangesAsync();
+                await _context.SaveChangesAsync(cancellation);
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    await transaction.RollbackAsync();
+                    return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+                }
+
                 var result = new RepositoryResult(updated.Id);
 
                 var operationResult = await _schedulesRepository.RenewAsync(
@@ -116,6 +141,13 @@ namespace WorkyOne.Repositories.Repositories.Users
                 );
 
                 result.AddInfo(operationResult);
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    await transaction.RollbackAsync();
+                    return new RepositoryResult(RepositoryErrorType.OperationCanceled);
+                }
+
                 await transaction.CommitAsync();
 
                 return result;

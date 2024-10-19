@@ -13,7 +13,10 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common
         /// Возвращает множество <see cref="DailyInfoEntity"/> для указанного <see cref="ScheduleEntity"/>
         /// </summary>
         /// <param name="request">Запрос на получение данных о <see cref="DailyInfoEntity"/></param>
-        /// <returns></returns>
-        public Task<List<DailyInfoEntity>> GetByScheduleIdAsync(DailyInfoRequest request);
+        /// <param name="cancellation">Токен отмены задания</param>
+        public Task<List<DailyInfoEntity>> GetByScheduleIdAsync(
+            DailyInfoRequest request,
+            CancellationToken cancellation = default
+        );
     }
 }

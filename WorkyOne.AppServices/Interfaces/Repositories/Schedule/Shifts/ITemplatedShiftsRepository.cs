@@ -15,9 +15,11 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts
         /// Возвращает список смен для указанного <see cref="TemplateEntity"/>
         /// </summary>
         /// <param name="request">Запрос на получение списка <see cref="TemplatedShiftEntity"/></param>
-        /// <returns></returns>
+        /// <param name="cancellation">Токен отмены задания</param>
+
         public Task<ICollection<TemplatedShiftEntity>> GetByTemplateIdAsync(
-            TemplatedShiftRequest request
+            TemplatedShiftRequest request,
+            CancellationToken cancellation = default
         );
     }
 }

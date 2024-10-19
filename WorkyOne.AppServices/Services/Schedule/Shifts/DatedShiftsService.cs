@@ -2,7 +2,6 @@
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts;
-using WorkyOne.Contracts.Repositories;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 
 namespace WorkyOne.AppServices.Services.Schedule.Shifts

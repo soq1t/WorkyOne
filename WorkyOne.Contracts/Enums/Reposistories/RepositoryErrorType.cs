@@ -13,6 +13,7 @@ namespace WorkyOne.Contracts.Enums.Reposistories
     {
         Unknown = 0,
         EntityNotExists = 1,
-        EntityAlreadyExists = 2
+        EntityAlreadyExists = 2,
+        OperationCanceled = 3,
     }
 }

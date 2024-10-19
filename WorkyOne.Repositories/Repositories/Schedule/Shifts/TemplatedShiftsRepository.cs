@@ -21,12 +21,13 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Shifts
             : base(baseRepo, context) { }
 
         public async Task<ICollection<TemplatedShiftEntity>> GetByTemplateIdAsync(
-            TemplatedShiftRequest request
+            TemplatedShiftRequest request,
+            CancellationToken cancellation = default
         )
         {
             return await _context
                 .TemplatedShifts.Where(s => s.TemplateId == request.TemplateId)
-                .ToListAsync();
+                .ToListAsync(cancellation);
         }
     }
 }
