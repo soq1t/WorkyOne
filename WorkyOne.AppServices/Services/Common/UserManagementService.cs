@@ -1,11 +1,11 @@
 ﻿using AutoMapper;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
-using WorkyOne.AppServices.Interfaces.Services;
+using WorkyOne.AppServices.Interfaces.Services.Common;
 using WorkyOne.Contracts.DTOs.Common;
 using WorkyOne.Contracts.Requests.Common;
 using WorkyOne.Domain.Entities.Users;
 
-namespace WorkyOne.AppServices.Services
+namespace WorkyOne.AppServices.Services.Common
 {
     /// <summary>
     /// Сервис управления пользователями

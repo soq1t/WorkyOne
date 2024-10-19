@@ -8,12 +8,13 @@ using AutoMapper;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services;
+using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Requests.Common;
 using WorkyOne.Contracts.Requests.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 
-namespace WorkyOne.AppServices.Services
+namespace WorkyOne.AppServices.Services.Schedule.Common
 {
     /// <summary>
     /// Сервис по работе с расписанием

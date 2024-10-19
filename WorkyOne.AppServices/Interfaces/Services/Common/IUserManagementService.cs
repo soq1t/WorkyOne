@@ -1,6 +1,6 @@
 ﻿using WorkyOne.Contracts.DTOs.Common;
 
-namespace WorkyOne.AppServices.Interfaces.Services
+namespace WorkyOne.AppServices.Interfaces.Services.Common
 {
     /// <summary>
     /// Интерфейс сервиса управления пользователями

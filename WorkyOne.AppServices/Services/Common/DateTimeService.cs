@@ -1,6 +1,6 @@
 ﻿using WorkyOne.AppServices.Interfaces.Services;
 
-namespace WorkyOne.AppServices.Services
+namespace WorkyOne.AppServices.Services.Common
 {
     /// <summary>
     /// Сервис по работе с датой и временем

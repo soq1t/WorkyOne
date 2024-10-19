@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 
-namespace WorkyOne.AppServices.Interfaces.Services
+namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
 {
     /// <summary>
     /// Интерфейс сервиса по работе с расписанием
