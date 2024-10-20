@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WorkyOne.Domain.Abstractions;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Interfaces.Common;
 
@@ -8,7 +9,7 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
     /// <summary>
     /// Сущность, описывающая смену, которая выставляется на определённую дату
     /// </summary>
-    public sealed class DatedShiftEntity : ShiftEntity, IUpdatable<DatedShiftEntity>
+    public sealed class DatedShiftEntity : ShiftEntity
     {
         /// <summary>
         /// Дата, на которую установлена смена
@@ -29,10 +30,14 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
         [Required]
         public ScheduleEntity Schedule { get; set; }
 
-        public void UpdateFields(DatedShiftEntity entity)
+        public override void UpdateFields(EntityBase entity)
         {
-            Date = entity.Date;
-            ScheduleId = entity.ScheduleId;
+            var shift = entity as DatedShiftEntity;
+            if (shift == null)
+            {
+                throw new ArgumentException();
+            }
+            Date = shift.Date;
             base.UpdateFields(entity);
         }
     }

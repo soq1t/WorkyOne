@@ -13,7 +13,7 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
     /// <summary>
     /// Абстрактный класс, описывающий рабочую смену
     /// </summary>
-    public abstract class ShiftEntity : EntityBase, IUpdatable<ShiftEntity>
+    public abstract class ShiftEntity : EntityBase
     {
         /// <summary>
         /// Название смены
@@ -25,6 +25,7 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
         /// <summary>
         /// Цветовой код смены
         /// </summary>
+        [Required]
         [Length(
             4,
             7,
@@ -34,7 +35,7 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
             @"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
             ErrorMessage = "Цветовой код должен представлять формат HEX (#FFFFFF или #FFF)"
         )]
-        public string? ColorCode { get; set; }
+        public string? ColorCode { get; set; } = "#FFFFFF";
 
         /// <summary>
         /// Время начала смены
@@ -77,12 +78,21 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
             }
         }
 
-        public void UpdateFields(ShiftEntity entity)
+        public override void UpdateFields(EntityBase entity)
         {
-            Name = entity.Name;
-            ColorCode = entity.ColorCode;
-            Beginning = entity.Beginning;
-            Ending = entity.Ending;
+            ShiftEntity? shift = entity as ShiftEntity;
+
+            if (shift == null)
+            {
+                throw new ArgumentException();
+            }
+
+            Name = shift.Name;
+            ColorCode = shift.ColorCode;
+            Beginning = shift.Beginning;
+            Ending = shift.Ending;
+
+            base.UpdateFields(entity);
         }
     }
 }

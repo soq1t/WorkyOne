@@ -1,6 +1,11 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
+using WorkyOne.AppServices.Interfaces.Repositories.Users;
+using WorkyOne.Contracts.DTOs.Common;
+using WorkyOne.Contracts.DTOs.Schedule.Common;
+using WorkyOne.Contracts.Requests.Common;
 using WorkyOne.DependencyRegister;
+using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Users;
 
 namespace WorkyOne.MVC
@@ -42,19 +47,43 @@ namespace WorkyOne.MVC
             );
 
             //Test(app.Services).Wait();
+            CreateUserData(app.Services).Wait();
             app.Run();
         }
 
-        private static async Task Test(IServiceProvider services)
+        private static async Task CreateUserData(IServiceProvider services)
         {
-            using (IServiceScope scope = services.CreateScope())
-            {
-                UserManager<UserEntity> userManager = scope.ServiceProvider.GetRequiredService<
-                    UserManager<UserEntity>
-                >();
+            using var scope = services.CreateScope();
 
-                var users = await userManager.Users.ToListAsync();
+            var repo = scope.ServiceProvider.GetRequiredService<IUserDatasRepository>();
+            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
+
+            var user = await userManager.FindByNameAsync("soq1t");
+
+            if (user != null)
+            {
+                var request = new UserDataRequest { UserId = user.Id };
+                var data = await repo.GetAsync(request);
+
+                if (data == null)
+                {
+                    data = new UserDataEntity(user.Id);
+                    await repo.CreateAsync(data);
+                }
             }
         }
+
+        //private static async Task Test(IServiceProvider services)
+        //{
+        //    using IServiceScope scope = services.CreateScope();
+
+        //    var mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
+
+        //    var user = new UserEntity();
+        //    var userData = new UserDataEntity();
+
+        //    var dto = mapper.Map<UserInfoDto>(user);
+        //    mapper.Map(userData, dto);
+        //}
     }
 }

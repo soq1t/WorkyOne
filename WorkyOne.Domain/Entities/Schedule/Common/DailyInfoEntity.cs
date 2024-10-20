@@ -14,7 +14,7 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
     /// <summary>
     /// Сущность, описывающая определённый день для определённого расписания
     /// </summary>
-    public sealed class DailyInfoEntity : EntityBase, IUpdatable<DailyInfoEntity>
+    public sealed class DailyInfoEntity : EntityBase
     {
         /// <summary>
         /// ID расписания
@@ -67,17 +67,26 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// </summary>
         public TimeSpan? ShiftProlongation { get; set; }
 
-        public void UpdateFields(DailyInfoEntity entity)
+        public override void UpdateFields(EntityBase entity)
         {
-            base.UpdateFields(entity);
+            var item = entity as DailyInfoEntity;
 
-            ScheduleId = entity.ScheduleId;
-            ColorCode = entity.ColorCode;
-            IsBusyDay = entity.IsBusyDay;
-            Date = entity.Date;
-            Beginning = entity.Beginning;
-            Ending = entity.Ending;
-            ShiftProlongation = entity.ShiftProlongation;
+            if (item == null)
+            {
+                throw new ArgumentException(
+                    $"Object must be {typeof(DailyInfoEntity).Name} type",
+                    nameof(entity)
+                );
+            }
+
+            ColorCode = item.ColorCode;
+            IsBusyDay = item.IsBusyDay;
+            Date = item.Date;
+            Beginning = item.Beginning;
+            Ending = item.Ending;
+            ShiftProlongation = item.ShiftProlongation;
+
+            base.UpdateFields(entity);
         }
 
         public static DailyInfoEntity CreateFromShiftEntity(ShiftEntity shift, DateOnly date)

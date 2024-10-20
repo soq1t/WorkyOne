@@ -21,6 +21,14 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
         );
 
         /// <summary>
+        /// Возвращает <see cref="DatedShiftDto"/> по идентификатору <see cref="DatedShiftEntity"/>
+        /// </summary>
+        /// <param name="id">Идентификатор <see cref="DatedShiftEntity"/></param>
+        /// <param name="cancellation">Токен отмены задания</param>
+        /// <returns></returns>
+        public Task<DatedShiftDto?> GetAsync(string id, CancellationToken cancellation = default);
+
+        /// <summary>
         /// Удаляет из базы данных множество <see cref="DatedShiftEntity"/>
         /// </summary>
         /// <param name="ids">Список идентификаторов удаляемых <see cref="DatedShiftEntity"/></param>
@@ -55,9 +63,14 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
         /// Создаёт в базе данных <see cref="DatedShiftEntity"/> на основе передаваемой <see cref="DatedShiftDto"/>
         /// </summary>
         /// <param name="dto">DTO, на основе которой будет создана <see cref="DatedShiftEntity"/></param>
+        /// <param name="scheduleId">Идентификатор <see cref="ScheduleEntity"/>, для которого создаётся <see cref="DatedShiftEntity"/></param>
         /// <param name="cancellation">Токен отмены задания</param>
         /// <returns></returns>
-        public Task<bool> CreateAsync(DatedShiftDto dto, CancellationToken cancellation = default);
+        public Task<bool> CreateAsync(
+            DatedShiftDto dto,
+            string scheduleId,
+            CancellationToken cancellation = default
+        );
 
         /// <summary>
         /// Обновляет в базе данных <see cref="DatedShiftEntity"/> на основании передаваемой <see cref="DatedShiftDto"/> по её идентификатору

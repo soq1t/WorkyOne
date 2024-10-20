@@ -14,7 +14,7 @@ namespace WorkyOne.Domain.Abstractions
         [Key]
         public string Id { get; set; } = Guid.NewGuid().ToString();
 
-        public void UpdateFields(EntityBase entity)
+        public virtual void UpdateFields(EntityBase entity)
         {
             Id = entity.Id;
         }

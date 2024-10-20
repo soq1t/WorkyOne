@@ -11,7 +11,7 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
     /// <summary>
     /// Сущность, описывающая расписание пользователя
     /// </summary>
-    public sealed class ScheduleEntity : EntityBase, IUpdatable<ScheduleEntity>
+    public sealed class ScheduleEntity : EntityBase
     {
         /// <summary>
         /// ID данных пользователя
@@ -63,11 +63,20 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// </summary>
         public List<DailyInfoEntity> Timetable { get; set; } = new List<DailyInfoEntity>();
 
-        public void UpdateFields(ScheduleEntity entity)
+        public override void UpdateFields(EntityBase entity)
         {
-            Name = entity.Name;
-            TemplateId = entity.TemplateId;
-            UserDataId = entity.UserDataId;
+            var item = entity as ScheduleEntity;
+
+            if (item == null)
+            {
+                throw new ArgumentException();
+            }
+
+            Name = item.Name;
+            TemplateId = item.TemplateId;
+            UserDataId = item.UserDataId;
+
+            base.UpdateFields(entity);
         }
     }
 }

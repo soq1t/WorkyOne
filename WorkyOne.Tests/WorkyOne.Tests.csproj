@@ -21,6 +21,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WorkyOne.DependencyRegister\WorkyOne.DependencyRegister.csproj" />
     <ProjectReference Include="..\WorkyOne.Infrastructure\WorkyOne.Infrastructure.csproj" />
     <ProjectReference Include="..\WorkyOne.Repositories\WorkyOne.Repositories.csproj" />
   </ItemGroup>

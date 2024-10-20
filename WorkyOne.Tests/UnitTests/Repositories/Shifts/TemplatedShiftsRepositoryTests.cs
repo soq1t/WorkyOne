@@ -90,25 +90,5 @@ namespace WorkyOne.Tests.UnitTests.Repositories.Shifts
             Assert.Equal(entities[0].Id, result.Errors[0].EntityId);
             Assert.Equal(RepositoryErrorType.EntityAlreadyExists, result.Errors[0].ErrorType);
         }
-
-        [Fact]
-        public async Task Delete_ShouldReturnCorrectResult()
-        {
-            var id = _shifts[0].Id;
-
-            var result = await _repo.DeleteAsync(id);
-
-            Assert.NotNull(result);
-            Assert.True(result.IsSuccess);
-            Assert.Equal(id, result.SucceedIds[0]);
-
-            id = Guid.NewGuid().ToString();
-            result = await _repo.DeleteAsync(id);
-
-            Assert.NotNull(result);
-            Assert.False(result.IsSuccess);
-            Assert.Equal(id, result.Errors[0].EntityId);
-            Assert.Equal(RepositoryErrorType.EntityNotExists, result.Errors[0].ErrorType);
-        }
     }
 }

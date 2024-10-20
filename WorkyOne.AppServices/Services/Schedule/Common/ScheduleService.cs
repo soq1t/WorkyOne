@@ -42,26 +42,45 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             _dateService = dateService;
         }
 
-        public async Task ClearDailyAsync(string scheduleId)
+        public async Task<bool> ClearDailyAsync(
+            string scheduleId,
+            CancellationToken cancellation = default
+        )
         {
             var deletedIds = (
                 await _dailyInfosRepository.GetByScheduleIdAsync(
-                    new DailyInfoRequest { ScheduleId = scheduleId }
+                    new DailyInfoRequest { ScheduleId = scheduleId },
+                    cancellation
                 )
             )
                 .Select(x => x.Id)
                 .ToList();
 
+            if (cancellation.IsCancellationRequested)
+            {
+                return false;
+            }
+
             if (deletedIds.Any())
             {
-                await _dailyInfosRepository.DeleteManyAsync(deletedIds);
+                await _dailyInfosRepository.DeleteManyAsync(deletedIds, cancellation);
+                return true;
+            }
+            else
+            {
+                return false;
             }
         }
 
-        public async Task<string?> CreateScheduleAsync(string scheduleName, string userDataId)
+        public async Task<string?> CreateScheduleAsync(
+            string scheduleName,
+            string userDataId,
+            CancellationToken cancellation = default
+        )
         {
             var userData = await _userDatasRepository.GetAsync(
-                new UserDataRequest { Id = userDataId }
+                new UserDataRequest { Id = userDataId },
+                cancellation
             );
 
             if (userData == null)
@@ -69,22 +88,43 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                 return null;
             }
 
+            if (cancellation.IsCancellationRequested)
+            {
+                return null;
+            }
             var schedule = new ScheduleEntity() { UserDataId = userDataId, Name = scheduleName, };
 
-            await _schedulesRepository.CreateAsync(schedule);
+            var result = await _schedulesRepository.CreateAsync(schedule, cancellation);
 
-            return schedule.Id;
+            if (result.IsSuccess)
+            {
+                return schedule.Id;
+            }
+            else
+            {
+                return null;
+            }
         }
 
-        public Task DeleteSchedulesAsync(List<string> schedulesIds)
+        public async Task<bool> DeleteSchedulesAsync(
+            List<string> schedulesIds,
+            CancellationToken cancellation = default
+        )
         {
-            return _schedulesRepository.DeleteManyAsync(schedulesIds);
+            var result = await _schedulesRepository.DeleteManyAsync(schedulesIds, cancellation);
+
+            if (cancellation.IsCancellationRequested)
+            {
+                return false;
+            }
+            return result.IsSuccess;
         }
 
         public async Task<List<DailyInfoDto>> GenerateDailyAsync(
             string scheduleId,
             DateOnly startDate,
-            DateOnly endDate
+            DateOnly endDate,
+            CancellationToken cancellation = default
         )
         {
             var schedule = await _schedulesRepository.GetAsync(
@@ -94,7 +134,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                     IncludeTemplate = true,
                     IncludeDatedShifts = true,
                     IncludePeriodicShifts = true
-                }
+                },
+                cancellation
             );
 
             if (schedule == null)
@@ -106,33 +147,71 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             for (DateOnly date = startDate; date <= endDate; date = date.AddDays(1))
             {
+                if (cancellation.IsCancellationRequested)
+                {
+                    return new List<DailyInfoDto>();
+                }
                 DailyInfoEntity info = GetDailyInfo(schedule, date);
                 infos.Add(info);
             }
 
-            await _dailyInfosRepository.CreateManyAsync(infos);
+            await _dailyInfosRepository.CreateManyAsync(infos, cancellation);
 
-            var dto = _mapper.Map<DailyInfoDto>(infos[0]);
+            if (cancellation.IsCancellationRequested)
+            {
+                return new List<DailyInfoDto>();
+            }
 
             return _mapper.Map<List<DailyInfoDto>>(infos);
         }
 
-        public async Task<ICollection<DailyInfoDto>> GetDailyAsync(string scheduleId)
+        public async Task<ScheduleDto?> GetAsync(
+            ScheduleRequest request,
+            CancellationToken cancellation = default
+        )
+        {
+            var item = await _schedulesRepository.GetAsync(request, cancellation);
+
+            if (item == null)
+            {
+                return null;
+            }
+            else
+            {
+                return _mapper.Map<ScheduleDto>(item);
+            }
+        }
+
+        public async Task<ICollection<DailyInfoDto>> GetDailyAsync(
+            string scheduleId,
+            CancellationToken cancellation = default
+        )
         {
             var infoEntities = await _dailyInfosRepository.GetByScheduleIdAsync(
-                new DailyInfoRequest { ScheduleId = scheduleId }
+                new DailyInfoRequest { ScheduleId = scheduleId },
+                cancellation
             );
+
+            if (cancellation.IsCancellationRequested)
+            {
+                return new List<DailyInfoDto>();
+            }
 
             List<DailyInfoDto> infoDtos = _mapper.Map<List<DailyInfoDto>>(infoEntities);
 
             return infoDtos;
         }
 
-        public Task UpdateScheduleAsync(ScheduleDto scheduleDto)
+        public async Task<bool> UpdateScheduleAsync(
+            ScheduleDto scheduleDto,
+            CancellationToken cancellation = default
+        )
         {
             ScheduleEntity schedule = _mapper.Map<ScheduleEntity>(scheduleDto);
 
-            return _schedulesRepository.UpdateAsync(schedule);
+            var result = await _schedulesRepository.UpdateAsync(schedule, cancellation);
+
+            return result.IsSuccess;
         }
 
         private DailyInfoEntity GetDailyInfo(ScheduleEntity schedule, DateOnly date)

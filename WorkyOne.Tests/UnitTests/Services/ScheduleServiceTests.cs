@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 using Moq;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
@@ -8,8 +9,10 @@ using WorkyOne.AppServices.Services.Schedule.Common;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Repositories;
 using WorkyOne.Contracts.Requests.Schedule.Common;
+using WorkyOne.DependencyRegister;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Common;
 using WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Schedule.Common;
 using WorkyOne.Repositories.Repositories.Schedule.Common;
 using Xunit;
@@ -30,9 +33,17 @@ namespace WorkyOne.Tests.UnitTests.Services
 
         public ScheduleServiceTests()
         {
-            var config = new MapperConfiguration(mc => mc.AddProfile(new DailyInfoProfile()));
+            var services = new ServiceCollection();
 
-            _mapper = config.CreateMapper();
+            services.AddAutoMapper(typeof(UserInfoProfile).Assembly);
+
+            var sp = services.BuildServiceProvider();
+
+            _mapper = sp.GetRequiredService<IMapper>();
+
+            //var config = new MapperConfiguration(mc => mc.AddProfile(new DailyInfoProfile()));
+
+            //_mapper = config.CreateMapper();
         }
 
         [Fact]

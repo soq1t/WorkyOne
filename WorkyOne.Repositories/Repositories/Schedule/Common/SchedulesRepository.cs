@@ -43,9 +43,9 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
         {
             IQueryable<ScheduleEntity> query = _context.Schedules.Where(s => s.Id == request.Id);
 
-            QueryBuilder(request, query);
+            query = QueryBuilder(request, query);
 
-            return query.FirstOrDefaultAsync();
+            return query.FirstOrDefaultAsync(cancellation);
         }
 
         /// <inheritdoc/>
@@ -58,7 +58,7 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
                 s.UserDataId == request.UserId
             );
 
-            QueryBuilder(request, query);
+            query = QueryBuilder(request, query);
 
             return await query.ToListAsync(cancellation);
         }
@@ -68,11 +68,15 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
         /// </summary>
         /// <param name="request">Запрос на получение информации из базы</param>
         /// <param name="query">Сущность запроса</param>
-        private void QueryBuilder(ScheduleRequest request, IQueryable<ScheduleEntity> query)
+        private IQueryable<ScheduleEntity> QueryBuilder(
+            ScheduleRequest request,
+            IQueryable<ScheduleEntity> query
+        )
         {
+            var result = query;
             if (request.IncludeTemplate)
             {
-                query
+                result = result
                     .Include(s => s.Template)
                     .ThenInclude(t => t.Sequences)
                     .Include(s => s.Template)
@@ -81,13 +85,15 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
 
             if (request.IncludeDatedShifts)
             {
-                query.Include(s => s.DatedShifts);
+                result = result.Include(s => s.DatedShifts);
             }
 
             if (request.IncludePeriodicShifts)
             {
-                query.Include(s => s.PeriodicShifts);
+                result = result.Include(s => s.PeriodicShifts);
             }
+
+            return result;
         }
 
         /// <inheritdoc/>

@@ -15,7 +15,8 @@ namespace WorkyOne.Contracts.DTOs.Abstractions
         /// <summary>
         /// ID смены
         /// </summary>
-        public string Id { get; set; }
+        [Key]
+        public string Id { get; set; } = Guid.NewGuid().ToString();
 
         /// <summary>
         /// Название смены
@@ -27,6 +28,7 @@ namespace WorkyOne.Contracts.DTOs.Abstractions
         /// <summary>
         /// Цветовой код смены
         /// </summary>
+        [Required]
         [Length(
             4,
             7,
@@ -36,7 +38,7 @@ namespace WorkyOne.Contracts.DTOs.Abstractions
             @"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
             ErrorMessage = "Цветовой код должен представлять формат HEX (#FFFFFF или #FFF)"
         )]
-        public string? ColorCode { get; set; }
+        public string? ColorCode { get; set; } = "#FFFFFF";
 
         /// <summary>
         /// Время начала смены

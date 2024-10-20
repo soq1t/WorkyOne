@@ -21,7 +21,7 @@ namespace WorkyOne.Repositories.Repositories.Common
     /// <typeparam name="TEntity">Тип данных, с которыми работает репозиторий</typeparam>
     /// <typeparam name="TRequest">Тип запроса на получение данных из базы</typeparam>
     public abstract class EntityRepository<TEntity, TRequest> : IEntityRepository<TEntity, TRequest>
-        where TEntity : EntityBase, IUpdatable<TEntity>
+        where TEntity : EntityBase, IUpdatable<EntityBase>
         where TRequest : IEntityRequest
     {
         protected readonly IBaseRepository _baseRepo;
