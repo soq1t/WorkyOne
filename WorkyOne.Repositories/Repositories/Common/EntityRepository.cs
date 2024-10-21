@@ -8,7 +8,7 @@ using WorkyOne.AppServices.Interfaces.Repositories.Common;
 using WorkyOne.Contracts.Enums.Reposistories;
 using WorkyOne.Contracts.Interfaces.Repositories;
 using WorkyOne.Contracts.Repositories;
-using WorkyOne.Domain.Abstractions;
+using WorkyOne.Domain.Entities.Abstractions.Common;
 using WorkyOne.Domain.Interfaces.Common;
 using WorkyOne.Repositories.Contextes;
 using WorkyOne.Repositories.Extensions.Repositories;

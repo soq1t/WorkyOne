@@ -1,32 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Identity;
-using WorkyOne.Domain.Entities.Schedule;
+﻿using Microsoft.AspNetCore.Identity;
+using WorkyOne.Domain.Attributes.Updating;
 using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.Domain.Entities.Users
 {
-    public class UserEntity : IdentityUser, IEntity, IUpdatable<UserEntity>
+    public class UserEntity : IdentityUser, IEntity
     {
         /// <summary>
         /// Имя пользователя
         /// </summary>
+        [AutoUpdated]
         public string? FirstName { get; set; }
 
         /// <summary>
         /// Активирован ли пользователь
         /// </summary>
+        [AutoUpdated]
         public bool IsActivated { get; set; }
-
-        public void UpdateFields(UserEntity entity)
-        {
-            FirstName = entity.FirstName;
-            IsActivated = entity.IsActivated;
-            UserName = entity.UserName;
-            Email = entity.Email;
-        }
     }
 }

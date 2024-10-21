@@ -1,8 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using WorkyOne.Domain.Abstractions;
 using WorkyOne.Domain.Attributes;
+using WorkyOne.Domain.Attributes.Updating;
+using WorkyOne.Domain.Entities.Abstractions.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 using WorkyOne.Domain.Interfaces.Common;
 
@@ -11,7 +12,7 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
     /// <summary>
     /// Сущность, описывающая определённую последовательность смен
     /// </summary>
-    public sealed class TemplateEntity : EntityBase, IUpdatable<TemplateEntity>
+    public sealed class TemplateEntity : EntityBase
     {
         /// <summary>
         /// ID расписания
@@ -30,26 +31,19 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// Список рабочих смен, используемых в шаблоне
         /// </summary>
         [Required]
-        [Renewable]
         public List<TemplatedShiftEntity> Shifts { get; set; } = new List<TemplatedShiftEntity>();
 
         /// <summary>
         /// Последовательность смен в шаблоне
         /// </summary>
         [Required]
-        [Renewable]
         public List<ShiftSequenceEntity> Sequences { get; set; } = new List<ShiftSequenceEntity>();
 
         /// <summary>
         /// Дата, с которой начинается отсчёт повторений шаблона
         /// </summary>
         [Required]
+        [AutoUpdated]
         public DateOnly StartDate { get; set; }
-
-        public void UpdateFields(TemplateEntity entity)
-        {
-            ScheduleId = entity.ScheduleId;
-            StartDate = entity.StartDate;
-        }
     }
 }

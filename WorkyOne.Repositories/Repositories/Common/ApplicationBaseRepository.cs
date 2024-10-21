@@ -2,7 +2,7 @@
 using WorkyOne.AppServices.Interfaces.Repositories.Common;
 using WorkyOne.Contracts.Enums.Reposistories;
 using WorkyOne.Contracts.Repositories;
-using WorkyOne.Domain.Abstractions;
+using WorkyOne.Domain.Entities.Abstractions.Common;
 using WorkyOne.Repositories.Contextes;
 
 namespace WorkyOne.Repositories.Repositories.Common

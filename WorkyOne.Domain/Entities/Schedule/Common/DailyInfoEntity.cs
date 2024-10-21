@@ -5,8 +5,9 @@ using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using WorkyOne.Domain.Abstractions;
-using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Attributes.Updating;
+using WorkyOne.Domain.Entities.Abstractions.Common;
+using WorkyOne.Domain.Entities.Abstractions.Shifts;
 using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.Domain.Entities.Schedule.Common
@@ -27,11 +28,13 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// Название рабочего дня
         /// </summary>
         [Required]
+        [AutoUpdated]
         public string Name { get; set; }
 
         /// <summary>
         /// Код цвета, которым выделяется данный день на графике
         /// </summary>
+        [AutoUpdated]
         public string ColorCode { get; set; } = "#FFFFFF";
 
         /// <summary>
@@ -44,50 +47,33 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// Указывает, является ли день рабочим
         /// </summary>
         [Required]
+        [AutoUpdated]
         public bool IsBusyDay { get; set; }
 
         /// <summary>
         /// Дата, которую описывает сущность
         /// </summary>
         [Required]
+        [AutoUpdated]
         public DateOnly Date { get; set; }
 
         /// <summary>
         /// Время начала рабочей смены
         /// </summary>
+        [AutoUpdated]
         public TimeOnly? Beginning { get; set; }
 
         /// <summary>
         /// Время окончания рабочей смены
         /// </summary>
+        [AutoUpdated]
         public TimeOnly? Ending { get; set; }
 
         /// <summary>
         /// Продолжительность рабочей смены
         /// </summary>
+        [AutoUpdated]
         public TimeSpan? ShiftProlongation { get; set; }
-
-        public override void UpdateFields(EntityBase entity)
-        {
-            var item = entity as DailyInfoEntity;
-
-            if (item == null)
-            {
-                throw new ArgumentException(
-                    $"Object must be {typeof(DailyInfoEntity).Name} type",
-                    nameof(entity)
-                );
-            }
-
-            ColorCode = item.ColorCode;
-            IsBusyDay = item.IsBusyDay;
-            Date = item.Date;
-            Beginning = item.Beginning;
-            Ending = item.Ending;
-            ShiftProlongation = item.ShiftProlongation;
-
-            base.UpdateFields(entity);
-        }
 
         public static DailyInfoEntity CreateFromShiftEntity(ShiftEntity shift, DateOnly date)
         {

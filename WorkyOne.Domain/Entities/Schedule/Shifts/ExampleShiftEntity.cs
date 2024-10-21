@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using WorkyOne.Domain.Entities.Abstractions.Shifts;
 
 namespace WorkyOne.Domain.Entities.Schedule.Shifts
 {

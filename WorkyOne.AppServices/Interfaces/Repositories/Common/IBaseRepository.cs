@@ -1,5 +1,5 @@
 ﻿using WorkyOne.Contracts.Repositories;
-using WorkyOne.Domain.Abstractions;
+using WorkyOne.Domain.Entities.Abstractions.Common;
 using WorkyOne.Domain.Interfaces;
 
 namespace WorkyOne.AppServices.Interfaces.Repositories.Common

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\WorkyOne.AppServices\WorkyOne.AppServices.csproj" />
     <ProjectReference Include="..\WorkyOne.Contracts\WorkyOne.Contracts.csproj" />
     <ProjectReference Include="..\WorkyOne.Domain\WorkyOne.Domain.csproj" />
   </ItemGroup>

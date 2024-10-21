@@ -1,15 +1,13 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WorkyOne.Domain.Abstractions;
-using WorkyOne.Domain.Attributes;
+using WorkyOne.Domain.Entities.Abstractions.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
-using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.Domain.Entities.Users
 {
     /// <summary>
     /// Сущность, описывающая необходимую приложению информацию о пользователе
     /// </summary>
-    public class UserDataEntity : EntityBase, IUpdatable<UserDataEntity>
+    public class UserDataEntity : EntityBase
     {
         /// <summary>
         /// Идентификатор пользователя, к которому относится информация
@@ -20,7 +18,6 @@ namespace WorkyOne.Domain.Entities.Users
         /// <summary>
         /// Список рабочих графиков, которые создал пользователь
         /// </summary>
-        [Renewable]
         public List<ScheduleEntity> Schedules { get; set; } = new List<ScheduleEntity>();
 
         /// <summary>
@@ -36,10 +33,5 @@ namespace WorkyOne.Domain.Entities.Users
         /// Стандартный конструктор сущности (для EF)
         /// </summary>
         public UserDataEntity() { }
-
-        public void UpdateFields(UserDataEntity entity)
-        {
-            UserId = entity.UserId;
-        }
     }
 }

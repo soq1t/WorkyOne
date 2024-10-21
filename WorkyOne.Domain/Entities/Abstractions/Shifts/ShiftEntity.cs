@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WorkyOne.Domain.Abstractions;
+﻿using System.ComponentModel.DataAnnotations;
+using WorkyOne.Domain.Attributes.Updating;
+using WorkyOne.Domain.Entities.Abstractions.Common;
 using WorkyOne.Domain.Exceptions.Scedule;
-using WorkyOne.Domain.Interfaces.Common;
 
-namespace WorkyOne.Domain.Entities.Schedule.Shifts
+namespace WorkyOne.Domain.Entities.Abstractions.Shifts
 {
     /// <summary>
     /// Абстрактный класс, описывающий рабочую смену
@@ -20,6 +15,7 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
         /// </summary>
         [Required]
         [Length(1, 30)]
+        [AutoUpdated]
         public string Name { get; set; } = "Смена";
 
         /// <summary>
@@ -35,16 +31,19 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
             @"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
             ErrorMessage = "Цветовой код должен представлять формат HEX (#FFFFFF или #FFF)"
         )]
+        [AutoUpdated]
         public string? ColorCode { get; set; } = "#FFFFFF";
 
         /// <summary>
         /// Время начала смены
         /// </summary>
+        [AutoUpdated]
         public TimeOnly? Beginning { get; set; }
 
         /// <summary>
         /// Время окончания смены
         /// </summary>
+        [AutoUpdated]
         public TimeOnly? Ending { get; set; }
 
         /// <summary>
@@ -76,23 +75,6 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
                     return duration;
                 }
             }
-        }
-
-        public override void UpdateFields(EntityBase entity)
-        {
-            ShiftEntity? shift = entity as ShiftEntity;
-
-            if (shift == null)
-            {
-                throw new ArgumentException();
-            }
-
-            Name = shift.Name;
-            ColorCode = shift.ColorCode;
-            Beginning = shift.Beginning;
-            Ending = shift.Ending;
-
-            base.UpdateFields(entity);
         }
     }
 }
