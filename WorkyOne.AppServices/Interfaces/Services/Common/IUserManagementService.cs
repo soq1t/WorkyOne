@@ -11,6 +11,10 @@ namespace WorkyOne.AppServices.Interfaces.Services.Common
         /// Возвращает данные пользователя
         /// </summary>
         /// <param name="userId">Идентификатор пользователя</param>
-        public Task<UserInfoDto?> GetUserInfoAsync(string userId);
+        /// <param name="cancellation">Токен отмены задачи</param>
+        public Task<UserInfoDto?> GetUserInfoAsync(
+            string userId,
+            CancellationToken cancellation = default
+        );
     }
 }

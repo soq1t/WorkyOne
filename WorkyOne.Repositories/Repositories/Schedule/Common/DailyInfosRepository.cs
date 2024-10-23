@@ -1,28 +1,40 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using WorkyOne.AppServices.Interfaces.Repositories.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
-using WorkyOne.Contracts.Requests.Schedule.Common;
+using WorkyOne.Contracts.Repositories.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
+using WorkyOne.Domain.Requests.Common;
+using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Repositories.Contextes;
-using WorkyOne.Repositories.Repositories.Common;
+using WorkyOne.Repositories.Repositories.Abstractions;
 
 namespace WorkyOne.Repositories.Repositories.Schedule.Common
 {
     public sealed class DailyInfosRepository
-        : EntityRepository<DailyInfoEntity, DailyInfoRequest>,
+        : ApplicationBaseRepository<
+            DailyInfoEntity,
+            EntityRequest<DailyInfoEntity>,
+            PaginatedDailyInfoRequest
+        >,
             IDailyInfosRepository
     {
-        public DailyInfosRepository(IBaseRepository baseRepo, ApplicationDbContext context)
-            : base(baseRepo, context) { }
+        public DailyInfosRepository(ApplicationDbContext context)
+            : base(context) { }
 
-        public Task<List<DailyInfoEntity>> GetByScheduleIdAsync(
-            DailyInfoRequest request,
+        public async Task<RepositoryResult> DeleteByConditionAsync(
+            Func<DailyInfoEntity, bool> predicate,
             CancellationToken cancellation = default
         )
         {
-            return _context
-                .DailyInfos.Where(x => x.ScheduleId == request.ScheduleId)
-                .ToListAsync(cancellation);
+            await _context.DailyInfos.Where(e => predicate(e)).ExecuteDeleteAsync(cancellation);
+
+            if (cancellation.IsCancellationRequested)
+            {
+                return RepositoryResult.CancelationRequested();
+            }
+            else
+            {
+                return new RepositoryResult("1");
+            }
         }
     }
 }

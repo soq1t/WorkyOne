@@ -4,17 +4,14 @@ using Moq;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services;
-using WorkyOne.AppServices.Services;
+using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.AppServices.Services.Schedule.Common;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
-using WorkyOne.Contracts.Repositories;
-using WorkyOne.Contracts.Requests.Schedule.Common;
-using WorkyOne.DependencyRegister;
+using WorkyOne.Contracts.Repositories.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Common;
-using WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Schedule.Common;
-using WorkyOne.Repositories.Repositories.Schedule.Common;
 using Xunit;
 
 namespace WorkyOne.Tests.UnitTests.Services
@@ -28,6 +25,9 @@ namespace WorkyOne.Tests.UnitTests.Services
         private readonly Mock<IUserDatasRepository> _userDatasRepoMock =
             new Mock<IUserDatasRepository>();
         private readonly Mock<IDateTimeService> _dateTimeServiceMock = new Mock<IDateTimeService>();
+
+        private readonly Mock<IEntityUpdateUtility> _entityUpdateUtilityMock =
+            new Mock<IEntityUpdateUtility>();
 
         private readonly IMapper _mapper;
 
@@ -92,7 +92,8 @@ namespace WorkyOne.Tests.UnitTests.Services
                 _dailyInfosRepoMock.Object,
                 _userDatasRepoMock.Object,
                 _mapper,
-                _dateTimeServiceMock.Object
+                _dateTimeServiceMock.Object,
+                _entityUpdateUtilityMock.Object
             );
 
             // Act
@@ -163,7 +164,8 @@ namespace WorkyOne.Tests.UnitTests.Services
                 _dailyInfosRepoMock.Object,
                 _userDatasRepoMock.Object,
                 _mapper,
-                _dateTimeServiceMock.Object
+                _dateTimeServiceMock.Object,
+                _entityUpdateUtilityMock.Object
             );
 
             // Act

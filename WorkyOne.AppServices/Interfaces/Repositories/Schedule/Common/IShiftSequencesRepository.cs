@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WorkyOne.AppServices.Interfaces.Repositories.Common;
-using WorkyOne.Contracts.Requests.Schedule.Common;
+﻿using WorkyOne.AppServices.Interfaces.Repositories.CRUD;
 using WorkyOne.Domain.Entities.Schedule.Common;
+using WorkyOne.Domain.Requests.Common;
+using WorkyOne.Domain.Requests.Schedule.Common;
 
 namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common
 {
@@ -13,17 +9,9 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common
     /// Интерфейс репозитория по работе с <see cref="ShiftSequenceEntity"/>
     /// </summary>
     public interface IShiftSequencesRepository
-        : IEntityRepository<ShiftSequenceEntity, ShiftSequenceRequest>
-    {
-        /// <summary>
-        /// Возвращает список <see cref="ShiftSequenceEntity"/> для заданного <see cref="TemplateEntity"/>
-        /// </summary>
-        /// <param name="request">Запрос на получение <see cref="ShiftSequenceEntity"/></param>
-        /// <returns></returns>
-        /// <param name="cancellation">Токен отмены задания</param>
-        public Task<ICollection<ShiftSequenceEntity>> GetByTemplateIdAsync(
-            ShiftSequenceRequest request,
-            CancellationToken cancellation = default
-        );
-    }
+        : ICrudRepository<
+            ShiftSequenceEntity,
+            EntityRequest<ShiftSequenceEntity>,
+            PaginatedShiftSequencesRequest
+        > { }
 }

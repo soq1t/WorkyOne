@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using WorkyOne.AppServices.Interfaces.Repositories.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
@@ -11,13 +10,14 @@ using WorkyOne.AppServices.Interfaces.Services;
 using WorkyOne.AppServices.Interfaces.Services.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
+using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.AppServices.Services.Common;
 using WorkyOne.AppServices.Services.Schedule.Common;
 using WorkyOne.AppServices.Services.Schedule.Shifts;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Schedule.Common;
+using WorkyOne.Infrastructure.Utilities;
 using WorkyOne.Repositories.Contextes;
-using WorkyOne.Repositories.Repositories.Common;
 using WorkyOne.Repositories.Repositories.Schedule.Common;
 using WorkyOne.Repositories.Repositories.Schedule.Shifts;
 using WorkyOne.Repositories.Repositories.Users;
@@ -49,6 +49,8 @@ namespace WorkyOne.DependencyRegister
         /// <param name="services">Сервисы</param>
         private static void RegisterServices(IServiceCollection services)
         {
+            services.AddTransient<IEntityUpdateUtility, EntityUpdateUtility>();
+
             services.AddScoped<IDateTimeService, DateTimeService>();
             services.AddScoped<IUserManagementService, UserManagementService>();
 
@@ -113,10 +115,8 @@ namespace WorkyOne.DependencyRegister
         /// <param name="services">Сервисы приложения</param>
         private static void RegisterRepositories(IServiceCollection services)
         {
-            services.AddScoped<IBaseRepository, ApplicationBaseRepository>();
-
             services.AddScoped<IDailyInfosRepository, DailyInfosRepository>();
-            services.AddScoped<ISchedulesRepository, SchedulesRepository>();
+            services.AddScoped<ISchedulesRepository, ScheduleRepository>();
             services.AddScoped<IShiftSequencesRepository, ShiftSequencesRepository>();
             services.AddScoped<ITemplatesRepository, TemplatesRepository>();
 

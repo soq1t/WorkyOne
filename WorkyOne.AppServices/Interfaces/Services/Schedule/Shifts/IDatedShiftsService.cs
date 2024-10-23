@@ -10,34 +10,26 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
     public interface IDatedShiftsService
     {
         /// <summary>
-        /// Возвращает список <see cref="DatedShiftDto"/> для указанного <see cref="ScheduleEntity"/>
+        /// Возвращает список <see cref="DatedShiftDto"/> для указанного расписания
         /// </summary>
-        /// <param name="scheduleId">Идентификатор <see cref="ScheduleEntity"/></param>
+        /// <param name="scheduleId">Идентификатор расписания</param>
         /// <param name="cancellation">Токен отмены задания</param>
-        /// <returns></returns>
+        /// <param name="page">Страница</param>
+        /// <param name="amount">Количество сущностей</param>
         public Task<List<DatedShiftDto>> GetForScheduleAsync(
             string scheduleId,
+            int page,
+            int amount,
             CancellationToken cancellation = default
         );
 
         /// <summary>
-        /// Возвращает <see cref="DatedShiftDto"/> по идентификатору <see cref="DatedShiftEntity"/>
+        /// Возвращает <see cref="DatedShiftDto"/> по его идентификатору
         /// </summary>
-        /// <param name="id">Идентификатор <see cref="DatedShiftEntity"/></param>
+        /// <param name="id">Идентификатор сущности</param>
         /// <param name="cancellation">Токен отмены задания</param>
         /// <returns></returns>
         public Task<DatedShiftDto?> GetAsync(string id, CancellationToken cancellation = default);
-
-        /// <summary>
-        /// Удаляет из базы данных множество <see cref="DatedShiftEntity"/>
-        /// </summary>
-        /// <param name="ids">Список идентификаторов удаляемых <see cref="DatedShiftEntity"/></param>
-        /// <param name="cancellation">Токен отмены задания</param>
-        /// <returns></returns>
-        public Task<bool> DeleteManyAsync(
-            ICollection<string> ids,
-            CancellationToken cancellation = default
-        );
 
         /// <summary>
         /// Удаляет из базы данных <see cref="DatedShiftEntity"/>
@@ -47,17 +39,6 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
         /// <returns></returns>
 
         public Task<bool> DeleteAsync(string id, CancellationToken cancellation = default);
-
-        /// <summary>
-        /// Удаляет все <see cref="DatedShiftEntity"/> для указанного <see cref="ScheduleEntity"/>
-        /// </summary>
-        /// <param name="scheduleId">Идентификатор <see cref="ScheduleEntity"/></param>
-        /// <param name="cancellation">Токен отмены задания</param>
-        /// <returns></returns>
-        public Task<bool> DeleteForScheduleAsync(
-            string scheduleId,
-            CancellationToken cancellation = default
-        );
 
         /// <summary>
         /// Создаёт в базе данных <see cref="DatedShiftEntity"/> на основе передаваемой <see cref="DatedShiftDto"/>

@@ -1,7 +1,7 @@
-﻿using WorkyOne.AppServices.Interfaces.Repositories.Common;
-using WorkyOne.Contracts.Requests.Schedule.Shifts;
-using WorkyOne.Domain.Entities.Schedule.Common;
+﻿using WorkyOne.AppServices.Interfaces.Repositories.CRUD;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Requests.Common;
+using WorkyOne.Domain.Requests.Schedule.Shifts;
 
 namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts
 {
@@ -9,17 +9,9 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts
     /// Интерфейс репозитория по работе с <see cref="PeriodicShiftEntity"/>
     /// </summary>
     public interface IPeriodicShiftsRepository
-        : IEntityRepository<PeriodicShiftEntity, PeriodicShiftRequest>
-    {
-        /// <summary>
-        /// Возвращает список "перидичных" смен для указанного <see cref="ScheduleEntity"/>
-        /// </summary>
-        /// <param name="request">Запрос на получение данных из базы</param>
-        /// <param name="cancellation">Токен отмены задания</param>
-
-        public Task<List<PeriodicShiftEntity>> GetByScheduleIdAsync(
-            PeriodicShiftRequest request,
-            CancellationToken cancellation = default
-        );
-    }
+        : ICrudRepository<
+            PeriodicShiftEntity,
+            EntityRequest<PeriodicShiftEntity>,
+            PaginatedPeriodicShiftRequest
+        > { }
 }

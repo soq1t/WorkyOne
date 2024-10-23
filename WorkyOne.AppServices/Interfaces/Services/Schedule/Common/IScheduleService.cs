@@ -1,11 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WorkyOne.Contracts.DTOs.Schedule.Common;
-using WorkyOne.Contracts.Requests.Schedule.Common;
-using WorkyOne.Domain.Entities.Schedule.Common;
+﻿using WorkyOne.Contracts.DTOs.Schedule.Common;
+using WorkyOne.Domain.Requests.Schedule;
 
 namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
 {
@@ -17,10 +11,35 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// <summary>
         /// Возвращает расписание из базы данных
         /// </summary>
-        /// <param name="request">Запрос на получение расписания</param>
+        /// <param name="scheduleId">Идентификатор расписания</param>
         /// <param name="cancellation">Токен отмены задания</param>
         public Task<ScheduleDto?> GetAsync(
-            ScheduleRequest request,
+            string scheduleId,
+            CancellationToken cancellation = default
+        );
+
+        /// <summary>
+        /// Возвращает из базы данных расписания, относящиеся к определённому пользователю
+        /// </summary>
+        /// <param name="userDataId">Идентификатор пользовательских данных</param>
+        /// <param name="cancellation">Токен отмены задания</param>
+        /// <returns></returns>
+        public Task<List<ScheduleDto>> GetByUserDataAsync(
+            string userDataId,
+            CancellationToken cancellation = default
+        );
+
+        /// <summary>
+        /// Возвращает множестно расписаний из базы данных
+        /// </summary>
+        /// <param name="pageIndex">Номер страницы</param>
+        /// <param name="amount">Количество на странице</param>
+        /// <param name="includeFullData">Включать ли все данные в запрос</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        public Task<List<ScheduleDto>> GetManyAsync(
+            int pageIndex,
+            int amount,
+            bool includeFullData = false,
             CancellationToken cancellation = default
         );
 
@@ -91,8 +110,10 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// <param name="scheduleId">Идентификатор расписания</param>
         /// <param name="cancellation">Токен отмены задания</param>
 
-        public Task<ICollection<DailyInfoDto>> GetDailyAsync(
+        public Task<List<DailyInfoDto>> GetDailyAsync(
             string scheduleId,
+            DateOnly startDate,
+            DateOnly endDate,
             CancellationToken cancellation = default
         );
     }

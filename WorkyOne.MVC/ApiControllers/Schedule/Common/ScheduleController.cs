@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
-using WorkyOne.Contracts.DTOs.Schedule.Shifts;
-using WorkyOne.Contracts.Requests.Schedule.Common;
 using WorkyOne.MVC.ViewModels.Api.Schedule.Common;
 
 namespace WorkyOne.MVC.ApiControllers.Schedule.Common
@@ -24,6 +22,28 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
         }
 
         /// <summary>
+        /// Возвращает множество расписаний согласно заданным условиям
+        /// </summary>
+        /// <param name="model">Условия получения расписани</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        [HttpGet]
+        [Route("")]
+        public async Task<IActionResult> GetManyAsync(
+            [FromQuery] GetManySchedulesViewModel model,
+            CancellationToken cancellation = default
+        )
+        {
+            var result = await _scheduleService.GetManyAsync(
+                model.PageIndex,
+                model.Amount,
+                model.IncludeFullData.Value,
+                cancellation
+            );
+
+            return Json(result);
+        }
+
+        /// <summary>
         /// Возвращает расписание по его идентификатору
         /// </summary>
         /// <param name="id">Идентификатор расписания</param>
@@ -32,18 +52,10 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
         [Route("{id}")]
         public async Task<IActionResult> GetAsync(
             [FromRoute] string id,
-            CancellationToken cancellation,
-            [FromQuery] bool includeFullData = false
+            CancellationToken cancellation
         )
         {
-            var request = new ScheduleRequest { Id = id };
-            if (includeFullData)
-            {
-                request.IncludePeriodicShifts = true;
-                request.IncludeDatedShifts = true;
-                request.IncludeTemplate = true;
-            }
-            var item = await _scheduleService.GetAsync(request, cancellation);
+            var item = await _scheduleService.GetAsync(id, cancellation);
 
             if (item == null)
             {
@@ -63,7 +75,7 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> CreateAsync(
-            [FromBody] ScheduleViewModel model,
+            [FromBody] CreateScheduleViewModel model,
             CancellationToken cancellation
         )
         {
@@ -93,38 +105,18 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
         [Route("{scheduleId}/shifts/dated")]
         public async Task<IActionResult> GetDatedShiftsAsync(
             string scheduleId,
+            [FromQuery] int page,
+            [FromQuery] int amount,
             CancellationToken cancellation = default
         )
         {
-            var shifts = await _datedShiftsService.GetForScheduleAsync(scheduleId, cancellation);
-            return Json(shifts);
-        }
-
-        /// <summary>
-        /// Удаляет все "датированные" смены для указанного расписания
-        /// </summary>
-        /// <param name="scheduleId">Идентификатор расписания</param>
-        /// <param name="cancellation">Токен отмены задания</param>
-        [HttpDelete]
-        [Route("{scheduleId}/shifts/dated")]
-        public async Task<IActionResult> ClearDatedShiftsAsync(
-            string scheduleId,
-            CancellationToken cancellation = default
-        )
-        {
-            bool result = await _datedShiftsService.DeleteForScheduleAsync(
+            var shifts = await _datedShiftsService.GetForScheduleAsync(
                 scheduleId,
+                page,
+                amount,
                 cancellation
             );
-
-            if (result)
-            {
-                return Ok();
-            }
-            else
-            {
-                return BadRequest();
-            }
+            return Json(shifts);
         }
         #endregion
     }

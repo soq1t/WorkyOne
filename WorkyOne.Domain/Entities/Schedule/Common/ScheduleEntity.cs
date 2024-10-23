@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using WorkyOne.Domain.Attributes;
 using WorkyOne.Domain.Attributes.Updating;
 using WorkyOne.Domain.Entities.Abstractions.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 using WorkyOne.Domain.Entities.Users;
-using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.Domain.Entities.Schedule.Common
 {

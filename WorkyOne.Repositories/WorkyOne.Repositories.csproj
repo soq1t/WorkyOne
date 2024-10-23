@@ -21,4 +21,8 @@
     <ProjectReference Include="..\WorkyOne.Domain\WorkyOne.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Repositories\Common\" />
+  </ItemGroup>
+
 </Project>

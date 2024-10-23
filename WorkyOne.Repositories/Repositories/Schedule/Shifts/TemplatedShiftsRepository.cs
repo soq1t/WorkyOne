@@ -1,12 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using WorkyOne.AppServices.Interfaces.Repositories.Common;
-using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
-using WorkyOne.Contracts.Enums.Reposistories;
-using WorkyOne.Contracts.Repositories;
-using WorkyOne.Contracts.Requests.Schedule.Shifts;
+﻿using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Requests.Common;
+using WorkyOne.Domain.Requests.Schedule.Shifts;
 using WorkyOne.Repositories.Contextes;
-using WorkyOne.Repositories.Repositories.Common;
+using WorkyOne.Repositories.Repositories.Abstractions;
 
 namespace WorkyOne.Repositories.Repositories.Schedule.Shifts
 {
@@ -14,20 +11,14 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Shifts
     /// Репозиторий по работе с <see cref="TemplatedShiftEntity"/>
     /// </summary>
     public sealed class TemplatedShiftsRepository
-        : EntityRepository<TemplatedShiftEntity, TemplatedShiftRequest>,
+        : ApplicationBaseRepository<
+            TemplatedShiftEntity,
+            EntityRequest<TemplatedShiftEntity>,
+            PaginatedTemplatedShiftRequest
+        >,
             ITemplatedShiftsRepository
     {
-        public TemplatedShiftsRepository(IBaseRepository baseRepo, ApplicationDbContext context)
-            : base(baseRepo, context) { }
-
-        public async Task<ICollection<TemplatedShiftEntity>> GetByTemplateIdAsync(
-            TemplatedShiftRequest request,
-            CancellationToken cancellation = default
-        )
-        {
-            return await _context
-                .TemplatedShifts.Where(s => s.TemplateId == request.TemplateId)
-                .ToListAsync(cancellation);
-        }
+        public TemplatedShiftsRepository(ApplicationDbContext context)
+            : base(context) { }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace WorkyOne.AppServices.Interfaces.Utilities
+﻿using WorkyOne.Domain.Interfaces.Common;
+
+namespace WorkyOne.AppServices.Interfaces.Utilities
 {
     /// <summary>
     /// Интерфейс сервиса по обновлению сущностей
@@ -16,6 +18,7 @@
             TEntity target,
             TEntity source,
             IEnumerable<string>? propNames = null
-        );
+        )
+            where TEntity : class, IEntity;
     }
 }

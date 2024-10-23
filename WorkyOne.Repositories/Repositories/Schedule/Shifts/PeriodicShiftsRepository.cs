@@ -1,10 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
-using WorkyOne.AppServices.Interfaces.Repositories.Common;
-using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
-using WorkyOne.Contracts.Requests.Schedule.Shifts;
+﻿using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Requests.Common;
+using WorkyOne.Domain.Requests.Schedule.Shifts;
 using WorkyOne.Repositories.Contextes;
-using WorkyOne.Repositories.Repositories.Common;
+using WorkyOne.Repositories.Repositories.Abstractions;
 
 namespace WorkyOne.Repositories.Repositories.Schedule.Shifts
 {
@@ -12,20 +11,14 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Shifts
     /// Репозиторий по работе с <see cref="PeriodicShiftEntity"/>
     /// </summary>
     public sealed class PeriodicShiftsRepository
-        : EntityRepository<PeriodicShiftEntity, PeriodicShiftRequest>,
+        : ApplicationBaseRepository<
+            PeriodicShiftEntity,
+            EntityRequest<PeriodicShiftEntity>,
+            PaginatedPeriodicShiftRequest
+        >,
             IPeriodicShiftsRepository
     {
-        public PeriodicShiftsRepository(IBaseRepository baseRepo, ApplicationDbContext context)
-            : base(baseRepo, context) { }
-
-        public Task<List<PeriodicShiftEntity>> GetByScheduleIdAsync(
-            PeriodicShiftRequest request,
-            CancellationToken cancellation = default
-        )
-        {
-            return _context
-                .PeriodicShifts.Where(s => s.ScheduleId == request.ScheduleId)
-                .ToListAsync(cancellation);
-        }
+        public PeriodicShiftsRepository(ApplicationDbContext context)
+            : base(context) { }
     }
 }

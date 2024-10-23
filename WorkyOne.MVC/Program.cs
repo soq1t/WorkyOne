@@ -1,12 +1,4 @@
-using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using WorkyOne.AppServices.Interfaces.Repositories.Users;
-using WorkyOne.Contracts.DTOs.Common;
-using WorkyOne.Contracts.DTOs.Schedule.Common;
-using WorkyOne.Contracts.Requests.Common;
 using WorkyOne.DependencyRegister;
-using WorkyOne.Domain.Entities.Schedule.Common;
-using WorkyOne.Domain.Entities.Users;
 
 namespace WorkyOne.MVC
 {
@@ -47,31 +39,31 @@ namespace WorkyOne.MVC
             );
 
             //Test(app.Services).Wait();
-            CreateUserData(app.Services).Wait();
+            //CreateUserData(app.Services).Wait();
             app.Run();
         }
 
-        private static async Task CreateUserData(IServiceProvider services)
-        {
-            using var scope = services.CreateScope();
+        //private static async Task CreateUserData(IServiceProvider services)
+        //{
+        //    using var scope = services.CreateScope();
 
-            var repo = scope.ServiceProvider.GetRequiredService<IUserDatasRepository>();
-            var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
+        //    var repo = scope.ServiceProvider.GetRequiredService<IUserDatasRepository>();
+        //    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
 
-            var user = await userManager.FindByNameAsync("soq1t");
+        //    var user = await userManager.FindByNameAsync("soq1t");
 
-            if (user != null)
-            {
-                var request = new UserDataRequest { UserId = user.Id };
-                var data = await repo.GetAsync(request);
+        //    if (user != null)
+        //    {
+        //        var request = new EntityRequest<object>();
+        //        var data = await repo.GetAsync(request);
 
-                if (data == null)
-                {
-                    data = new UserDataEntity(user.Id);
-                    await repo.CreateAsync(data);
-                }
-            }
-        }
+        //        if (data == null)
+        //        {
+        //            data = new UserDataEntity(user.Id);
+        //            await repo.CreateAsync(data);
+        //        }
+        //    }
+        //}
 
         //private static async Task Test(IServiceProvider services)
         //{

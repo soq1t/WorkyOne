@@ -1,6 +1,7 @@
 ﻿using System.Reflection;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Domain.Attributes.Updating;
+using WorkyOne.Domain.Interfaces.Common;
 using WorkyOne.Infrastructure.Exceptions.Utilities.EntityUpdateUtility;
 
 namespace WorkyOne.Infrastructure.Utilities
@@ -15,6 +16,7 @@ namespace WorkyOne.Infrastructure.Utilities
             TEntity source,
             IEnumerable<string>? propNames = null
         )
+            where TEntity : class, IEntity
         {
             List<PropertyInfo> props = GetUpdatableProperties(typeof(TEntity));
 

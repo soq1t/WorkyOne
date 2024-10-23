@@ -2,8 +2,9 @@
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services.Common;
 using WorkyOne.Contracts.DTOs.Common;
-using WorkyOne.Contracts.Requests.Common;
 using WorkyOne.Domain.Entities.Users;
+using WorkyOne.Domain.Requests.Common;
+using WorkyOne.Domain.Requests.Users;
 
 namespace WorkyOne.AppServices.Services.Common
 {
@@ -27,9 +28,14 @@ namespace WorkyOne.AppServices.Services.Common
             _mapper = mapper;
         }
 
-        public async Task<UserInfoDto?> GetUserInfoAsync(string userId)
+        public async Task<UserInfoDto?> GetUserInfoAsync(
+            string userId,
+            CancellationToken cancellation = default
+        )
         {
-            UserEntity? user = await _usersRepo.GetAsync(new UserRequest { Id = userId });
+            var user = await _usersRepo.GetAsync(
+                new EntityRequest<UserEntity> { EntityId = userId, }
+            );
 
             if (user == null)
             {
@@ -37,16 +43,17 @@ namespace WorkyOne.AppServices.Services.Common
             }
 
             UserDataEntity? userData = await _usersDataRepo.GetAsync(
-                new UserDataRequest { UserId = userId }
+                new UserDataRequest { UserId = userId, }
             );
 
             if (userData == null)
             {
                 userData = new UserDataEntity(userId);
-                await _usersDataRepo.CreateAsync(userData);
+                await _usersDataRepo.CreateAsync(userData, cancellation);
+                await _usersDataRepo.SaveChangesAsync(cancellation);
             }
-            UserInfoDto dto = new UserInfoDto();
-            _mapper.Map(user, dto);
+
+            var dto = _mapper.Map<UserInfoDto>(user);
             _mapper.Map(userData, dto);
 
             return dto;
