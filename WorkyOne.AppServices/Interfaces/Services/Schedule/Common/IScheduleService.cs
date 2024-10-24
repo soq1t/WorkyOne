@@ -1,6 +1,7 @@
 ﻿using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Services.Common;
-using WorkyOne.Contracts.Services.GetRequests.Schedule;
+using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
+using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
 
 namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
 {
@@ -41,15 +42,13 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         );
 
         /// <summary>
-        /// Создаёт расписание в базе данных. Возвращает идентификатор созданного расписания в случае успеха
+        /// Создаёт расписание в базе данных на основании <see cref="ScheduleDto"/>
         /// </summary>
-        /// <param name="scheduleName">Название расписания</param>
-        /// <param name="userDataId">ID пользовательских данных, для которых создаётся расписание</param>
+        /// <param name="dto">DTO, на основании которой создаётся расписание</param>
         /// <param name="cancellation">Токен отмены задания</param>
 
         public Task<ServiceResult> CreateScheduleAsync(
-            string scheduleName,
-            string userDataId,
+            ScheduleDto dto,
             CancellationToken cancellation = default
         );
 

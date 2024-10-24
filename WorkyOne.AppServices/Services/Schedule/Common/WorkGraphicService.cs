@@ -5,7 +5,7 @@ using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Services.Common;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
-using WorkyOne.Contracts.Services.GetRequests.Schedule;
+using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
 

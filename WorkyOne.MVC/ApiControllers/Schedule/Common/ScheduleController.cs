@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
+using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
 using WorkyOne.Contracts.Services.GetRequests.Common;
-using WorkyOne.Contracts.Services.GetRequests.Schedule;
+using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
 using WorkyOne.MVC.ViewModels.Api.Schedule.Common;
 
 namespace WorkyOne.MVC.ApiControllers.Schedule.Common
@@ -71,20 +72,16 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
         /// <summary>
         /// Создаёт расписание
         /// </summary>
-        /// <param name="model">Вьюмодель расписания</param>
+        /// <param name="dto">DTO создавемого расписания</param>
         /// <param name="cancellation">Токен отмены задания</param>
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> CreateAsync(
-            [FromBody] CreateScheduleViewModel model,
+            [FromBody] ScheduleDto dto,
             CancellationToken cancellation
         )
         {
-            var result = await _scheduleService.CreateScheduleAsync(
-                model.ScheduleName,
-                model.UserDataId,
-                cancellation
-            );
+            var result = await _scheduleService.CreateScheduleAsync(dto, cancellation);
 
             if (result.IsSucceed)
             {
@@ -149,7 +146,7 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
             CancellationToken cancellation = default
         )
         {
-            request.ScheduleId = id;
+            request.ScheduleId = request.ScheduleId ?? id;
 
             var result = await _workGraphicService.GetGraphicAsync(request, cancellation);
 

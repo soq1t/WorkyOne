@@ -32,12 +32,12 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         );
 
         /// <summary>
-        /// Создаёт шаблон на основе <see cref="TemplateDto"/>
+        /// Создаёт шаблон в базе данных
         /// </summary>
-        /// <param name="dto">DTO создаваемого шаблона</param>
+        /// <param name="model">Модель, содержащая информацию о создаваемом шаблоне</param>
         /// <param name="cancellation">Токен отмены задачи</param>
         public Task<ServiceResult> CreateAsync(
-            TemplateDto dto,
+            TemplateModel model,
             CancellationToken cancellation = default
         );
 

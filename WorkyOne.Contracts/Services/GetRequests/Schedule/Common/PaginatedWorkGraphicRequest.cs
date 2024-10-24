@@ -3,7 +3,7 @@ using WorkyOne.Contracts.Attributes.Validation;
 using WorkyOne.Contracts.Enums.Attributes;
 using WorkyOne.Contracts.Services.GetRequests.Common;
 
-namespace WorkyOne.Contracts.Services.GetRequests.Schedule
+namespace WorkyOne.Contracts.Services.GetRequests.Schedule.Common
 {
     /// <summary>
     /// Запрос на получение рабочего графика

@@ -5,6 +5,8 @@ using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Services.Common;
+using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
+using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Domain.Requests.Users;
@@ -37,33 +39,34 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
         }
 
         public async Task<ServiceResult> CreateScheduleAsync(
-            string scheduleName,
-            string userDataId,
+            ScheduleDto dto,
             CancellationToken cancellation = default
         )
         {
             var userData = await _userDatasRepository.GetAsync(
-                new UserDataRequest { EntityId = userDataId },
+                new UserDataRequest { EntityId = dto.UserDataId },
                 cancellation
             );
 
             if (userData == null)
             {
-                return ServiceResult.Error($"Не найдены пользовательские данные (ID {userDataId})");
+                return ServiceResult.Error(
+                    $"Не найдены пользовательские данные (ID {dto.UserDataId})"
+                );
             }
 
             if (cancellation.IsCancellationRequested)
             {
                 return ServiceResult.CancellationRequested();
             }
-            var schedule = new ScheduleEntity() { UserDataId = userDataId, Name = scheduleName, };
+            var schedule = _mapper.Map<ScheduleEntity>(dto);
 
             var result = await _schedulesRepository.CreateAsync(schedule, cancellation);
 
             if (result.IsSuccess)
             {
                 await _schedulesRepository.SaveChangesAsync(cancellation);
-                return ServiceResult.Ok($"Расписание успешно создано!");
+                return ServiceResult.Ok($"Расписание (ID: {schedule.Id}) успешно создано!");
             }
             else
             {
@@ -127,7 +130,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
         }
 
         public async Task<List<ScheduleDto>> GetManyAsync(
-            ContractRequest.PaginatedScheduleRequest request,
+            ContractRequest.Common.PaginatedScheduleRequest request,
             CancellationToken cancellation = default
         )
         {

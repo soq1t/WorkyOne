@@ -9,6 +9,7 @@ using WorkyOne.Contracts.Services.Common;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Requests.Common;
+using WorkyOne.Domain.Requests.Schedule.Common;
 
 namespace WorkyOne.AppServices.Services.Schedule.Common
 {
@@ -18,6 +19,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
     public sealed class TemplateService : ITemplateService
     {
         private readonly ITemplatesRepository _templatesRepo;
+        private readonly ISchedulesRepository _schedulesRepo;
         private readonly IShiftSequencesRepository _shiftsSequencesRepo;
         private readonly IMapper _mapper;
         private readonly IEntityUpdateUtility _updateUtility;
@@ -26,34 +28,43 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             ITemplatesRepository templatesRepo,
             IShiftSequencesRepository shiftsSequencesRepo,
             IMapper mapper,
-            IEntityUpdateUtility updateUtility
+            IEntityUpdateUtility updateUtility,
+            ISchedulesRepository schedulesRepo
         )
         {
             _templatesRepo = templatesRepo;
             _shiftsSequencesRepo = shiftsSequencesRepo;
             _mapper = mapper;
             _updateUtility = updateUtility;
+            _schedulesRepo = schedulesRepo;
         }
 
         public async Task<ServiceResult> CreateAsync(
-            TemplateDto dto,
+            TemplateModel model,
             CancellationToken cancellation = default
         )
         {
-            var request = new EntityRequest<TemplateEntity>(dto.Id);
-            var existed = await _templatesRepo.GetAsync(request, cancellation);
+            var schedule = await _schedulesRepo.GetAsync(
+                new ScheduleRequest(model.ScheduleId, false),
+                cancellation
+            );
 
-            if (cancellation.IsCancellationRequested)
+            if (schedule == null)
             {
-                return ServiceResult.CancellationRequested();
+                return ServiceResult.Error(
+                    $"Указанное расписание (ID: {model.ScheduleId}) не найдено"
+                );
             }
 
-            if (existed != null)
+            if (schedule.TemplateId != null)
             {
-                return ServiceResult.Error($"Такой шаблон (ID: {dto.Id}) уже существует");
+                return ServiceResult.Error(
+                    $"У указанного расписания (ID: {schedule.Id}) уже есть шаблон (ID: {schedule.TemplateId})"
+                );
             }
 
-            var entity = _mapper.Map<TemplateEntity>(dto);
+            var entity = _mapper.Map<TemplateEntity>(model.Template);
+            entity.ScheduleId = schedule.Id;
 
             var result = await _templatesRepo.CreateAsync(entity, cancellation);
 
@@ -181,6 +192,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             );
 
             var sequence = _mapper.Map<List<ShiftSequenceEntity>>(model.Sequences);
+            sequence.ForEach(x => x.Template = template);
 
             var result = await _shiftsSequencesRepo.CreateManyAsync(sequence, cancellation);
 

@@ -22,6 +22,7 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
         /// <summary>
         /// ID данных пользователя
         /// </summary>
+        [Required]
         public string UserDataId { get; set; }
 
         /// <summary>

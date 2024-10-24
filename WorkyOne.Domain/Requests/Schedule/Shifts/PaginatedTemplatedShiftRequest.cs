@@ -13,7 +13,7 @@ namespace WorkyOne.Domain.Requests.Schedule.Shifts
         /// Создаёт запрос на получение множества <see cref="TemplatedShiftEntity"/> для указанного <see cref="TemplateEntity"/>
         /// </summary>
         /// <param name="templateId">Идентификатор <see cref="TemplateEntity"/></param>
-        public PaginatedTemplatedShiftRequest(string? templateId)
+        public PaginatedTemplatedShiftRequest(string? templateId = null)
         {
             TemplateId = templateId;
         }
