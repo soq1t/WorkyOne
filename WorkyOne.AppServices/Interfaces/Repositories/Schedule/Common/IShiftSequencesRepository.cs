@@ -13,5 +13,6 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common
             ShiftSequenceEntity,
             EntityRequest<ShiftSequenceEntity>,
             PaginatedShiftSequencesRequest
-        > { }
+        >,
+            IDeleteByConditionRepository<ShiftSequenceEntity> { }
 }

@@ -193,7 +193,7 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
             return _context.SaveChangesAsync(cancellation);
         }
 
-        public RepositoryResult Update(TEntity entity, CancellationToken cancellation = default)
+        public RepositoryResult Update(TEntity entity)
         {
             if (_context.Entry(entity).State == EntityState.Detached)
             {
@@ -209,10 +209,7 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
             }
         }
 
-        public RepositoryResult UpdateMany(
-            IEnumerable<TEntity> entities,
-            CancellationToken cancellation = default
-        )
+        public RepositoryResult UpdateMany(IEnumerable<TEntity> entities)
         {
             var result = new RepositoryResult();
 

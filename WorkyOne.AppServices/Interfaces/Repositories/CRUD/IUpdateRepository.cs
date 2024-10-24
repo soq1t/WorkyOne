@@ -14,17 +14,12 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.CRUD
         /// Производит обновление сущности <paramref name="entity"/> в базе данных
         /// </summary>
         /// <param name="entity">Обновляемая сущность</param>
-        /// <param name="cancellation">Токен отмены задания</param>
-        public RepositoryResult Update(TEntity entity, CancellationToken cancellation = default);
+        public RepositoryResult Update(TEntity entity);
 
         /// <summary>
         /// Производит обновление множества сущностей <paramref name="entity"/> в базе данных
         /// </summary>
         /// <param name="entities">Список обновляемых сущностей</param>
-        /// <param name="cancellation">Токен отмены задания</param>
-        public RepositoryResult UpdateMany(
-            IEnumerable<TEntity> entities,
-            CancellationToken cancellation = default
-        );
+        public RepositoryResult UpdateMany(IEnumerable<TEntity> entities);
     }
 }
