@@ -1,10 +1,10 @@
 ﻿using AutoMapper;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
-using WorkyOne.AppServices.Interfaces.Services;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
+using WorkyOne.Contracts.Services;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Domain.Requests.Users;
@@ -36,7 +36,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             _entityUpdateUtility = entityUpdateUtility;
         }
 
-        public async Task<string?> CreateScheduleAsync(
+        public async Task<ServiceResult> CreateScheduleAsync(
             string scheduleName,
             string userDataId,
             CancellationToken cancellation = default
@@ -49,12 +49,12 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             if (userData == null)
             {
-                return null;
+                return ServiceResult.Error($"Не найдены пользовательские данные (ID {userDataId})");
             }
 
             if (cancellation.IsCancellationRequested)
             {
-                return null;
+                return ServiceResult.CancellationRequested();
             }
             var schedule = new ScheduleEntity() { UserDataId = userDataId, Name = scheduleName, };
 
@@ -63,15 +63,15 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             if (result.IsSuccess)
             {
                 await _schedulesRepository.SaveChangesAsync(cancellation);
-                return schedule.Id;
+                return ServiceResult.Ok($"Расписание успешно создано!");
             }
             else
             {
-                return null;
+                return ServiceResult.FromRepositoryResult(result);
             }
         }
 
-        public async Task<bool> DeleteSchedulesAsync(
+        public async Task<ServiceResult> DeleteSchedulesAsync(
             List<string> schedulesIds,
             CancellationToken cancellation = default
         )
@@ -80,15 +80,18 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             if (cancellation.IsCancellationRequested)
             {
-                return false;
+                return ServiceResult.CancellationRequested();
             }
 
             if (result.IsSuccess)
             {
                 await _schedulesRepository.SaveChangesAsync(cancellation);
+                return ServiceResult.Ok("Расписание успешно удалено!");
             }
-
-            return result.IsSuccess;
+            else
+            {
+                return ServiceResult.FromRepositoryResult(result);
+            }
         }
 
         public async Task<ScheduleDto?> GetAsync(
@@ -143,7 +146,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             return dtos;
         }
 
-        public async Task<bool> UpdateScheduleAsync(
+        public async Task<ServiceResult> UpdateScheduleAsync(
             ScheduleDto scheduleDto,
             CancellationToken cancellation = default
         )
@@ -156,7 +159,9 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             if (target == null)
             {
-                return false;
+                return ServiceResult.Error(
+                    $"Не найдено обновляемое расписание (ID: {scheduleDto.Id})"
+                );
             }
 
             _entityUpdateUtility.Update(target, source);
@@ -166,9 +171,12 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             if (result.IsSuccess)
             {
                 await _schedulesRepository.SaveChangesAsync(cancellation);
+                return ServiceResult.Ok("Расписание успешно обновлено!");
             }
-
-            return result.IsSuccess;
+            else
+            {
+                return ServiceResult.FromRepositoryResult(result);
+            }
         }
     }
 }

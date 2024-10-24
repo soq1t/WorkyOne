@@ -82,13 +82,13 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
                 cancellation
             );
 
-            if (string.IsNullOrEmpty(result))
+            if (result.IsSucceed)
             {
-                return BadRequest();
+                return Ok(result.SucceedMessage);
             }
             else
             {
-                return Ok();
+                return BadRequest(result.GetErrors());
             }
         }
 
