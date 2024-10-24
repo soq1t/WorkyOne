@@ -1,4 +1,5 @@
 ﻿using WorkyOne.Contracts.DTOs.Schedule.Common;
+using WorkyOne.Contracts.Repositories.Requests.Schedule.Common;
 using WorkyOne.Domain.Requests.Schedule;
 
 namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
@@ -32,14 +33,10 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// <summary>
         /// Возвращает множестно расписаний из базы данных
         /// </summary>
-        /// <param name="pageIndex">Номер страницы</param>
-        /// <param name="amount">Количество на странице</param>
-        /// <param name="includeFullData">Включать ли все данные в запрос</param>
+        /// <param name="request">Запрос на получение данных</param>
         /// <param name="cancellation">Токен отмены задачи</param>
         public Task<List<ScheduleDto>> GetManyAsync(
-            int pageIndex,
-            int amount,
-            bool includeFullData = false,
+            PaginatedScheduleRequest request,
             CancellationToken cancellation = default
         );
 
@@ -75,45 +72,6 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
 
         public Task<bool> UpdateScheduleAsync(
             ScheduleDto scheduleDto,
-            CancellationToken cancellation = default
-        );
-
-        /// <summary>
-        /// Создаёт и сохраняет в базу данных рабочий график согласно заданному расписанию
-        /// </summary>
-        /// <param name="scheduleId">Идентификатор расписания, согласно которому создаётся график</param>
-        /// <param name="startDate">Дата, с которой начинается расчёт графика</param>
-        /// <param name="endDate">Дата, которой оканчивается расчёт графика</param>
-        /// <param name="cancellation">Токен отмены задания</param>
-
-        public Task<List<DailyInfoDto>> GenerateDailyAsync(
-            string scheduleId,
-            DateOnly startDate,
-            DateOnly endDate,
-            CancellationToken cancellation = default
-        );
-
-        /// <summary>
-        /// Удаляет из базы данных рассчитанный рабочий график для указанного расписания
-        /// </summary>
-        /// <param name="scheduleId">Идентификатор расписания, для которого удаляется график</param>
-        /// <param name="cancellation">Токен отмены задания</param>
-
-        public Task<bool> ClearDailyAsync(
-            string scheduleId,
-            CancellationToken cancellation = default
-        );
-
-        /// <summary>
-        /// Возвращает рабочий график для указанного расписания
-        /// </summary>
-        /// <param name="scheduleId">Идентификатор расписания</param>
-        /// <param name="cancellation">Токен отмены задания</param>
-
-        public Task<List<DailyInfoDto>> GetDailyAsync(
-            string scheduleId,
-            DateOnly startDate,
-            DateOnly endDate,
             CancellationToken cancellation = default
         );
     }

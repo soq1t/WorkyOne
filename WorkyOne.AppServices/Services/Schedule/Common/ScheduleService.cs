@@ -8,6 +8,7 @@ using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Domain.Requests.Users;
+using ContractRequest = WorkyOne.Contracts.Repositories.Requests.Schedule.Common;
 
 namespace WorkyOne.AppServices.Services.Schedule.Common
 {
@@ -17,47 +18,22 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
     public sealed class ScheduleService : IScheduleService
     {
         private readonly ISchedulesRepository _schedulesRepository;
-        private readonly IDailyInfosRepository _dailyInfosRepository;
         private readonly IUserDatasRepository _userDatasRepository;
         private readonly IMapper _mapper;
-        private readonly IDateTimeService _dateService;
 
         private readonly IEntityUpdateUtility _entityUpdateUtility;
 
         public ScheduleService(
             ISchedulesRepository schedulesRepository,
-            IDailyInfosRepository dailyInfosRepository,
             IUserDatasRepository userDatasRepository,
             IMapper mapper,
-            IDateTimeService dateService,
             IEntityUpdateUtility entityUpdateUtility
         )
         {
             _schedulesRepository = schedulesRepository;
-            _dailyInfosRepository = dailyInfosRepository;
             _userDatasRepository = userDatasRepository;
             _mapper = mapper;
-            _dateService = dateService;
             _entityUpdateUtility = entityUpdateUtility;
-        }
-
-        public async Task<bool> ClearDailyAsync(
-            string scheduleId,
-            CancellationToken cancellation = default
-        )
-        {
-            var result = await _dailyInfosRepository.DeleteByConditionAsync(e =>
-                e.ScheduleId == scheduleId
-            );
-
-            if (result.IsSuccess)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
         }
 
         public async Task<string?> CreateScheduleAsync(
@@ -86,6 +62,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             if (result.IsSuccess)
             {
+                await _schedulesRepository.SaveChangesAsync(cancellation);
                 return schedule.Id;
             }
             else
@@ -105,51 +82,13 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             {
                 return false;
             }
+
+            if (result.IsSuccess)
+            {
+                await _schedulesRepository.SaveChangesAsync(cancellation);
+            }
+
             return result.IsSuccess;
-        }
-
-        public async Task<List<DailyInfoDto>> GenerateDailyAsync(
-            string scheduleId,
-            DateOnly startDate,
-            DateOnly endDate,
-            CancellationToken cancellation = default
-        )
-        {
-            var schedule = await _schedulesRepository.GetAsync(
-                new ScheduleRequest
-                {
-                    EntityId = scheduleId,
-                    IncludeTemplate = true,
-                    IncludeShifts = true,
-                },
-                cancellation
-            );
-
-            if (schedule == null)
-            {
-                return new List<DailyInfoDto>();
-            }
-
-            var infos = new List<DailyInfoEntity>(endDate.DayNumber - startDate.DayNumber + 1);
-
-            for (DateOnly date = startDate; date <= endDate; date = date.AddDays(1))
-            {
-                if (cancellation.IsCancellationRequested)
-                {
-                    return new List<DailyInfoDto>();
-                }
-                DailyInfoEntity info = GetDailyInfo(schedule, date);
-                infos.Add(info);
-            }
-
-            await _dailyInfosRepository.CreateManyAsync(infos, cancellation);
-
-            if (cancellation.IsCancellationRequested)
-            {
-                return new List<DailyInfoDto>();
-            }
-
-            return _mapper.Map<List<DailyInfoDto>>(infos);
         }
 
         public async Task<ScheduleDto?> GetAsync(
@@ -184,41 +123,20 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             return dtos;
         }
 
-        public async Task<List<DailyInfoDto>> GetDailyAsync(
-            string scheduleId,
-            DateOnly startDate,
-            DateOnly endDate,
-            CancellationToken cancellation = default
-        )
-        {
-            if (endDate < startDate)
-            {
-                return [];
-            }
-
-            var request = new PaginatedDailyInfoRequest(startDate, endDate, scheduleId);
-
-            var entities = await _dailyInfosRepository.GetManyAsync(request, cancellation);
-            var dtos = _mapper.Map<List<DailyInfoDto>>(entities);
-            return dtos;
-        }
-
         public async Task<List<ScheduleDto>> GetManyAsync(
-            int pageIndex,
-            int amount,
-            bool includeFullData = false,
+            ContractRequest.PaginatedScheduleRequest request,
             CancellationToken cancellation = default
         )
         {
-            var request = new PaginatedScheduleRequest
+            var repoRequest = new PaginatedScheduleRequest
             {
-                PageIndex = pageIndex,
-                Amount = amount,
-                IncludeShifts = includeFullData,
-                IncludeTemplate = includeFullData,
+                PageIndex = request.PageIndex.Value,
+                Amount = request.Amount.Value,
+                IncludeShifts = request.IncludeFullData.Value,
+                IncludeTemplate = request.IncludeFullData.Value,
             };
 
-            var entities = await _schedulesRepository.GetManyAsync(request, cancellation);
+            var entities = await _schedulesRepository.GetManyAsync(repoRequest, cancellation);
 
             var dtos = _mapper.Map<List<ScheduleDto>>(entities);
 
@@ -251,79 +169,6 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             }
 
             return result.IsSuccess;
-        }
-
-        private DailyInfoEntity GetDailyInfo(ScheduleEntity schedule, DateOnly date)
-        {
-            var datedShift = schedule.DatedShifts.FirstOrDefault(d => d.Date == date);
-
-            if (datedShift != null)
-            {
-                var info = DailyInfoEntity.CreateFromShiftEntity(datedShift, date);
-                info.ScheduleId = schedule.Id;
-                info.Schedule = schedule;
-                return info;
-            }
-
-            var periodicShift = schedule.PeriodicShifts.FirstOrDefault(d =>
-                d.StartDate <= date && d.EndDate >= date
-            );
-
-            if (periodicShift != null)
-            {
-                var info = DailyInfoEntity.CreateFromShiftEntity(periodicShift, date);
-                info.ScheduleId = schedule.Id;
-                info.Schedule = schedule;
-                return info;
-            }
-
-            if (schedule.Template == null)
-            {
-                return new DailyInfoEntity
-                {
-                    IsBusyDay = false,
-                    Date = date,
-                    Schedule = schedule,
-                    ScheduleId = schedule.Id
-                };
-            }
-            else
-            {
-                var info = GetFromTemplate(schedule.Template, date);
-                info.ScheduleId = schedule.Id;
-                info.Schedule = schedule;
-                return info;
-            }
-        }
-
-        private DailyInfoEntity GetFromTemplate(TemplateEntity template, DateOnly date)
-        {
-            if (template.Sequences.Count == 0)
-            {
-                return new DailyInfoEntity { IsBusyDay = false, Date = date };
-            }
-
-            int sequenceLength = template.Sequences.Count;
-            var passedDays = date.DayNumber - template.StartDate.DayNumber;
-            passedDays = Math.Abs(passedDays);
-            var position = passedDays % sequenceLength;
-
-            if (date >= template.StartDate)
-            {
-                var sequence = template.Sequences.OrderBy(s => s.Position).ToList();
-                var shift = sequence[position].Shift;
-
-                return DailyInfoEntity.CreateFromShiftEntity(shift, date);
-            }
-            else
-            {
-                position = position == 0 ? sequenceLength - 1 : position - 1;
-
-                var sequence = template.Sequences.OrderByDescending(s => s.Position).ToList();
-                var shift = sequence[position].Shift;
-
-                return DailyInfoEntity.CreateFromShiftEntity(shift, date);
-            }
         }
     }
 }

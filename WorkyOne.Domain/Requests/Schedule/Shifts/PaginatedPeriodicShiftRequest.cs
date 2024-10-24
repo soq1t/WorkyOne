@@ -29,7 +29,15 @@ namespace WorkyOne.Domain.Requests.Schedule.Shifts
             set
             {
                 _scheduleId = value;
-                Predicate = (x) => x.ScheduleId == _scheduleId;
+
+                if (value == null)
+                {
+                    Predicate = (x) => true;
+                }
+                else
+                {
+                    Predicate = (x) => x.ScheduleId == value;
+                }
             }
         }
     }

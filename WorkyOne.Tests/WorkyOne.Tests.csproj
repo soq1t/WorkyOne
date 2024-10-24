@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <Folder Include="UnitTests\Repositories\" />
+    <Folder Include="UnitTests\Services\" />
   </ItemGroup>
 
 </Project>

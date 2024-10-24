@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
+using WorkyOne.Contracts.Repositories.Requests.Common;
+using WorkyOne.Contracts.Repositories.Requests.Schedule.Common;
 using WorkyOne.MVC.ViewModels.Api.Schedule.Common;
 
 namespace WorkyOne.MVC.ApiControllers.Schedule.Common
@@ -29,16 +31,11 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> GetManyAsync(
-            [FromQuery] GetManySchedulesViewModel model,
+            [FromQuery] PaginatedScheduleRequest request,
             CancellationToken cancellation = default
         )
         {
-            var result = await _scheduleService.GetManyAsync(
-                model.PageIndex,
-                model.Amount,
-                model.IncludeFullData.Value,
-                cancellation
-            );
+            var result = await _scheduleService.GetManyAsync(request, cancellation);
 
             return Json(result);
         }
@@ -104,16 +101,14 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
         [HttpGet]
         [Route("{scheduleId}/shifts/dated")]
         public async Task<IActionResult> GetDatedShiftsAsync(
-            string scheduleId,
-            [FromQuery] int page,
-            [FromQuery] int amount,
+            [FromRoute] string scheduleId,
+            [FromQuery] PaginatedRequest request,
             CancellationToken cancellation = default
         )
         {
             var shifts = await _datedShiftsService.GetForScheduleAsync(
                 scheduleId,
-                page,
-                amount,
+                request,
                 cancellation
             );
             return Json(shifts);

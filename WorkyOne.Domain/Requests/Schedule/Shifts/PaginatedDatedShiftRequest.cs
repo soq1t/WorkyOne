@@ -13,7 +13,7 @@ namespace WorkyOne.Domain.Requests.Schedule.Shifts
         /// Создаёт запрос на получение множества <see cref="DatedShiftEntity"/> для указанного <see cref="ScheduleEntity"/>
         /// </summary>
         /// <param name="scheduleId">Идентификатор <see cref="ScheduleEntity"/></param>
-        public PaginatedDatedShiftRequest(string? scheduleId)
+        public PaginatedDatedShiftRequest(string? scheduleId = null)
         {
             ScheduleId = scheduleId;
         }
@@ -29,7 +29,15 @@ namespace WorkyOne.Domain.Requests.Schedule.Shifts
             set
             {
                 _scheduleId = value;
-                Predicate = (x) => x.ScheduleId == _scheduleId;
+
+                if (value == null)
+                {
+                    Predicate = (x) => true;
+                }
+                else
+                {
+                    Predicate = (x) => x.ScheduleId == value;
+                }
             }
         }
     }

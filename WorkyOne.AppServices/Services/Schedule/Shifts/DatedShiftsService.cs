@@ -4,6 +4,7 @@ using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts;
+using WorkyOne.Contracts.Repositories.Requests.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
@@ -35,6 +36,62 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
             _entityUpdateUtility = entityUpdateUtility;
         }
 
+        public async Task<DatedShiftDto?> GetAsync(
+            string id,
+            CancellationToken cancellation = default
+        )
+        {
+            var entity = await _datedShiftsRepository.GetAsync(
+                new EntityRequest<DatedShiftEntity> { EntityId = id }
+            );
+
+            if (entity == null)
+            {
+                return null;
+            }
+
+            var dto = _mapper.Map<DatedShiftDto>(entity);
+            return dto;
+        }
+
+        public async Task<List<DatedShiftDto>> GetManyAsync(
+            PaginatedRequest request,
+            CancellationToken cancellation = default
+        )
+        {
+            var pageIndex = request.PageIndex.Value;
+            var amount = request.Amount.Value;
+
+            var repoRequest = new PaginatedDatedShiftRequest
+            {
+                Amount = amount,
+                PageIndex = pageIndex
+            };
+
+            var entities = await _datedShiftsRepository.GetManyAsync(repoRequest, cancellation);
+
+            var dtos = _mapper.Map<List<DatedShiftDto>>(entities);
+            return dtos;
+        }
+
+        public async Task<List<DatedShiftDto>> GetForScheduleAsync(
+            string scheduleId,
+            PaginatedRequest request,
+            CancellationToken cancellation = default
+        )
+        {
+            var repoRequest = new PaginatedDatedShiftRequest(scheduleId)
+            {
+                PageIndex = request.PageIndex.Value,
+                Amount = request.Amount.Value,
+            };
+
+            var entities = await _datedShiftsRepository.GetManyAsync(repoRequest, cancellation);
+            var dtos = _mapper.Map<List<DatedShiftDto>>(entities);
+
+            return dtos;
+        }
+
         public async Task<bool> CreateAsync(
             DatedShiftDto dto,
             string scheduleId,
@@ -59,50 +116,12 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
 
             var result = await _datedShiftsRepository.CreateAsync(shift);
 
-            return result.IsSuccess;
-        }
-
-        public async Task<bool> DeleteAsync(string id, CancellationToken cancellation = default)
-        {
-            var result = await _datedShiftsRepository.DeleteAsync(id, cancellation);
-            return result.IsSuccess;
-        }
-
-        public async Task<DatedShiftDto?> GetAsync(
-            string id,
-            CancellationToken cancellation = default
-        )
-        {
-            var entity = await _datedShiftsRepository.GetAsync(
-                new EntityRequest<DatedShiftEntity> { EntityId = id }
-            );
-
-            if (entity == null)
+            if (result.IsSuccess)
             {
-                return null;
+                await _datedShiftsRepository.SaveChangesAsync(cancellation);
             }
 
-            var dto = _mapper.Map<DatedShiftDto>(entity);
-            return dto;
-        }
-
-        public async Task<List<DatedShiftDto>> GetForScheduleAsync(
-            string scheduleId,
-            int page,
-            int amount,
-            CancellationToken cancellation = default
-        )
-        {
-            var request = new PaginatedDatedShiftRequest(scheduleId)
-            {
-                PageIndex = page,
-                Amount = amount,
-            };
-
-            var entities = await _datedShiftsRepository.GetManyAsync(request, cancellation);
-            var dtos = _mapper.Map<List<DatedShiftDto>>(entities);
-
-            return dtos;
+            return result.IsSuccess;
         }
 
         public async Task<bool> UpdateAsync(
@@ -134,6 +153,18 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
             {
                 return false;
             }
+        }
+
+        public async Task<bool> DeleteAsync(string id, CancellationToken cancellation = default)
+        {
+            var result = await _datedShiftsRepository.DeleteAsync(id, cancellation);
+
+            if (result.IsSuccess)
+            {
+                await _datedShiftsRepository.SaveChangesAsync(cancellation);
+            }
+
+            return result.IsSuccess;
         }
     }
 }

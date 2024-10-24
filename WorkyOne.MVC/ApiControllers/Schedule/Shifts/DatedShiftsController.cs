@@ -1,14 +1,15 @@
 ﻿using System.Runtime.CompilerServices;
 using Microsoft.AspNetCore.Mvc;
+using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts;
+using WorkyOne.Contracts.Repositories.Requests.Common;
 using WorkyOne.MVC.ViewModels.Api.Schedule.Shifts;
 
 namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
 {
     [ApiController]
     [Route("api/shifts/dated")]
-    [Route("api/schedule/{scheduleId}/shifts/dated")]
     public class DatedShiftsController : Controller
     {
         private readonly IDatedShiftsService _datedShiftsService;
@@ -18,6 +19,18 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
             _datedShiftsService = datedShiftsService;
         }
 
+        [HttpGet]
+        [Route("")]
+        public async Task<IActionResult> GetManyAsync(
+            [FromQuery] PaginatedRequest request,
+            CancellationToken cancellation = default
+        )
+        {
+            var result = await _datedShiftsService.GetManyAsync(request, cancellation);
+
+            return Json(result);
+        }
+
         /// <summary>
         /// Возвращает "датированную" смену
         /// </summary>
@@ -25,7 +38,7 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
         /// <param name="cancellation">Токен отмены задания</param>
         [HttpGet]
         [Route("{id}")]
-        public async Task<IActionResult> GetDatedShiftAsync(
+        public async Task<IActionResult> GetAsync(
             string id,
             CancellationToken cancellation = default
         )
@@ -49,8 +62,8 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
         /// <param name="cancellation">Токен отмены задания</param>
         [HttpPost]
         [Route("")]
-        public async Task<IActionResult> CreateDatedShiftAsync(
-            [FromBody] DatedShiftViewModel viewModel,
+        public async Task<IActionResult> CreateAsync(
+            [FromBody] CreateDatedShiftViewModel viewModel,
             CancellationToken cancellation = default
         )
         {
@@ -77,7 +90,7 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
         /// <param name="cancellationToken">Токен отмены задания</param>
         [HttpDelete]
         [Route("{id}")]
-        public async Task<IActionResult> DeleteDatedShiftAsync(
+        public async Task<IActionResult> DeleteAsync(
             [FromRoute] string id,
             CancellationToken cancellationToken
         )
@@ -96,15 +109,18 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
         /// <summary>
         /// Обновляет "датированную" смену
         /// </summary>
+        /// <param name="id">Идентификатор обновляемой смены</param>
         /// <param name="dto">DTO обновляемой смены</param>
         /// <param name="cancellationToken">Токен отмены задания</param>
         [HttpPut]
         [Route("{id}")]
-        public async Task<IActionResult> UpdateDatedShiftAsync(
+        public async Task<IActionResult> UpdateAsync(
+            [FromRoute] string id,
             [FromBody] DatedShiftDto dto,
             CancellationToken cancellationToken
         )
         {
+            dto.Id = id;
             var result = await _datedShiftsService.UpdateAsync(dto, cancellationToken);
 
             if (result)

@@ -1,4 +1,5 @@
-﻿using WorkyOne.Contracts.Repositories.Common;
+﻿using System.Linq.Expressions;
+using WorkyOne.Contracts.Repositories.Common;
 using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.AppServices.Interfaces.Repositories.CRUD
@@ -16,7 +17,7 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.CRUD
         /// <param name="predicate">Условие удаления сущностей</param>
         /// <param name="cancellation">Токен отмены задачи</param>
         public Task<RepositoryResult> DeleteByConditionAsync(
-            Func<TEntity, bool> predicate,
+            Expression<Func<TEntity, bool>> predicate,
             CancellationToken cancellation = default
         );
     }

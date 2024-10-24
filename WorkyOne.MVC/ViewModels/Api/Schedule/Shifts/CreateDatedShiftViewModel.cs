@@ -6,7 +6,7 @@ namespace WorkyOne.MVC.ViewModels.Api.Schedule.Shifts
     /// <summary>
     /// Вьюмодель для <see cref="DatedShiftDto"/>
     /// </summary>
-    public sealed class DatedShiftViewModel
+    public sealed class CreateDatedShiftViewModel
     {
         /// <summary>
         /// Идентификатор расписания, к оторому относится <see cref="DatedShiftDto"/>

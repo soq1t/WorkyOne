@@ -40,7 +40,7 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
                 return RepositoryResult.CancelationRequested();
             }
 
-            if (existed != null)
+            if (existed == null)
             {
                 _context.Set<TEntity>().Add(entity);
                 return new RepositoryResult(entity.Id);
@@ -92,12 +92,8 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
                 return RepositoryResult.CancelationRequested();
             }
 
-            foreach (var entity in newEntities)
-            {
-                _context.Set<TEntity>().Add(entity);
-                result.SucceedIds.Add(entity.Id);
-            }
-
+            _context.Set<TEntity>().AddRange(newEntities);
+            result.SucceedIds = newEntities.Select(e => e.Id).ToList();
             return result;
         }
 

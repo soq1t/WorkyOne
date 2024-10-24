@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.Contracts.Repositories.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
@@ -21,11 +22,11 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             : base(context) { }
 
         public async Task<RepositoryResult> DeleteByConditionAsync(
-            Func<DailyInfoEntity, bool> predicate,
+            Expression<Func<DailyInfoEntity, bool>> predicate,
             CancellationToken cancellation = default
         )
         {
-            await _context.DailyInfos.Where(e => predicate(e)).ExecuteDeleteAsync(cancellation);
+            await _context.DailyInfos.Where(predicate).ExecuteDeleteAsync(cancellation);
 
             if (cancellation.IsCancellationRequested)
             {
