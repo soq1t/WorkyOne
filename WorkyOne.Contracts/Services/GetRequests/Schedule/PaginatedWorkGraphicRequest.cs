@@ -1,18 +1,18 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using WorkyOne.Contracts.Attributes.Validation;
 using WorkyOne.Contracts.Enums.Attributes;
+using WorkyOne.Contracts.Services.GetRequests.Common;
 
-namespace WorkyOne.Contracts.Repositories.Requests.Common
+namespace WorkyOne.Contracts.Services.GetRequests.Schedule
 {
     /// <summary>
-    /// Запрос на проведение манипуляций с рабочим графиком согласно указанному расписанию
+    /// Запрос на получение рабочего графика
     /// </summary>
-    public sealed class WorkGraphicRequest : PaginatedRequest
+    public sealed class PaginatedWorkGraphicRequest : PaginatedRequest
     {
         /// <summary>
-        /// Идентификатор расписания
+        /// Идентификатор рабочего графика
         /// </summary>
-        [Required(ErrorMessage = "Введите идентификатор расписания")]
         public string? ScheduleId { get; set; }
 
         /// <summary>

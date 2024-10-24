@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WorkyOne.Contracts.Repositories.Requests.Common;
+using WorkyOne.Contracts.Services.GetRequests.Common;
 
-namespace WorkyOne.Contracts.Repositories.Requests.Schedule.Common
+namespace WorkyOne.Contracts.Services.GetRequests.Schedule
 {
     /// <summary>
     /// Пагинированный запрос на получение информации о расписаниях из репозитория

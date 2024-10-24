@@ -16,7 +16,7 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
         /// <summary>
         /// Идентификатор сущности
         /// </summary>
-        public string Id { get; set; }
+        //public string Id { get; set; }
 
         /// <summary>
         /// Название рабочего дня

@@ -4,11 +4,11 @@ using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
-using WorkyOne.Contracts.Services;
+using WorkyOne.Contracts.Services.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Domain.Requests.Users;
-using ContractRequest = WorkyOne.Contracts.Repositories.Requests.Schedule.Common;
+using ContractRequest = WorkyOne.Contracts.Services.GetRequests.Schedule;
 
 namespace WorkyOne.AppServices.Services.Schedule.Common
 {

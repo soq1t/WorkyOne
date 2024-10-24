@@ -27,8 +27,20 @@ namespace WorkyOne.Contracts.Attributes.Validation
                 return new ValidationResult($"Неизвестное свойство: {_comparePropertyName}");
             }
 
-            var compareValue = (DateOnly)compareProperty.GetValue(validationContext.ObjectInstance);
-            var currentValue = (DateOnly)value;
+            var compareValue = (DateOnly?)
+                compareProperty.GetValue(validationContext.ObjectInstance);
+
+            var currentValue = (DateOnly?)value;
+
+            if (compareValue == null)
+            {
+                return new ValidationResult($"{_comparePropertyName} must be not null");
+            }
+
+            if (currentValue == null)
+            {
+                return new ValidationResult($"{validationContext.MemberName} must be not null");
+            }
 
             switch (_mode)
             {
@@ -40,7 +52,7 @@ namespace WorkyOne.Contracts.Attributes.Validation
                     else
                     {
                         return new ValidationResult(
-                            $"Ошибка: значение должно быть больше чем {compareValue}"
+                            $"Ошибка: значение должно быть больше чем {_comparePropertyName}"
                         );
                     }
                 case DateCompareMode.Less:
@@ -51,7 +63,7 @@ namespace WorkyOne.Contracts.Attributes.Validation
                     else
                     {
                         return new ValidationResult(
-                            $"Ошибка: значение должно быть меньше чем {compareValue}"
+                            $"Ошибка: значение должно быть меньше чем {_comparePropertyName}"
                         );
                     }
                 case DateCompareMode.MoreOrEquial:
@@ -62,7 +74,7 @@ namespace WorkyOne.Contracts.Attributes.Validation
                     else
                     {
                         return new ValidationResult(
-                            $"Ошибка: значение должно быть больше или равно {compareValue}"
+                            $"Ошибка: значение должно быть больше или равно {_comparePropertyName}"
                         );
                     }
                 case DateCompareMode.LessOrEquial:
@@ -73,7 +85,7 @@ namespace WorkyOne.Contracts.Attributes.Validation
                     else
                     {
                         return new ValidationResult(
-                            $"Ошибка: значение должно быть меньше или равно {compareValue}"
+                            $"Ошибка: значение должно быть меньше или равно {_comparePropertyName}"
                         );
                     }
                 case DateCompareMode.Equial:
@@ -84,7 +96,7 @@ namespace WorkyOne.Contracts.Attributes.Validation
                     else
                     {
                         return new ValidationResult(
-                            $"Ошибка: значение должно быть равно {compareValue}"
+                            $"Ошибка: значение должно быть равно {_comparePropertyName}"
                         );
                     }
                 case DateCompareMode.NotEquial:
@@ -95,7 +107,7 @@ namespace WorkyOne.Contracts.Attributes.Validation
                     else
                     {
                         return new ValidationResult(
-                            $"Ошибка: значение не должно быть равно {compareValue}"
+                            $"Ошибка: значение не должно быть равно {_comparePropertyName}"
                         );
                     }
 

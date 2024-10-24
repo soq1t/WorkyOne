@@ -1,6 +1,6 @@
 ﻿using WorkyOne.Contracts.DTOs.Schedule.Common;
-using WorkyOne.Contracts.Repositories.Requests.Schedule.Common;
-using WorkyOne.Contracts.Services;
+using WorkyOne.Contracts.Services.Common;
+using WorkyOne.Contracts.Services.GetRequests.Schedule;
 
 namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
 {

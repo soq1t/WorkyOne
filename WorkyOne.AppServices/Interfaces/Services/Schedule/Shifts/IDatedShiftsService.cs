@@ -1,5 +1,5 @@
 ﻿using WorkyOne.Contracts.DTOs.Schedule.Shifts;
-using WorkyOne.Contracts.Repositories.Requests.Common;
+using WorkyOne.Contracts.Services.GetRequests.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 

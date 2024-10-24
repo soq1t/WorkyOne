@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using WorkyOne.Contracts.Repositories.Common;
 
-namespace WorkyOne.Contracts.Services
+namespace WorkyOne.Contracts.Services.Common
 {
     /// <summary>
     /// Результат выполнения действий сервисом

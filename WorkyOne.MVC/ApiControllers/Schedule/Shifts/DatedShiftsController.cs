@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts;
-using WorkyOne.Contracts.Repositories.Requests.Common;
+using WorkyOne.Contracts.Services.GetRequests.Common;
 using WorkyOne.MVC.ViewModels.Api.Schedule.Shifts;
 
 namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts

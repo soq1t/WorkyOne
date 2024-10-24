@@ -56,6 +56,7 @@ namespace WorkyOne.DependencyRegister
 
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<IDatedShiftsService, DatedShiftsService>();
+            services.AddScoped<IWorkGraphicService, WorkGraphicService>();
         }
 
         /// <summary>

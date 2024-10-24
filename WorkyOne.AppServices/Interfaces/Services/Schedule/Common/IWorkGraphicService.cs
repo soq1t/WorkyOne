@@ -1,6 +1,7 @@
 ﻿using WorkyOne.Contracts.DTOs.Schedule.Common;
-using WorkyOne.Contracts.Repositories.Requests.Common;
-using WorkyOne.Contracts.Services;
+using WorkyOne.Contracts.Services.Common;
+using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
+using WorkyOne.Contracts.Services.GetRequests.Schedule;
 
 namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
 {
@@ -15,18 +16,18 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// <param name="request">Запрос на получение графика</param>
         /// <param name="cancellation">Токен отмены задачи</param>
         public Task<List<DailyInfoDto>> GetGraphicAsync(
-            WorkGraphicRequest request,
+            PaginatedWorkGraphicRequest request,
             CancellationToken cancellation = default
         );
 
         /// <summary>
         /// Создаёт рабочий график согласно заданным в запросе условиям
         /// </summary>
-        /// <param name="request">Запрос на создание графика</param>
+        /// <param name="model">Модель графика</param>
         /// <param name="cancellation">Токен отмены задачи</param>
         /// <returns></returns>
         public Task<ServiceResult> CreateAsync(
-            WorkGraphicRequest request,
+            WorkGraphicModel model,
             CancellationToken cancellation = default
         );
 
@@ -44,11 +45,11 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// <summary>
         /// Очищает рабочий график согласно заданным условиям
         /// </summary>
-        /// <param name="request">Запрос, содержащий информацию об очистке графика</param>
+        /// <param name="model">Модель графика</param>
         /// <param name="cancellation">Токен отмены задачи</param>
         /// <returns></returns>
         public Task<ServiceResult> ClearRangeAsync(
-            WorkGraphicRequest request,
+            WorkGraphicModel model,
             CancellationToken cancellation = default
         );
     }

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace WorkyOne.Contracts.Repositories.Requests.Common
+namespace WorkyOne.Contracts.Services.GetRequests.Common
 {
     /// <summary>
     /// Пагинированный запрос на получение данных из репозитория

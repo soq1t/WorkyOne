@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
-using WorkyOne.Contracts.Repositories.Requests.Common;
-using WorkyOne.Contracts.Repositories.Requests.Schedule.Common;
+using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
+using WorkyOne.Contracts.Services.GetRequests.Common;
+using WorkyOne.Contracts.Services.GetRequests.Schedule;
 using WorkyOne.MVC.ViewModels.Api.Schedule.Common;
 
 namespace WorkyOne.MVC.ApiControllers.Schedule.Common
@@ -13,20 +14,23 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
     {
         private readonly IScheduleService _scheduleService;
         private readonly IDatedShiftsService _datedShiftsService;
+        private readonly IWorkGraphicService _workGraphicService;
 
         public ScheduleController(
             IScheduleService scheduleService,
-            IDatedShiftsService datedShiftsService
+            IDatedShiftsService datedShiftsService,
+            IWorkGraphicService workGraphicService
         )
         {
             _scheduleService = scheduleService;
             _datedShiftsService = datedShiftsService;
+            _workGraphicService = workGraphicService;
         }
 
         /// <summary>
         /// Возвращает множество расписаний согласно заданным условиям
         /// </summary>
-        /// <param name="model">Условия получения расписани</param>
+        /// <param name="request">Запрос на получение расписания</param>
         /// <param name="cancellation">Токен отмены задачи</param>
         [HttpGet]
         [Route("")]
@@ -112,6 +116,44 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
                 cancellation
             );
             return Json(shifts);
+        }
+        #endregion
+
+        #region Work Graphic
+        [HttpPost]
+        [Route("{id}/graphic")]
+        public async Task<IActionResult> CreateGraphicAsync(
+            [FromRoute] string id,
+            [FromBody] WorkGraphicModel model,
+            CancellationToken cancellation = default
+        )
+        {
+            model.ScheduleId = id;
+            var result = await _workGraphicService.CreateAsync(model, cancellation);
+
+            if (result.IsSucceed)
+            {
+                return Ok(result.SucceedMessage);
+            }
+            else
+            {
+                return BadRequest(result.GetErrors());
+            }
+        }
+
+        [HttpGet]
+        [Route("{id}/graphic")]
+        public async Task<IActionResult> GetGraphicAsync(
+            [FromRoute] string id,
+            [FromQuery] PaginatedWorkGraphicRequest request,
+            CancellationToken cancellation = default
+        )
+        {
+            request.ScheduleId = id;
+
+            var result = await _workGraphicService.GetGraphicAsync(request, cancellation);
+
+            return Json(result);
         }
         #endregion
     }
