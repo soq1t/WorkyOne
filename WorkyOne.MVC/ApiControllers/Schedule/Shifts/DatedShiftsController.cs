@@ -1,15 +1,14 @@
-﻿using System.Runtime.CompilerServices;
-using Microsoft.AspNetCore.Mvc;
-using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
+﻿using Microsoft.AspNetCore.Mvc;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts;
+using WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts;
 using WorkyOne.Contracts.Services.GetRequests.Common;
-using WorkyOne.MVC.ViewModels.Api.Schedule.Shifts;
 
 namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
 {
     [ApiController]
     [Route("api/shifts/dated")]
+    [Route("api/schedule/{scheduleId}/shifts/dated")]
     public class DatedShiftsController : Controller
     {
         private readonly IDatedShiftsService _datedShiftsService;
@@ -23,10 +22,24 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
         [Route("")]
         public async Task<IActionResult> GetManyAsync(
             [FromQuery] PaginatedRequest request,
+            [FromRoute] string? scheduleId,
             CancellationToken cancellation = default
         )
         {
-            var result = await _datedShiftsService.GetManyAsync(request, cancellation);
+            List<DatedShiftDto> result;
+
+            if (scheduleId != null)
+            {
+                result = await _datedShiftsService.GetForScheduleAsync(
+                    scheduleId,
+                    request,
+                    cancellation
+                );
+            }
+            else
+            {
+                result = await _datedShiftsService.GetManyAsync(request, cancellation);
+            }
 
             return Json(result);
         }
@@ -63,23 +76,31 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> CreateAsync(
-            [FromBody] CreateDatedShiftViewModel viewModel,
+            [FromRoute] string? scheduleId,
+            [FromBody] ShiftModel<DatedShiftDto> model,
             CancellationToken cancellation = default
         )
         {
+            model.ParentId = model.ParentId ?? scheduleId;
+
+            if (model.ParentId == null)
+            {
+                return BadRequest($"{nameof(model)}.{nameof(model.ParentId)} is required");
+            }
+
             var result = await _datedShiftsService.CreateAsync(
-                viewModel.DatedShift,
-                viewModel.ScheduleId,
+                model.Shift,
+                model.ParentId,
                 cancellation
             );
 
-            if (result)
+            if (result.IsSucceed)
             {
-                return Ok();
+                return Ok(result.SucceedMessage);
             }
             else
             {
-                return BadRequest();
+                return BadRequest(result.GetErrors());
             }
         }
 
@@ -96,13 +117,13 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
         )
         {
             var result = await _datedShiftsService.DeleteAsync(id, cancellationToken);
-            if (result)
+            if (result.IsSucceed)
             {
-                return Ok();
+                return Ok(result.SucceedMessage);
             }
             else
             {
-                return BadRequest();
+                return BadRequest(result.GetErrors());
             }
         }
 
@@ -123,13 +144,13 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
             dto.Id = id;
             var result = await _datedShiftsService.UpdateAsync(dto, cancellationToken);
 
-            if (result)
+            if (result.IsSucceed)
             {
-                return Ok();
+                return Ok(result.SucceedMessage);
             }
             else
             {
-                return BadRequest();
+                return BadRequest(result.GetErrors());
             }
         }
     }

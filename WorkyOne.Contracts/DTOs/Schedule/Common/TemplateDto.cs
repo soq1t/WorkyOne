@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using WorkyOne.Contracts.DTOs.Abstractions;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts;
 
@@ -17,7 +12,7 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
         /// <summary>
         /// Идентификатор шаблона
         /// </summary>
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>
         /// Список рабочих смен, используемых в шаблоне
@@ -35,6 +30,6 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
         /// Дата, с которой начинается отсчёт повторений шаблона
         /// </summary>
         [Required]
-        public DateOnly StartDate { get; set; }
+        public DateOnly? StartDate { get; set; }
     }
 }

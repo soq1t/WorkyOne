@@ -10,6 +10,11 @@ namespace WorkyOne.Domain.Requests.Users
 {
     public sealed class UserDataRequest : EntityRequest<UserDataEntity>
     {
+        public UserDataRequest(string? userId = null)
+        {
+            UserId = userId;
+        }
+
         private string? _userId;
 
         /// <summary>
@@ -20,8 +25,16 @@ namespace WorkyOne.Domain.Requests.Users
             get => _userId;
             set
             {
-                Predicate = (x) => x.UserId == value;
                 _userId = value;
+
+                if (value == null)
+                {
+                    Predicate = (x) => true;
+                }
+                else
+                {
+                    Predicate = (x) => x.UserId == value;
+                }
             }
         }
     }

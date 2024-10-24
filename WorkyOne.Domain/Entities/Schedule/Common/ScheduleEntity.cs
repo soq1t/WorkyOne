@@ -26,12 +26,6 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         public UserDataEntity UserData { get; set; }
 
         /// <summary>
-        /// ID шаблона
-        /// </summary>
-        [ForeignKey(nameof(Template))]
-        public string? TemplateId { get; set; }
-
-        /// <summary>
         /// Шаблон, который используется в текущем расписании
         /// </summary>
         public TemplateEntity? Template { get; set; }

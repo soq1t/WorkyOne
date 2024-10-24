@@ -45,7 +45,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
         )
         {
             var schedule = await _schedulesRepo.GetAsync(
-                new ScheduleRequest(model.ScheduleId, false),
+                new ScheduleRequest(model.ScheduleId, true),
                 cancellation
             );
 
@@ -56,14 +56,16 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                 );
             }
 
-            if (schedule.TemplateId != null)
+            if (schedule.Template != null)
             {
                 return ServiceResult.Error(
-                    $"У указанного расписания (ID: {schedule.Id}) уже есть шаблон (ID: {schedule.TemplateId})"
+                    $"У указанного расписания (ID: {schedule.Id}) уже есть шаблон (ID: {schedule.Template.Id})"
                 );
             }
 
             var entity = _mapper.Map<TemplateEntity>(model.Template);
+            entity.Id = Guid.NewGuid().ToString();
+
             entity.ScheduleId = schedule.Id;
 
             var result = await _templatesRepo.CreateAsync(entity, cancellation);

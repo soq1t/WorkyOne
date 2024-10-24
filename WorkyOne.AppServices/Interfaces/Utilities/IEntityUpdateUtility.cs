@@ -1,4 +1,6 @@
-﻿using WorkyOne.Domain.Interfaces.Common;
+﻿using AutoMapper;
+using WorkyOne.Contracts.DTOs.Abstractions;
+using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.AppServices.Interfaces.Utilities
 {

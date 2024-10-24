@@ -1,3 +1,5 @@
+using WorkyOne.AppServices.Interfaces.Services.Schedule.Users;
+using WorkyOne.Contracts.Services.GetRequests.Users;
 using WorkyOne.DependencyRegister;
 
 namespace WorkyOne.MVC
@@ -38,32 +40,24 @@ namespace WorkyOne.MVC
                 pattern: "{controller=Home}/{action=Index}/{id?}"
             );
 
+#if DEBUG
             //Test(app.Services).Wait();
-            //CreateUserData(app.Services).Wait();
+            CreateUserData(app.Services).Wait();
+#endif
+
             app.Run();
         }
 
-        //private static async Task CreateUserData(IServiceProvider services)
-        //{
-        //    using var scope = services.CreateScope();
+        private static async Task CreateUserData(IServiceProvider services)
+        {
+            using var scope = services.CreateScope();
 
-        //    var repo = scope.ServiceProvider.GetRequiredService<IUserDatasRepository>();
-        //    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
+            var usersService = scope.ServiceProvider.GetRequiredService<IUsersService>();
 
-        //    var user = await userManager.FindByNameAsync("soq1t");
-
-        //    if (user != null)
-        //    {
-        //        var request = new EntityRequest<object>();
-        //        var data = await repo.GetAsync(request);
-
-        //        if (data == null)
-        //        {
-        //            data = new UserDataEntity(user.Id);
-        //            await repo.CreateAsync(data);
-        //        }
-        //    }
-        //}
+            var userInfo = await usersService.GetUserInfoAsync(
+                new UserInfoRequest() { UserName = "soq1t", }
+            );
+        }
 
         //private static async Task Test(IServiceProvider services)
         //{

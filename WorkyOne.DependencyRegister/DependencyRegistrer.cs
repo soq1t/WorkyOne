@@ -7,13 +7,14 @@ using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services;
-using WorkyOne.AppServices.Interfaces.Services.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
+using WorkyOne.AppServices.Interfaces.Services.Schedule.Users;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.AppServices.Services.Common;
 using WorkyOne.AppServices.Services.Schedule.Common;
 using WorkyOne.AppServices.Services.Schedule.Shifts;
+using WorkyOne.AppServices.Services.Users;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Schedule.Common;
 using WorkyOne.Infrastructure.Utilities;
@@ -52,7 +53,7 @@ namespace WorkyOne.DependencyRegister
             services.AddTransient<IEntityUpdateUtility, EntityUpdateUtility>();
 
             services.AddScoped<IDateTimeService, DateTimeService>();
-            services.AddScoped<IUserManagementService, UserManagementService>();
+            services.AddScoped<IUsersService, UsersService>();
 
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<IWorkGraphicService, WorkGraphicService>();

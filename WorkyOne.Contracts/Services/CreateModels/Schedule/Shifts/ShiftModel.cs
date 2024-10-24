@@ -1,4 +1,5 @@
-﻿using WorkyOne.Contracts.DTOs.Abstractions;
+﻿using System.ComponentModel.DataAnnotations;
+using WorkyOne.Contracts.DTOs.Abstractions;
 
 namespace WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts
 {
@@ -12,11 +13,12 @@ namespace WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts
         /// <summary>
         /// Идентификатор "родителя" смены
         /// </summary>
-        public string ParentId { get; set; }
+        public string? ParentId { get; set; }
 
         /// <summary>
         /// DTO создаваемой смены
         /// </summary>
+        [Required]
         public TShift Shift { get; set; }
     }
 }

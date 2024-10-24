@@ -71,17 +71,11 @@ namespace WorkyOne.Repositories.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
-                    b.Property<string>("TemplateId")
-                        .HasColumnType("text");
-
                     b.Property<string>("UserDataId")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("TemplateId")
-                        .IsUnique();
 
                     b.HasIndex("UserDataId");
 
@@ -127,6 +121,9 @@ namespace WorkyOne.Repositories.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("ScheduleId")
+                        .IsUnique();
+
                     b.ToTable("Templates");
                 });
 
@@ -139,6 +136,7 @@ namespace WorkyOne.Repositories.Migrations
                         .HasColumnType("time without time zone");
 
                     b.Property<string>("ColorCode")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateOnly>("Date")
@@ -171,6 +169,7 @@ namespace WorkyOne.Repositories.Migrations
                         .HasColumnType("time without time zone");
 
                     b.Property<string>("ColorCode")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<TimeOnly?>("Ending")
@@ -194,6 +193,7 @@ namespace WorkyOne.Repositories.Migrations
                         .HasColumnType("time without time zone");
 
                     b.Property<string>("ColorCode")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateOnly>("EndDate")
@@ -229,6 +229,7 @@ namespace WorkyOne.Repositories.Migrations
                         .HasColumnType("time without time zone");
 
                     b.Property<string>("ColorCode")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<TimeOnly?>("Ending")
@@ -276,17 +277,11 @@ namespace WorkyOne.Repositories.Migrations
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.ScheduleEntity", b =>
                 {
-                    b.HasOne("WorkyOne.Domain.Entities.Schedule.Common.TemplateEntity", "Template")
-                        .WithOne("Schedule")
-                        .HasForeignKey("WorkyOne.Domain.Entities.Schedule.Common.ScheduleEntity", "TemplateId");
-
                     b.HasOne("WorkyOne.Domain.Entities.Users.UserDataEntity", "UserData")
                         .WithMany("Schedules")
                         .HasForeignKey("UserDataId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Template");
 
                     b.Navigation("UserData");
                 });
@@ -308,6 +303,17 @@ namespace WorkyOne.Repositories.Migrations
                     b.Navigation("Shift");
 
                     b.Navigation("Template");
+                });
+
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.TemplateEntity", b =>
+                {
+                    b.HasOne("WorkyOne.Domain.Entities.Schedule.Common.ScheduleEntity", "Schedule")
+                        .WithOne("Template")
+                        .HasForeignKey("WorkyOne.Domain.Entities.Schedule.Common.TemplateEntity", "ScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Schedule");
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.DatedShiftEntity", b =>
@@ -349,14 +355,13 @@ namespace WorkyOne.Repositories.Migrations
 
                     b.Navigation("PeriodicShifts");
 
+                    b.Navigation("Template");
+
                     b.Navigation("Timetable");
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.TemplateEntity", b =>
                 {
-                    b.Navigation("Schedule")
-                        .IsRequired();
-
                     b.Navigation("Sequences");
 
                     b.Navigation("Shifts");

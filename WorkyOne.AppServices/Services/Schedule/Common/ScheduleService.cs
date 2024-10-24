@@ -5,8 +5,6 @@ using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Services.Common;
-using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
-using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Domain.Requests.Users;
@@ -60,6 +58,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                 return ServiceResult.CancellationRequested();
             }
             var schedule = _mapper.Map<ScheduleEntity>(dto);
+            schedule.Id = Guid.NewGuid().ToString();
 
             var result = await _schedulesRepository.CreateAsync(schedule, cancellation);
 

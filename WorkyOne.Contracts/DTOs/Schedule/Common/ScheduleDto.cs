@@ -17,7 +17,7 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
         /// <summary>
         /// ID расписания
         /// </summary>
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
         /// <summary>
         /// ID данных пользователя
@@ -35,7 +35,7 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
         /// <summary>
         /// Шаблон, который используется в текущем расписании
         /// </summary>
-        public TemplateDto Template { get; set; }
+        public TemplateDto? Template { get; set; }
 
         /// <summary>
         /// Список смен, выставляемых на конкретную дату

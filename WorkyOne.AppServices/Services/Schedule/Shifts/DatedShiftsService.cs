@@ -4,6 +4,7 @@ using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts;
+using WorkyOne.Contracts.Services.Common;
 using WorkyOne.Contracts.Services.GetRequests.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 using WorkyOne.Domain.Requests.Common;
@@ -92,7 +93,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
             return dtos;
         }
 
-        public async Task<bool> CreateAsync(
+        public async Task<ServiceResult> CreateAsync(
             DatedShiftDto dto,
             string scheduleId,
             CancellationToken cancellation = default
@@ -101,30 +102,38 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
             var request = new ScheduleRequest { EntityId = scheduleId };
             var schedule = await _schedulesRepository.GetAsync(request, cancellation);
 
-            if (schedule == null || cancellation.IsCancellationRequested)
+            if (cancellation.IsCancellationRequested)
             {
-                return false;
+                return ServiceResult.CancellationRequested();
+            }
+
+            if (schedule == null)
+            {
+                return ServiceResult.Error($"Указанное расписание (ID: {scheduleId}) не найдено");
             }
 
             DatedShiftEntity shift = _mapper.Map<DatedShiftEntity>(dto);
             shift.Schedule = schedule;
+            shift.Id = Guid.NewGuid().ToString();
 
+            var result = await _datedShiftsRepository.CreateAsync(shift, cancellation);
             if (cancellation.IsCancellationRequested)
             {
-                return false;
+                return ServiceResult.CancellationRequested();
             }
-
-            var result = await _datedShiftsRepository.CreateAsync(shift);
 
             if (result.IsSuccess)
             {
                 await _datedShiftsRepository.SaveChangesAsync(cancellation);
+                return ServiceResult.Ok($"Датированная смена (ID: {shift.Id}) успешно создана!");
             }
-
-            return result.IsSuccess;
+            else
+            {
+                return ServiceResult.FromRepositoryResult(result);
+            }
         }
 
-        public async Task<bool> UpdateAsync(
+        public async Task<ServiceResult> UpdateAsync(
             DatedShiftDto dto,
             CancellationToken cancellation = default
         )
@@ -137,34 +146,40 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
 
             if (target == null)
             {
-                return false;
+                return ServiceResult.Error($"Датированная смена (ID: {source.Id}) не была найдена");
             }
 
             _entityUpdateUtility.Update(target, source);
 
-            var result = _datedShiftsRepository.Update(target, cancellation);
+            var result = _datedShiftsRepository.Update(target);
 
             if (result.IsSuccess)
             {
                 await _datedShiftsRepository.SaveChangesAsync(cancellation);
-                return true;
+                return ServiceResult.Ok($"Датированная смена (ID: {target.Id}) успешно обновлена");
             }
             else
             {
-                return false;
+                return ServiceResult.FromRepositoryResult(result);
             }
         }
 
-        public async Task<bool> DeleteAsync(string id, CancellationToken cancellation = default)
+        public async Task<ServiceResult> DeleteAsync(
+            string id,
+            CancellationToken cancellation = default
+        )
         {
             var result = await _datedShiftsRepository.DeleteAsync(id, cancellation);
 
             if (result.IsSuccess)
             {
                 await _datedShiftsRepository.SaveChangesAsync(cancellation);
+                return ServiceResult.Ok($"Датированная смена (ID: {id}) успешно удалена");
             }
-
-            return result.IsSuccess;
+            else
+            {
+                return ServiceResult.FromRepositoryResult(result);
+            }
         }
     }
 }

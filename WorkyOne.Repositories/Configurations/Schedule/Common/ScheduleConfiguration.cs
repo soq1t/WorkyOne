@@ -13,10 +13,7 @@ namespace WorkyOne.Repositories.Configurations.Schedule.Common
         {
             builder.HasKey(x => x.Id);
 
-            builder
-                .HasOne(x => x.Template)
-                .WithOne(x => x.Schedule)
-                .HasForeignKey<ScheduleEntity>(x => x.TemplateId);
+            builder.HasOne(x => x.Template);
 
             builder
                 .HasOne(x => x.UserData)

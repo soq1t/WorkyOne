@@ -17,26 +17,13 @@ namespace WorkyOne.Repositories.Migrations
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    ColorCode = table.Column<string>(type: "text", nullable: true),
+                    ColorCode = table.Column<string>(type: "text", nullable: false),
                     Beginning = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
                     Ending = table.Column<TimeOnly>(type: "time without time zone", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_ExampleShifts", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Templates",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    ScheduleId = table.Column<string>(type: "text", nullable: false),
-                    StartDate = table.Column<DateOnly>(type: "date", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Templates", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -52,74 +39,20 @@ namespace WorkyOne.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TemplatedShifts",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    TemplateId = table.Column<string>(type: "text", nullable: false),
-                    Name = table.Column<string>(type: "text", nullable: false),
-                    ColorCode = table.Column<string>(type: "text", nullable: true),
-                    Beginning = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
-                    Ending = table.Column<TimeOnly>(type: "time without time zone", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_TemplatedShifts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_TemplatedShifts_Templates_TemplateId",
-                        column: x => x.TemplateId,
-                        principalTable: "Templates",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Schedules",
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "text", nullable: false),
                     UserDataId = table.Column<string>(type: "text", nullable: false),
-                    TemplateId = table.Column<string>(type: "text", nullable: true),
                     Name = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Schedules", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Schedules_Templates_TemplateId",
-                        column: x => x.TemplateId,
-                        principalTable: "Templates",
-                        principalColumn: "Id");
-                    table.ForeignKey(
                         name: "FK_Schedules_UserDatas_UserDataId",
                         column: x => x.UserDataId,
                         principalTable: "UserDatas",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ShiftSequences",
-                columns: table => new
-                {
-                    Id = table.Column<string>(type: "text", nullable: false),
-                    TemplateId = table.Column<string>(type: "text", nullable: false),
-                    ShiftId = table.Column<string>(type: "text", nullable: false),
-                    Position = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ShiftSequences", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_ShiftSequences_TemplatedShifts_ShiftId",
-                        column: x => x.ShiftId,
-                        principalTable: "TemplatedShifts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ShiftSequences_Templates_TemplateId",
-                        column: x => x.TemplateId,
-                        principalTable: "Templates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -157,7 +90,7 @@ namespace WorkyOne.Repositories.Migrations
                     Date = table.Column<DateOnly>(type: "date", nullable: false),
                     ScheduleId = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    ColorCode = table.Column<string>(type: "text", nullable: true),
+                    ColorCode = table.Column<string>(type: "text", nullable: false),
                     Beginning = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
                     Ending = table.Column<TimeOnly>(type: "time without time zone", nullable: true)
                 },
@@ -181,7 +114,7 @@ namespace WorkyOne.Repositories.Migrations
                     EndDate = table.Column<DateOnly>(type: "date", nullable: false),
                     ScheduleId = table.Column<string>(type: "text", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    ColorCode = table.Column<string>(type: "text", nullable: true),
+                    ColorCode = table.Column<string>(type: "text", nullable: false),
                     Beginning = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
                     Ending = table.Column<TimeOnly>(type: "time without time zone", nullable: true)
                 },
@@ -192,6 +125,73 @@ namespace WorkyOne.Repositories.Migrations
                         name: "FK_PeriodicShifts_Schedules_ScheduleId",
                         column: x => x.ScheduleId,
                         principalTable: "Schedules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Templates",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    ScheduleId = table.Column<string>(type: "text", nullable: false),
+                    StartDate = table.Column<DateOnly>(type: "date", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Templates", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Templates_Schedules_ScheduleId",
+                        column: x => x.ScheduleId,
+                        principalTable: "Schedules",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "TemplatedShifts",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    TemplateId = table.Column<string>(type: "text", nullable: false),
+                    Name = table.Column<string>(type: "text", nullable: false),
+                    ColorCode = table.Column<string>(type: "text", nullable: false),
+                    Beginning = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
+                    Ending = table.Column<TimeOnly>(type: "time without time zone", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_TemplatedShifts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_TemplatedShifts_Templates_TemplateId",
+                        column: x => x.TemplateId,
+                        principalTable: "Templates",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ShiftSequences",
+                columns: table => new
+                {
+                    Id = table.Column<string>(type: "text", nullable: false),
+                    TemplateId = table.Column<string>(type: "text", nullable: false),
+                    ShiftId = table.Column<string>(type: "text", nullable: false),
+                    Position = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ShiftSequences", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ShiftSequences_TemplatedShifts_ShiftId",
+                        column: x => x.ShiftId,
+                        principalTable: "TemplatedShifts",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ShiftSequences_Templates_TemplateId",
+                        column: x => x.TemplateId,
+                        principalTable: "Templates",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -212,12 +212,6 @@ namespace WorkyOne.Repositories.Migrations
                 column: "ScheduleId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Schedules_TemplateId",
-                table: "Schedules",
-                column: "TemplateId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Schedules_UserDataId",
                 table: "Schedules",
                 column: "UserDataId");
@@ -236,6 +230,12 @@ namespace WorkyOne.Repositories.Migrations
                 name: "IX_TemplatedShifts_TemplateId",
                 table: "TemplatedShifts",
                 column: "TemplateId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Templates_ScheduleId",
+                table: "Templates",
+                column: "ScheduleId",
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -257,16 +257,16 @@ namespace WorkyOne.Repositories.Migrations
                 name: "ShiftSequences");
 
             migrationBuilder.DropTable(
-                name: "Schedules");
-
-            migrationBuilder.DropTable(
                 name: "TemplatedShifts");
 
             migrationBuilder.DropTable(
-                name: "UserDatas");
+                name: "Templates");
 
             migrationBuilder.DropTable(
-                name: "Templates");
+                name: "Schedules");
+
+            migrationBuilder.DropTable(
+                name: "UserDatas");
         }
     }
 }

@@ -5,7 +5,6 @@ using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
 using WorkyOne.Contracts.Services.GetRequests.Common;
 using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
-using WorkyOne.MVC.ViewModels.Api.Schedule.Common;
 
 namespace WorkyOne.MVC.ApiControllers.Schedule.Common
 {
@@ -94,26 +93,26 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
         }
 
         #region Dated Shifts
-        /// <summary>
-        /// Возвращает список "датированных" смен для указанного расписания
-        /// </summary>
-        /// <param name="scheduleId">Идентификатор расписания</param>
-        /// <param name="cancellation">Токен отмены задания</param>
-        [HttpGet]
-        [Route("{scheduleId}/shifts/dated")]
-        public async Task<IActionResult> GetDatedShiftsAsync(
-            [FromRoute] string scheduleId,
-            [FromQuery] PaginatedRequest request,
-            CancellationToken cancellation = default
-        )
-        {
-            var shifts = await _datedShiftsService.GetForScheduleAsync(
-                scheduleId,
-                request,
-                cancellation
-            );
-            return Json(shifts);
-        }
+        ///// <summary>
+        ///// Возвращает список "датированных" смен для указанного расписания
+        ///// </summary>
+        ///// <param name="scheduleId">Идентификатор расписания</param>
+        ///// <param name="cancellation">Токен отмены задания</param>
+        //[HttpGet]
+        //[Route("{scheduleId}/shifts/dated")]
+        //public async Task<IActionResult> GetDatedShiftsAsync(
+        //    [FromRoute] string scheduleId,
+        //    [FromQuery] PaginatedRequest request,
+        //    CancellationToken cancellation = default
+        //)
+        //{
+        //    var shifts = await _datedShiftsService.GetForScheduleAsync(
+        //        scheduleId,
+        //        request,
+        //        cancellation
+        //    );
+        //    return Json(shifts);
+        //}
         #endregion
 
         #region Work Graphic
