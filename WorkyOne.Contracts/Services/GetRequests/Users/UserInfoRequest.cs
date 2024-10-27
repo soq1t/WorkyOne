@@ -1,25 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using WorkyOne.Contracts.DTOs.Common;
+using WorkyOne.Contracts.Interfaces.Services.GetRequests;
 
 namespace WorkyOne.Contracts.Services.GetRequests.Users
 {
     /// <summary>
     /// Запрос на получение <see cref="UserInfoDto"/>
     /// </summary>
-    public class UserInfoRequest
+    public class UserInfoRequest : IUserInfoRequest
     {
-        /// <summary>
-        /// Идентификатор пользователя
-        /// </summary>
-        public string? UserId { get; set; }
+        [Required]
+        public string UserId { get; set; }
 
-        /// <summary>
-        /// Имя пользователя
-        /// </summary>
-        public string? UserName { get; set; }
+        [Required]
+        public string UserName { get; set; }
+
+        [Required]
+        public bool IncludeSchedules { get; set; }
+
+        [Required]
+        public bool IncludeFullSchedulesInfo { get; set; }
     }
 }

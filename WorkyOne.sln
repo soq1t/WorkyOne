@@ -29,7 +29,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkyOne.Contracts", "Worky
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{68642688-2FCF-4FBA-8E22-F49ADF08F093}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WorkyOne.Tests", "WorkyOne.Tests\WorkyOne.Tests.csproj", "{CDA91822-13B1-45EC-B989-02B7F4F558AC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WorkyOne.Tests", "WorkyOne.Tests\WorkyOne.Tests.csproj", "{CDA91822-13B1-45EC-B989-02B7F4F558AC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

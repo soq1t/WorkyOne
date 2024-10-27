@@ -54,7 +54,7 @@ namespace WorkyOne.Tests.UnitTests.Other
             Assert.Equal("Username", dto.UserName);
             Assert.Equal("Name", dto.FirstName);
             Assert.Equal("Email", dto.Email);
-            Assert.Equal(user.Id, dto.UserId);
+            Assert.Equal(user.Id, dto.Id);
             Assert.Equal(userData.Id, dto.UserDataId);
             Assert.Equal(userData.Schedules[0].Id, dto.Schedules[0].Id);
             Assert.Equal(userData.Schedules[0].Name, dto.Schedules[0].Name);

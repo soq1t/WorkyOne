@@ -10,11 +10,6 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
     public class TemplateDto : DtoBase
     {
         /// <summary>
-        /// Идентификатор шаблона
-        /// </summary>
-        public string? Id { get; set; }
-
-        /// <summary>
         /// Список рабочих смен, используемых в шаблоне
         /// </summary>
         [Required]

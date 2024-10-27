@@ -1,7 +1,6 @@
 ﻿using WorkyOne.AppServices.Interfaces.Repositories.CRUD;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Requests.Common;
-using WorkyOne.Domain.Requests.Schedule.Common;
 
 namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common
 {
@@ -12,7 +11,7 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common
         : ICrudRepository<
             ShiftSequenceEntity,
             EntityRequest<ShiftSequenceEntity>,
-            PaginatedShiftSequencesRequest
+            PaginatedRequest<ShiftSequenceEntity>
         >,
             IDeleteByConditionRepository<ShiftSequenceEntity> { }
 }

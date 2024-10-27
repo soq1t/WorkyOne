@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace WorkyOne.Contracts.Services.GetRequests.Common
 {
@@ -17,7 +12,7 @@ namespace WorkyOne.Contracts.Services.GetRequests.Common
         /// </summary>
         [Required(ErrorMessage = "Введите номер страницы")]
         [Range(1, int.MaxValue, ErrorMessage = "Введите корректный номер страницы (более 1)")]
-        public int? PageIndex { get; set; }
+        public int PageIndex { get; set; }
 
         /// <summary>
         /// Количество элементов на странице
@@ -28,6 +23,6 @@ namespace WorkyOne.Contracts.Services.GetRequests.Common
             100,
             ErrorMessage = "Количество элементов на странице должно составлять от 1 до 100"
         )]
-        public int? Amount { get; set; }
+        public int Amount { get; set; }
     }
 }

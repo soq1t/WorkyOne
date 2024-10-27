@@ -1,41 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WorkyOne.Domain.Entities.Users;
+﻿using WorkyOne.Domain.Entities.Users;
+using WorkyOne.Domain.Interfaces.Requests.Schedule;
+using WorkyOne.Domain.Interfaces.Specification;
 using WorkyOne.Domain.Requests.Common;
 
 namespace WorkyOne.Domain.Requests.Users
 {
-    public sealed class UserDataRequest : EntityRequest<UserDataEntity>
+    /// <summary>
+    /// Запрос на получение <see cref="UserDataEntity"/>
+    /// </summary>
+    public sealed class UserDataRequest : EntityRequest<UserDataEntity>, IUserDataRequest
     {
-        public UserDataRequest(string? userId = null)
-        {
-            UserId = userId;
-        }
+        public UserDataRequest(ISpecification<UserDataEntity> specification)
+            : base(specification) { }
 
-        private string? _userId;
+        public bool IncludeSchedules { get; set; } = false;
 
-        /// <summary>
-        /// Идентификатора <see cref="UserEntity"/>, для которого запрашивается <see cref="UserDataEntity"/>
-        /// </summary>
-        public string? UserId
-        {
-            get => _userId;
-            set
-            {
-                _userId = value;
-
-                if (value == null)
-                {
-                    Predicate = (x) => true;
-                }
-                else
-                {
-                    Predicate = (x) => x.UserId == value;
-                }
-            }
-        }
+        public bool IncludeFullSchedulesInfo { get; set; } = false;
     }
 }

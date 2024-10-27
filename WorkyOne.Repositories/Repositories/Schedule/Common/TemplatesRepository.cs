@@ -1,9 +1,9 @@
-﻿using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Repositories.Contextes;
+using WorkyOne.Repositories.Extensions;
 using WorkyOne.Repositories.Repositories.Abstractions;
 
 namespace WorkyOne.Repositories.Repositories.Schedule.Common
@@ -24,19 +24,9 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             CancellationToken cancellation = default
         )
         {
-            Expression<Func<TemplateEntity, bool>>? predicate =
-                (request.EntityId != null) ? (x) => x.Id == request.EntityId : request.Predicate;
-
-            if (predicate == null)
-            {
-                return Task.FromResult<TemplateEntity?>(null);
-            }
-
-            return _context
-                .Templates.Where(predicate)
-                .Include(t => t.Shifts)
-                .Include(t => t.Sequences)
-                .FirstOrDefaultAsync();
+            var query = _context.Templates.Where(request.Specification.ToExpression());
+            query = QueryBuilder(query);
+            return query.FirstOrDefaultAsync(cancellation);
         }
 
         public override Task<List<TemplateEntity>> GetManyAsync(
@@ -44,16 +34,16 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             CancellationToken cancellation = default
         )
         {
-            var skip = (request.PageIndex - 1) * request.Amount;
-            var take = request.Amount;
+            var query = _context.Templates.Where(request.Specification.ToExpression());
+            query = query.AddPagination(request.PageIndex, request.Amount);
+            query = QueryBuilder(query);
+            return query.ToListAsync(cancellation);
+        }
 
-            return _context
-                .Templates.Where(request.Predicate)
-                .Include(t => t.Shifts)
-                .Include(t => t.Sequences)
-                .Skip(skip)
-                .Take(take)
-                .ToListAsync(cancellation);
+        private static IQueryable<TemplateEntity> QueryBuilder(IQueryable<TemplateEntity> query)
+        {
+            query = query.Include(t => t.Shifts).Include(t => t.Sequences);
+            return query;
         }
     }
 }

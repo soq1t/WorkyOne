@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WorkyOne.Domain.Entities.Schedule.Common;
+﻿using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 
 namespace WorkyOne.Domain.Interfaces.Requests.Schedule

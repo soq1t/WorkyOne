@@ -1,6 +1,5 @@
 ﻿using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Services.Common;
-using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
 using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
 
 namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
@@ -25,9 +24,9 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// </summary>
         /// <param name="userDataId">Идентификатор пользовательских данных</param>
         /// <param name="cancellation">Токен отмены задания</param>
-        /// <returns></returns>
         public Task<List<ScheduleDto>> GetByUserDataAsync(
             string userDataId,
+            PaginatedScheduleRequest request,
             CancellationToken cancellation = default
         );
 
@@ -49,17 +48,6 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
 
         public Task<ServiceResult> CreateScheduleAsync(
             ScheduleDto dto,
-            CancellationToken cancellation = default
-        );
-
-        /// <summary>
-        /// Удаляет из базы данных расписания с указанными ID
-        /// </summary>
-        /// <param name="schedulesIds">Список ID удаляемых расписаний</param>
-        /// <param name="cancellation">Токен отмены задания</param>
-
-        public Task<ServiceResult> DeleteSchedulesAsync(
-            List<string> schedulesIds,
             CancellationToken cancellation = default
         );
 

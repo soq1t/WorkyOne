@@ -11,7 +11,7 @@ namespace WorkyOne.Contracts.DTOs.Common
         /// <summary>
         /// Идентификатор пользователя
         /// </summary>
-        public string UserId { get; set; }
+        public string Id { get; set; }
 
         /// <summary>
         /// Идентификатор данных пользователя

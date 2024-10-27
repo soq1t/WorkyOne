@@ -1,5 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using WorkyOne.Contracts.Attributes.Validation;
+﻿using WorkyOne.Contracts.Attributes.Validation;
 
 namespace WorkyOne.Contracts.Services.CreateModels.Schedule.Common
 {

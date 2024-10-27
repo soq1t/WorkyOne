@@ -56,6 +56,13 @@ namespace WorkyOne.Contracts.Services.Common
             return result;
         }
 
+        public static ServiceResult AccessDenied()
+        {
+            var result = new ServiceResult();
+            result.AddError("Доступ запрещён");
+            return result;
+        }
+
         public static ServiceResult CancellationRequested() => Error("Задача отменена");
 
         public static ServiceResult FromRepositoryResult(RepositoryResult repoResult)

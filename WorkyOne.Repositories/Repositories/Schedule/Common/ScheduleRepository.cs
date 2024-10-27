@@ -4,6 +4,7 @@ using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Interfaces.Requests.Schedule;
 using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Repositories.Contextes;
+using WorkyOne.Repositories.Extensions;
 using WorkyOne.Repositories.Repositories.Abstractions;
 
 namespace WorkyOne.Repositories.Repositories.Schedule.Common
@@ -23,8 +24,8 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             CancellationToken cancellation = default
         )
         {
-            IQueryable<ScheduleEntity> query = _context.Schedules.Where(s =>
-                s.Id == request.EntityId
+            IQueryable<ScheduleEntity> query = _context.Schedules.Where(
+                request.Specification.ToExpression()
             );
             query = QueryBuilder(request, query);
 
@@ -36,14 +37,16 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             CancellationToken cancellation = default
         )
         {
-            IQueryable<ScheduleEntity> query = _context.Schedules.Where(request.Predicate);
-            query = QueryBuilder(request, query);
-            query = AddPagination(query, request.PageIndex, request.Amount);
+            IQueryable<ScheduleEntity> query = _context.Schedules.Where(
+                request.Specification.ToExpression()
+            );
+            query = query.AddPagination(request.PageIndex, request.Amount);
 
+            query = QueryBuilder(request, query);
             return query.ToListAsync(cancellation);
         }
 
-        private IQueryable<ScheduleEntity> QueryBuilder(
+        private static IQueryable<ScheduleEntity> QueryBuilder(
             IScheduleRequest request,
             IQueryable<ScheduleEntity> query
         )

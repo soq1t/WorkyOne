@@ -1,9 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using WorkyOne.Contracts.Attributes.Validation;
 
 namespace WorkyOne.Contracts.DTOs.Abstractions
 {
@@ -12,12 +8,6 @@ namespace WorkyOne.Contracts.DTOs.Abstractions
     /// </summary>
     public abstract class ShiftDtoBase : DtoBase
     {
-        /// <summary>
-        /// ID смены
-        /// </summary>
-        [Key]
-        public string Id { get; set; } = Guid.NewGuid().ToString();
-
         /// <summary>
         /// Название смены
         /// </summary>
@@ -43,11 +33,13 @@ namespace WorkyOne.Contracts.DTOs.Abstractions
         /// <summary>
         /// Время начала смены
         /// </summary>
+        [ShiftTime(nameof(Ending))]
         public TimeOnly? Beginning { get; set; }
 
         /// <summary>
         /// Время окончания смены
         /// </summary>
+        [ShiftTime(nameof(Beginning))]
         public TimeOnly? Ending { get; set; }
 
         /// <summary>

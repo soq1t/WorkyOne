@@ -3,9 +3,10 @@ using WorkyOne.AppServices.Interfaces.Repositories.CRUD;
 using WorkyOne.Contracts.Enums.Reposistories;
 using WorkyOne.Contracts.Repositories.Common;
 using WorkyOne.Domain.Entities.Abstractions.Common;
+using WorkyOne.Domain.Interfaces.Specification;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Repositories.Contextes;
-using WorkyOne.Repositories.Extensions.Repositories.Crud;
+using WorkyOne.Repositories.Extensions;
 
 namespace WorkyOne.Repositories.Repositories.Abstractions
 {
@@ -16,7 +17,8 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
     /// <typeparam name="TSingleRequest">Тип запроса на получение сущности <typeparamref name="TEntity"/></typeparam>
     /// <typeparam name="TPaginatedRequest">Тип запроса на получения множества сущностей <typeparamref name="TEntity"/></typeparam>
     public abstract class ApplicationBaseRepository<TEntity, TSingleRequest, TPaginatedRequest>
-        : ICrudRepository<TEntity, TSingleRequest, TPaginatedRequest>
+        : ICrudRepository<TEntity, TSingleRequest, TPaginatedRequest>,
+            IDeleteByConditionRepository<TEntity>
         where TEntity : EntityBase
         where TSingleRequest : EntityRequest<TEntity>
         where TPaginatedRequest : PaginatedRequest<TEntity>
@@ -97,60 +99,49 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
             return result;
         }
 
-        public async Task<RepositoryResult> DeleteAsync(
-            string entityId,
+        public RepositoryResult Delete(TEntity entity)
+        {
+            if (_context.Entry(entity).State == EntityState.Detached)
+            {
+                return new RepositoryResult(
+                    RepositoryErrorType.EntityNotTrackedByContext,
+                    entity.Id
+                );
+            }
+
+            _context.Remove(entity);
+            return new RepositoryResult(entity.Id);
+        }
+
+        public async Task<RepositoryResult> DeleteByConditionAsync(
+            ISpecification<TEntity> specification,
             CancellationToken cancellation = default
         )
         {
-            var deleted = await _context.Set<TEntity>().FindAsync(entityId, cancellation);
+            await _context
+                .Set<TEntity>()
+                .Where(specification.ToExpression())
+                .ExecuteDeleteAsync(cancellation);
 
-            if (cancellation.IsCancellationRequested)
-            {
-                return RepositoryResult.CancelationRequested();
-            }
-
-            if (deleted == null)
-            {
-                return RepositoryResult.CancelationRequested();
-            }
-            else
-            {
-                _context.Remove(deleted);
-                return new RepositoryResult(entityId);
-            }
+            return RepositoryResult.Ok("1");
         }
 
-        public async Task<RepositoryResult> DeleteManyAsync(
-            IEnumerable<string> entitiesIds,
-            CancellationToken cancellation = default
-        )
+        public RepositoryResult DeleteMany(IEnumerable<TEntity> entities)
         {
             var result = new RepositoryResult();
 
-            var existed = await _context
-                .Set<TEntity>()
-                .Where(e => entitiesIds.Contains(e.Id))
-                .ToListAsync(cancellation);
-
-            if (cancellation.IsCancellationRequested)
+            foreach (var item in entities)
             {
-                return RepositoryResult.CancelationRequested();
-            }
-
-            var existedIds = existed.Select(e => e.Id).ToList();
-            result.SucceedIds = existedIds;
-
-            if (existedIds.Count < entitiesIds.Count())
-            {
-                var notExistedIds = entitiesIds.Except(existedIds);
-
-                foreach (var id in notExistedIds)
+                if (_context.Entry(item).State == EntityState.Detached)
                 {
-                    result.AddError(RepositoryErrorType.EntityNotExists, id);
+                    result.AddError(RepositoryErrorType.EntityNotTrackedByContext, item.Id);
+                }
+                else
+                {
+                    _context.Set<TEntity>().Remove(item);
+                    result.SucceedIds.Add(item.Id);
                 }
             }
-
-            _context.Set<TEntity>().RemoveRange(existed);
             return result;
         }
 
@@ -159,21 +150,9 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
             CancellationToken cancellation = default
         )
         {
-            return this.DefaultGetAsync(_context, request, cancellation);
-            //if (request.EntityId != null)
-            //{
-            //    return await _context.Set<TEntity>().FindAsync(request.EntityId, cancellation);
-            //}
-            //else if (request.Predicate != null)
-            //{
-            //    return await _context
-            //        .Set<TEntity>()
-            //        .FirstOrDefaultAsync(e => request.Predicate(e), cancellation);
-            //}
-            //else
-            //{
-            //    return null;
-            //}
+            return _context
+                .Set<TEntity>()
+                .FirstOrDefaultAsync(request.Specification.ToExpression(), cancellation);
         }
 
         public virtual Task<List<TEntity>> GetManyAsync(
@@ -181,9 +160,11 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
             CancellationToken cancellation = default
         )
         {
-            var query = _context.Set<TEntity>().Where(request.Predicate);
+            IQueryable<TEntity> query = _context
+                .Set<TEntity>()
+                .Where(request.Specification.ToExpression());
 
-            query = AddPagination(query, request.PageIndex, request.Amount);
+            query = query.AddPagination(request.PageIndex, request.Amount);
 
             return query.ToListAsync(cancellation);
         }
@@ -234,16 +215,16 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
             return result;
         }
 
-        protected IQueryable<TEntity> AddPagination(
-            IQueryable<TEntity> query,
-            int pageIndex,
-            int amount
-        )
-        {
-            var skip = (pageIndex - 1) * amount;
-            var take = amount;
+        //protected IQueryable<TEntity> AddPagination(
+        //    IQueryable<TEntity> query,
+        //    int pageIndex,
+        //    int amount
+        //)
+        //{
+        //    var skip = (pageIndex - 1) * amount;
+        //    var take = amount;
 
-            return query.Skip(skip).Take(take);
-        }
+        //    return query.Skip(skip).Take(take);
+        //}
     }
 }

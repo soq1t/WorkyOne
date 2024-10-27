@@ -1,7 +1,6 @@
 ﻿using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 using WorkyOne.Domain.Requests.Common;
-using WorkyOne.Domain.Requests.Schedule.Shifts;
 using WorkyOne.Repositories.Contextes;
 using WorkyOne.Repositories.Repositories.Abstractions;
 
@@ -14,7 +13,7 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Shifts
         : ApplicationBaseRepository<
             TemplatedShiftEntity,
             EntityRequest<TemplatedShiftEntity>,
-            PaginatedTemplatedShiftRequest
+            PaginatedRequest<TemplatedShiftEntity>
         >,
             ITemplatedShiftsRepository
     {

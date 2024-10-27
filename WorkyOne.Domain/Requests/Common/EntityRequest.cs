@@ -1,5 +1,5 @@
-﻿using System.Linq.Expressions;
-using WorkyOne.Domain.Interfaces.Common;
+﻿using WorkyOne.Domain.Interfaces.Common;
+using WorkyOne.Domain.Interfaces.Specification;
 
 namespace WorkyOne.Domain.Requests.Common
 {
@@ -11,27 +11,17 @@ namespace WorkyOne.Domain.Requests.Common
         where TEntity : class, IEntity
     {
         /// <summary>
-        /// Идентификатор <typeparamref name="TEntity"/>, которую требуется получить из базы данных
+        /// Спецификация, на основе которой происходит выборка объектов из базы данных
         /// </summary>
-        public string? EntityId { get; set; }
-
-        /// <summary>
-        /// Условие, по которой получается сущность
-        /// </summary>
-        public Expression<Func<TEntity, bool>>? Predicate { get; set; }
+        public ISpecification<TEntity> Specification { get; set; }
 
         /// <summary>
         /// Создаёт запрос на получение <typeparamref name="TEntity"/>
         /// </summary>
-        /// <param name="entityId">Идентификатор запрашиваемой <typeparamref name="TEntity"/></param>
-        /// <param name="predicate">Условия, на основании которых будет запрашиваться <typeparamref name="TEntity"/></param>
-        public EntityRequest(
-            string? entityId = null,
-            Expression<Func<TEntity, bool>>? predicate = null
-        )
+        /// <param name="specification">Спецификация, на основе которой происходит выборка объектов из базы данных</param>
+        public EntityRequest(ISpecification<TEntity> specification)
         {
-            EntityId = entityId;
-            Predicate = predicate;
+            Specification = specification;
         }
     }
 }

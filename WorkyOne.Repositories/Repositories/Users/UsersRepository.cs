@@ -5,7 +5,7 @@ using WorkyOne.Contracts.Repositories.Common;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Repositories.Contextes;
-using WorkyOne.Repositories.Extensions.Repositories.Crud;
+using WorkyOne.Repositories.Extensions;
 
 namespace WorkyOne.Repositories.Repositories.Users
 {
@@ -18,59 +18,37 @@ namespace WorkyOne.Repositories.Repositories.Users
             _context = context;
         }
 
-        public async Task<RepositoryResult> DeleteAsync(
-            string entityId,
-            CancellationToken cancellation = default
-        )
+        public RepositoryResult Delete(UserEntity entity)
         {
-            var deleted = await _context.Users.FindAsync(entityId, cancellation);
-
-            if (cancellation.IsCancellationRequested)
+            if (_context.Entry(entity).State == EntityState.Detached)
             {
-                return RepositoryResult.CancelationRequested();
+                return new RepositoryResult(
+                    RepositoryErrorType.EntityNotTrackedByContext,
+                    entity.Id
+                );
             }
 
-            if (deleted == null)
-            {
-                return RepositoryResult.CancelationRequested();
-            }
-            else
-            {
-                _context.Remove(deleted);
-                return new RepositoryResult(entityId);
-            }
+            _context.Remove(entity);
+            return new RepositoryResult(entity.Id);
         }
 
-        public async Task<RepositoryResult> DeleteManyAsync(
-            IEnumerable<string> entitiesIds,
-            CancellationToken cancellation = default
-        )
+        public RepositoryResult DeleteMany(IEnumerable<UserEntity> entities)
         {
             var result = new RepositoryResult();
 
-            var existed = await _context
-                .Users.Where(e => entitiesIds.Contains(e.Id))
-                .ToListAsync(cancellation);
-
-            if (cancellation.IsCancellationRequested)
+            foreach (var item in entities)
             {
-                return RepositoryResult.CancelationRequested();
-            }
-
-            var existedIds = existed.Select(e => e.Id).ToList();
-            result.SucceedIds = existedIds;
-
-            if (existedIds.Count < entitiesIds.Count())
-            {
-                var notExistedIds = entitiesIds.Except(existedIds);
-
-                foreach (var id in notExistedIds)
+                if (_context.Entry(item).State == EntityState.Detached)
                 {
-                    result.AddError(RepositoryErrorType.EntityNotExists, id);
+                    result.AddError(RepositoryErrorType.EntityNotTrackedByContext, item.Id);
+                }
+                else
+                {
+                    _context.Users.Remove(item);
+                    result.SucceedIds.Add(item.Id);
                 }
             }
 
-            _context.Users.RemoveRange(existed);
             return result;
         }
 
@@ -79,20 +57,10 @@ namespace WorkyOne.Repositories.Repositories.Users
             CancellationToken cancellation = default
         )
         {
-            return this.DefaultGetAsync(_context, request, cancellation);
-
-            //if (request.EntityId != null)
-            //{
-            //    return await _context.Users.FindAsync(request.EntityId, cancellation);
-            //}
-            //else if (request.Predicate != null)
-            //{
-            //    return await _context.Users.FirstOrDefaultAsync(request.Predicate, cancellation);
-            //}
-            //else
-            //{
-            //    return null;
-            //}
+            return _context.Users.FirstOrDefaultAsync(
+                request.Specification.ToExpression(),
+                cancellation
+            );
         }
 
         public Task<List<UserEntity>> GetManyAsync(
@@ -100,14 +68,10 @@ namespace WorkyOne.Repositories.Repositories.Users
             CancellationToken cancellation = default
         )
         {
-            var skip = (request.PageIndex - 1) * request.Amount;
-            var take = request.Amount;
+            var query = _context.Users.Where(request.Specification.ToExpression());
+            query = query.AddPagination(request.PageIndex, request.Amount);
 
-            return _context
-                .Users.Where(request.Predicate)
-                .Skip(skip)
-                .Take(take)
-                .ToListAsync(cancellation);
+            return query.ToListAsync(cancellation);
         }
 
         public Task SaveChangesAsync(CancellationToken cancellationToken = default)

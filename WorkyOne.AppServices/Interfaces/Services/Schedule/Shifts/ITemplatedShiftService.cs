@@ -43,6 +43,18 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
         );
 
         /// <summary>
+        /// Возвращает множество <see cref="TemplatedShiftDto"/>, относящихся к указанному расписанию
+        /// </summary>
+        /// <param name="scheduleId">Идентификатор расписания</param>
+        /// <param name="request">Запрос на получение множества <see cref="TemplatedShiftDto"/></param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        public Task<List<TemplatedShiftDto>> GetByScheduleIdAsync(
+            string scheduleId,
+            PaginatedRequest request,
+            CancellationToken cancellation = default
+        );
+
+        /// <summary>
         /// Создаёт "шаблонную" смену
         /// </summary>
         /// <param name="model">Модель, содержащая информацию о создаваемой смене</param>

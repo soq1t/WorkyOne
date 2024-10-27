@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using WorkyOne.Contracts.DTOs.Common;
@@ -23,5 +24,12 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Users
             UserInfoRequest request,
             CancellationToken cancellation = default
         );
+
+        /// <summary>
+        /// Проверяет, состоит ли пользователь в определённых ролях
+        /// </summary>
+        /// <param name="user">Проверяемый пользователь</param>
+        /// <param name="roles">Роли, которые проверяются для пользователя</param>
+        public bool IsUserInRoles(ClaimsPrincipal user, params string[] roles);
     }
 }

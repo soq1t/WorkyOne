@@ -71,12 +71,12 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
         /// <summary>
         /// Создаёт "датированную" смену для указанного расписания
         /// </summary>
-        /// <param name="viewModel">Вьюмодель создаваемой "датированной" смены</param>
+        /// <param name="model">Модель, содержащая информацию о создаваемой смене</param>
         /// <param name="cancellation">Токен отмены задания</param>
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> CreateAsync(
-            [FromRoute] string? scheduleId,
+            [FromRoute] [FromQuery] string scheduleId,
             [FromBody] ShiftModel<DatedShiftDto> model,
             CancellationToken cancellation = default
         )

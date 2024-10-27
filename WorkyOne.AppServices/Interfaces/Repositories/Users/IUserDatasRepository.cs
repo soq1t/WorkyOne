@@ -9,5 +9,5 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.Users
     /// Интерфейс репозитория по работе с <see cref="UserDataEntity"/>
     /// </summary>
     public interface IUserDatasRepository
-        : ICrudRepository<UserDataEntity, UserDataRequest, PaginatedRequest<UserDataEntity>> { }
+        : ICrudRepository<UserDataEntity, UserDataRequest, PaginatedUserDataRequest> { }
 }

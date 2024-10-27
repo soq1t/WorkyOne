@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
+using WorkyOne.Contracts.Attributes.Validation;
 using WorkyOne.Contracts.DTOs.Abstractions;
+using WorkyOne.Contracts.Enums.Attributes;
 
 namespace WorkyOne.Contracts.DTOs.Schedule
 {
@@ -17,12 +14,14 @@ namespace WorkyOne.Contracts.DTOs.Schedule
         /// Дата начала действия смены
         /// </summary>
         [Required]
-        public DateOnly StartDate { get; set; }
+        [DateCompare(DateCompareMode.LessOrEquial, nameof(EndDate))]
+        public DateOnly? StartDate { get; set; }
 
         /// <summary>
         /// Дата окончания действия смены
         /// </summary>
         [Required]
-        public DateOnly EndDate { get; set; }
+        [DateCompare(DateCompareMode.MoreOrEquial, nameof(StartDate))]
+        public DateOnly? EndDate { get; set; }
     }
 }

@@ -1,4 +1,5 @@
-﻿using WorkyOne.Contracts.DTOs.Schedule.Common;
+﻿using System.ComponentModel.DataAnnotations;
+using WorkyOne.Contracts.DTOs.Schedule.Common;
 
 namespace WorkyOne.Contracts.Services.CreateModels.Schedule.Common
 {
@@ -8,13 +9,14 @@ namespace WorkyOne.Contracts.Services.CreateModels.Schedule.Common
     public class ShiftSequencesModel
     {
         /// <summary>
-        /// Идентификатор шаблона
+        /// Идентификатор шаблона, для которого создаётся последовательность
         /// </summary>
-        public string? TemplateId { get; set; }
+        public string TemplateId { get; set; } = string.Empty;
 
         /// <summary>
         /// Последовательность смен
         /// </summary>
-        public IEnumerable<ShiftSequenceDto> Sequences { get; set; } = new List<ShiftSequenceDto>();
+        [Required]
+        public IEnumerable<ShiftSequenceDto> Sequences { get; set; }
     }
 }

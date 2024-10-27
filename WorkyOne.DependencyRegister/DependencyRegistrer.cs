@@ -55,6 +55,12 @@ namespace WorkyOne.DependencyRegister
             services.AddScoped<IDateTimeService, DateTimeService>();
             services.AddScoped<IUsersService, UsersService>();
 
+#if DEBUG
+            services.AddScoped<IUserAccessInfoProvider, UserAccessMock>();
+#else
+            services.AddScoped<IUserAccessInfoProvider, UserAccessInfoProvider>();
+#endif
+
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<IWorkGraphicService, WorkGraphicService>();
             services.AddScoped<ITemplateService, TemplateService>();

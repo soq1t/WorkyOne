@@ -13,16 +13,18 @@ namespace WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Common
         {
             // Маппинг Entity в DTO
             CreateMap<UserEntity, UserInfoDto>()
-                .ForMember(dto => dto.UserId, opt => opt.MapFrom(e => e.Id));
+                .ForMember(dto => dto.Id, opt => opt.MapFrom(e => e.Id));
 
             CreateMap<UserDataEntity, UserInfoDto>()
-                .ForMember(dto => dto.UserDataId, opt => opt.MapFrom(e => e.Id));
+                .ForMember(dto => dto.UserDataId, opt => opt.MapFrom(e => e.Id))
+                .ForMember(dto => dto.Id, opt => opt.Ignore());
 
             // Маппинг DTO в Entity
             CreateMap<UserInfoDto, UserEntity>()
-                .ForMember(e => e.Id, opt => opt.MapFrom(dto => dto.UserId));
+                .ForMember(e => e.Id, opt => opt.MapFrom(dto => dto.Id));
             CreateMap<UserInfoDto, UserDataEntity>()
-                .ForMember(e => e.Id, opt => opt.MapFrom(dto => dto.UserDataId));
+                .ForMember(e => e.Id, opt => opt.MapFrom(dto => dto.UserDataId))
+                .ForMember(e => e.Id, opt => opt.Ignore());
         }
     }
 }

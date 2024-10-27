@@ -1,18 +1,26 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WorkyOne.Contracts.Interfaces;
+﻿using System.Collections.ObjectModel;
 
 namespace WorkyOne.Contracts.Repositories.Result
 {
-    public class RepositoryResult : IResult
+    public class RepositoryResult
     {
-        public bool IsSucceed => SucceedItems.Count > 0;
+        private readonly List<ResultItem> _succeed = [];
+        private readonly List<ResultItem> _errors = [];
+        public bool IsSucceed => _succeed.Count > 0;
 
-        public List<ResultItem> SucceedItems => throw new NotImplementedException();
+        public List<string>? Succeed =>
+            (_succeed.Count > 0) ? _succeed.Select(x => x.Message).ToList() : null;
+        public List<string>? Errors =>
+            (_errors.Count > 0) ? _errors.Select(x => x.Message).ToList() : null;
 
-        public List<ResultItem> ErrorItems => throw new NotImplementedException();
+        public void AddError(ResultItem item)
+        {
+            _errors.Add(item);
+        }
+
+        public void AddSucceed(ResultItem item)
+        {
+            _succeed.Add(item);
+        }
     }
 }

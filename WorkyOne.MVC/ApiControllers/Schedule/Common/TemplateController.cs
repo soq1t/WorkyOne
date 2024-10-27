@@ -62,12 +62,12 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> CreateAsync(
-            [FromRoute] string? scheduleId,
+            [FromRoute] [FromQuery] string? scheduleId,
             [FromBody] TemplateModel model,
             CancellationToken cancellation = default
         )
         {
-            model.ScheduleId = model.ScheduleId ?? scheduleId;
+            model.ScheduleId = scheduleId;
 
             if (model.ScheduleId == null)
             {

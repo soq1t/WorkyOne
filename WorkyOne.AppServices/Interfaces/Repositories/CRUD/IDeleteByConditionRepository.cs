@@ -1,6 +1,7 @@
 ﻿using System.Linq.Expressions;
 using WorkyOne.Contracts.Repositories.Common;
 using WorkyOne.Domain.Interfaces.Common;
+using WorkyOne.Domain.Interfaces.Specification;
 
 namespace WorkyOne.AppServices.Interfaces.Repositories.CRUD
 {
@@ -14,10 +15,10 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.CRUD
         /// <summary>
         /// Удаляет из базы данных множество сущностей <typeparamref name="TEntity"/>, удовлетворяющих заданному условию
         /// </summary>
-        /// <param name="predicate">Условие удаления сущностей</param>
+        /// <param name="specification">Условие удаления сущностей</param>
         /// <param name="cancellation">Токен отмены задачи</param>
         public Task<RepositoryResult> DeleteByConditionAsync(
-            Expression<Func<TEntity, bool>> predicate,
+            ISpecification<TEntity> specification,
             CancellationToken cancellation = default
         );
     }

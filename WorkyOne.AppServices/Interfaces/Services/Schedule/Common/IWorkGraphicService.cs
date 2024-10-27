@@ -25,7 +25,6 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// </summary>
         /// <param name="model">Модель графика</param>
         /// <param name="cancellation">Токен отмены задачи</param>
-        /// <returns></returns>
         public Task<ServiceResult> CreateAsync(
             WorkGraphicModel model,
             CancellationToken cancellation = default
@@ -36,20 +35,8 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// </summary>
         /// <param name="scheduleId">Идентификатор расписания</param>
         /// <param name="cancellation">Токен отмены задачи</param>
-        /// <returns></returns>
         public Task<ServiceResult> ClearAsync(
             string scheduleId,
-            CancellationToken cancellation = default
-        );
-
-        /// <summary>
-        /// Очищает рабочий график согласно заданным условиям
-        /// </summary>
-        /// <param name="model">Модель графика</param>
-        /// <param name="cancellation">Токен отмены задачи</param>
-        /// <returns></returns>
-        public Task<ServiceResult> ClearRangeAsync(
-            WorkGraphicModel model,
             CancellationToken cancellation = default
         );
     }

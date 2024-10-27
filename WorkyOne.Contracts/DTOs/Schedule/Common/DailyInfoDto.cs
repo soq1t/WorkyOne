@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using WorkyOne.Contracts.DTOs.Abstractions;
 
 namespace WorkyOne.Contracts.DTOs.Schedule.Common
@@ -13,11 +8,6 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
     /// </summary>
     public sealed class DailyInfoDto : DtoBase
     {
-        /// <summary>
-        /// Идентификатор сущности
-        /// </summary>
-        //public string Id { get; set; }
-
         /// <summary>
         /// Название рабочего дня
         /// </summary>

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.ComponentModel.DataAnnotations;
 using WorkyOne.Contracts.DTOs.Abstractions;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts;
 
@@ -14,11 +9,6 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
     /// </summary>
     public class ScheduleDto : DtoBase
     {
-        /// <summary>
-        /// ID расписания
-        /// </summary>
-        public string? Id { get; set; }
-
         /// <summary>
         /// ID данных пользователя
         /// </summary>

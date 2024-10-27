@@ -9,6 +9,6 @@ namespace WorkyOne.Contracts.Services.GetRequests.Schedule.Common
     public sealed class PaginatedScheduleRequest : PaginatedRequest
     {
         [Required(ErrorMessage = "Укажите, нужно ли включать в запрос шаблоны, смены и т.д.")]
-        public bool? IncludeFullData { get; set; }
+        public bool IncludeFullData { get; set; } = false;
     }
 }
