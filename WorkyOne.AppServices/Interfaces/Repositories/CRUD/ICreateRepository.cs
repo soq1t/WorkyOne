@@ -1,4 +1,4 @@
-﻿using WorkyOne.Contracts.Repositories.Common;
+﻿using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.AppServices.Interfaces.Repositories.CRUD

@@ -1,5 +1,5 @@
 ﻿using WorkyOne.Contracts.DTOs.Schedule;
-using WorkyOne.Contracts.Services.Common;
+using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts;
 using WorkyOne.Contracts.Services.GetRequests.Common;
 
@@ -47,7 +47,7 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
         /// </summary>
         /// <param name="model">Модель, слдержащая информацию о создаваемой смене</param>
         /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<ServiceResult> CreateAsync(
+        public Task<RepositoryResult> CreateAsync(
             ShiftModel<PeriodicShiftDto> model,
             CancellationToken cancellation = default
         );
@@ -57,7 +57,7 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
         /// </summary>
         /// <param name="dto">DTO обновляемой смены</param>
         /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<ServiceResult> UpdateAsync(
+        public Task<RepositoryResult> UpdateAsync(
             PeriodicShiftDto dto,
             CancellationToken cancellation = default
         );
@@ -67,6 +67,9 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
         /// </summary>
         /// <param name="id">Идентификатор удаляемой смены</param>
         /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<ServiceResult> DeleteAsync(string id, CancellationToken cancellation = default);
+        public Task<RepositoryResult> DeleteAsync(
+            string id,
+            CancellationToken cancellation = default
+        );
     }
 }

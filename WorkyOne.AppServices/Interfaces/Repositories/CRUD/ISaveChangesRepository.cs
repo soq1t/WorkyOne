@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace WorkyOne.AppServices.Interfaces.Repositories.CRUD
+﻿namespace WorkyOne.AppServices.Interfaces.Repositories.CRUD
 {
     /// <summary>
     /// Интерфейс репозитория, который может сохранять изменения, внесённые в базу данных

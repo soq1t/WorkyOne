@@ -46,8 +46,22 @@ namespace WorkyOne.Contracts.Repositories.Result
         public static RepositoryResult Ok(string message = "Успех!") =>
             new RepositoryResult(true, message);
 
+        public static RepositoryResult Ok(ResultType type, string? entityId, string? entityName)
+        {
+            var result = Ok();
+            result.AddSucceed(type, entityId, entityName);
+            return result;
+        }
+
         public static RepositoryResult Error(string message = "Ошибка") =>
             new RepositoryResult(false, message);
+
+        public static RepositoryResult Error(ResultType type, string? entityId, string? entityName)
+        {
+            var result = Error();
+            result.AddError(type, entityId, entityName);
+            return result;
+        }
 
         public static RepositoryResult CancellationRequested() =>
             new RepositoryResult(false, "Запрошено завершение задачи");

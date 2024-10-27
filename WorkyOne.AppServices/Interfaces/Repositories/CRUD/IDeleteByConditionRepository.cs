@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using WorkyOne.Contracts.Repositories.Common;
+﻿using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Domain.Interfaces.Common;
 using WorkyOne.Domain.Interfaces.Specification;
 
