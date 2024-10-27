@@ -38,11 +38,17 @@ namespace WorkyOne.DependencyRegister
         public static void RegisterAll(IServiceCollection services, IConfiguration configuration)
         {
             RegisterOther(services);
+            RegisterConfigs(services, configuration);
             RegisterAuth(services);
             RegisterContextes(services, configuration);
             RegisterRepositories(services);
             RegisterServices(services);
         }
+
+        private static void RegisterConfigs(
+            IServiceCollection services,
+            IConfiguration configuration
+        ) { }
 
         /// <summary>
         /// Регистрирует сервисы, используемые приложением
@@ -79,16 +85,11 @@ namespace WorkyOne.DependencyRegister
             IConfiguration configuration
         )
         {
-#if DEBUG
-            string prefix = "Remote";
-#else
-            string prefix = "Local";
-#endif
             services.AddDbContext<UsersDbContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString($"{prefix}UsersConnection"))
+                options.UseNpgsql(configuration.GetConnectionString($"UsersDatabase"))
             );
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseNpgsql(configuration.GetConnectionString($"{prefix}MainConnection"))
+                options.UseNpgsql(configuration.GetConnectionString($"AppDatabase"))
             );
         }
 

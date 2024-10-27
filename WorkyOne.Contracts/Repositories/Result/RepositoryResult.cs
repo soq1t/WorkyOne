@@ -1,26 +1,55 @@
-﻿using System.Collections.ObjectModel;
+﻿using WorkyOne.Contracts.Enums.Result;
 
 namespace WorkyOne.Contracts.Repositories.Result
 {
     public class RepositoryResult
     {
-        private readonly List<ResultItem> _succeed = [];
-        private readonly List<ResultItem> _errors = [];
-        public bool IsSucceed => _succeed.Count > 0;
+        public List<string> Succeed { get; set; } = new List<string>();
+        public List<string> Errors { get; set; } = new List<string>();
+        public bool IsSucceed { get; set; }
+        public string Message { get; set; }
 
-        public List<string>? Succeed =>
-            (_succeed.Count > 0) ? _succeed.Select(x => x.Message).ToList() : null;
-        public List<string>? Errors =>
-            (_errors.Count > 0) ? _errors.Select(x => x.Message).ToList() : null;
-
-        public void AddError(ResultItem item)
+        public RepositoryResult(bool isSucceed, string message)
         {
-            _errors.Add(item);
+            IsSucceed = isSucceed;
+            Message = message;
         }
 
-        public void AddSucceed(ResultItem item)
+        public void AddError(ResultType type, string? entityId, string? entityName)
         {
-            _succeed.Add(item);
+            Errors.Add(GenerateMessage(type, entityId, entityName));
         }
+
+        public void AddSucceed(ResultType type, string? entityId, string? entityName)
+        {
+            Succeed.Add(GenerateMessage(type, entityId, entityName));
+        }
+
+        private string GenerateMessage(ResultType type, string? entityId, string? entityName)
+        {
+            entityId = entityId ?? "Unknown";
+            entityName = entityName ?? "Unknown";
+
+            string message = type switch
+            {
+                ResultType.Created => "Entity succesfully created",
+                ResultType.Updated => "Entity succesfully updated",
+                ResultType.Deleted => "Entity succesfully deleted",
+                ResultType.NotFound => "Entity not found",
+                ResultType.AlreadyExisted => "Entity already existed",
+                _ => "Unknown error",
+            };
+
+            return $"Entity [{entityName}] (ID: {entityId}) - {message}";
+        }
+
+        public static RepositoryResult Ok(string message = "Успех!") =>
+            new RepositoryResult(true, message);
+
+        public static RepositoryResult Error(string message = "Ошибка") =>
+            new RepositoryResult(false, message);
+
+        public static RepositoryResult CancellationRequested() =>
+            new RepositoryResult(false, "Запрошено завершение задачи");
     }
 }

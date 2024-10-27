@@ -10,6 +10,14 @@ namespace WorkyOne.MVC
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.Configuration.AddJsonFile("appsettings.json");
+
+#if DEBUG
+            builder.Configuration.AddJsonFile("appsettings.Development.json");
+#elif RELEASE
+            builder.Configuration.AddJsonFile("appsettings.Production.json");
+
+#endif
             // Add services to the container.
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpContextAccessor();
