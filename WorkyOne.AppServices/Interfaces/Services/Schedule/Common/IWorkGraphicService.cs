@@ -1,4 +1,5 @@
 ﻿using WorkyOne.Contracts.DTOs.Schedule.Common;
+using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.Common;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
 using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
@@ -25,7 +26,7 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// </summary>
         /// <param name="model">Модель графика</param>
         /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<ServiceResult> CreateAsync(
+        public Task<RepositoryResult> CreateAsync(
             WorkGraphicModel model,
             CancellationToken cancellation = default
         );
@@ -35,7 +36,7 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// </summary>
         /// <param name="scheduleId">Идентификатор расписания</param>
         /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<ServiceResult> ClearAsync(
+        public Task<RepositoryResult> ClearAsync(
             string scheduleId,
             CancellationToken cancellation = default
         );

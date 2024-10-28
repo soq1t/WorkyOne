@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Repositories\Common\" />
     <Folder Include="Services\GetRequests\Schedule\Shifts\" />
   </ItemGroup>
 

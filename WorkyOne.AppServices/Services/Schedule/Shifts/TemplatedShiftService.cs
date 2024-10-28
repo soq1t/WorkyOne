@@ -5,7 +5,8 @@ using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Users;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts;
-using WorkyOne.Contracts.Services.Common;
+using WorkyOne.Contracts.Enums.Result;
+using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts;
 using WorkyOne.Contracts.Services.GetRequests.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
@@ -49,7 +50,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
             InitFiltersAsync().Wait();
         }
 
-        public async Task<ServiceResult> CreateAsync(
+        public async Task<RepositoryResult> CreateAsync(
             ShiftModel<TemplatedShiftDto> model,
             CancellationToken cancellation = default
         )
@@ -62,7 +63,11 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
 
             if (template == null)
             {
-                return ServiceResult.Error($"Указанный шаблон (ID: {model.ParentId}) не найден");
+                return RepositoryResult.Error(
+                    ResultType.NotFound,
+                    model.ParentId,
+                    nameof(TemplateEntity)
+                );
             }
 
             var entity = _mapper.Map<TemplatedShiftEntity>(model.Shift);
@@ -73,21 +78,23 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
 
             if (cancellation.IsCancellationRequested)
             {
-                return ServiceResult.CancellationRequested();
+                return RepositoryResult.CancellationRequested();
             }
 
-            if (result.IsSuccess)
+            if (result.IsSucceed)
             {
                 await _shiftsRepo.SaveChangesAsync(cancellation);
-                return ServiceResult.Ok($"Шаблонная смена (ID: {entity.Id}) успешно создана!");
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    return RepositoryResult.CancellationRequested();
+                }
             }
-            else
-            {
-                return ServiceResult.FromRepositoryResult(result);
-            }
+
+            return result;
         }
 
-        public async Task<ServiceResult> DeleteAsync(
+        public async Task<RepositoryResult> DeleteAsync(
             string id,
             CancellationToken cancellation = default
         )
@@ -100,24 +107,30 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
 
             if (deleted == null)
             {
-                return ServiceResult.Error($"Шаблонная смена (ID: {id}) не найдена");
+                return RepositoryResult.Error(
+                    ResultType.NotFound,
+                    id,
+                    nameof(TemplatedShiftEntity)
+                );
             }
 
             var result = _shiftsRepo.Delete(deleted);
 
             if (cancellation.IsCancellationRequested)
             {
-                return ServiceResult.CancellationRequested();
+                return RepositoryResult.CancellationRequested();
             }
-            if (result.IsSuccess)
+            if (result.IsSucceed)
             {
                 await _shiftsRepo.SaveChangesAsync(cancellation);
-                return ServiceResult.Ok($"Шаблонная смена (ID: {id}) успешно удалена");
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    return RepositoryResult.CancellationRequested();
+                }
             }
-            else
-            {
-                return ServiceResult.FromRepositoryResult(result);
-            }
+
+            return result;
         }
 
         public async Task<TemplatedShiftDto?> GetAsync(
@@ -203,7 +216,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
             return dtos;
         }
 
-        public async Task<ServiceResult> UpdateAsync(
+        public async Task<RepositoryResult> UpdateAsync(
             TemplatedShiftDto dto,
             CancellationToken cancellation = default
         )
@@ -217,7 +230,11 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
 
             if (target == null)
             {
-                return ServiceResult.Error($"Не найден указанный шаблон (ID: {dto.Id})");
+                return RepositoryResult.Error(
+                    ResultType.NotFound,
+                    dto.Id,
+                    nameof(TemplatedShiftEntity)
+                );
             }
 
             var source = _mapper.Map<TemplatedShiftEntity>(dto);
@@ -228,18 +245,20 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
 
             if (cancellation.IsCancellationRequested)
             {
-                return ServiceResult.CancellationRequested();
+                return RepositoryResult.CancellationRequested();
             }
 
-            if (result.IsSuccess)
+            if (result.IsSucceed)
             {
                 await _shiftsRepo.SaveChangesAsync(cancellation);
-                return ServiceResult.Ok($"Шаблонная смена (ID: {target.Id}) успешно обновлена!");
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    return RepositoryResult.CancellationRequested();
+                }
             }
-            else
-            {
-                return ServiceResult.FromRepositoryResult(result);
-            }
+
+            return result;
         }
 
         private async Task InitFiltersAsync()

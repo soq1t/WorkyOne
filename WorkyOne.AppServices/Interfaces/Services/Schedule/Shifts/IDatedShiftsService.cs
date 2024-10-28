@@ -1,5 +1,5 @@
 ﻿using WorkyOne.Contracts.DTOs.Schedule.Shifts;
-using WorkyOne.Contracts.Services.Common;
+using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.GetRequests.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
@@ -49,7 +49,10 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
         /// <param name="cancellation">Токен отмены задания</param>
         /// <returns></returns>
 
-        public Task<ServiceResult> DeleteAsync(string id, CancellationToken cancellation = default);
+        public Task<RepositoryResult> DeleteAsync(
+            string id,
+            CancellationToken cancellation = default
+        );
 
         /// <summary>
         /// Создаёт в базе данных <see cref="DatedShiftEntity"/> на основе передаваемой <see cref="DatedShiftDto"/>
@@ -58,7 +61,7 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
         /// <param name="scheduleId">Идентификатор <see cref="ScheduleEntity"/>, для которого создаётся <see cref="DatedShiftEntity"/></param>
         /// <param name="cancellation">Токен отмены задания</param>
         /// <returns></returns>
-        public Task<ServiceResult> CreateAsync(
+        public Task<RepositoryResult> CreateAsync(
             DatedShiftDto dto,
             string scheduleId,
             CancellationToken cancellation = default
@@ -70,7 +73,7 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
         /// <param name="dto">DTO, данными которой будет обновлена <see cref="DatedShiftEntity"/> в базе данных</param>
         /// <param name="cancel">Токен отмены задания</param>
         /// <returns></returns>
-        public Task<ServiceResult> UpdateAsync(
+        public Task<RepositoryResult> UpdateAsync(
             DatedShiftDto dto,
             CancellationToken cancel = default
         );

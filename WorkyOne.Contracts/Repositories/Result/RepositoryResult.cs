@@ -4,8 +4,8 @@ namespace WorkyOne.Contracts.Repositories.Result
 {
     public class RepositoryResult
     {
-        public List<string> Succeed { get; set; } = new List<string>();
-        public List<string> Errors { get; set; } = new List<string>();
+        public List<string> SucceedItems { get; set; } = new List<string>();
+        public List<string> ErrorItems { get; set; } = new List<string>();
         public bool IsSucceed { get; set; }
         public string Message { get; set; }
 
@@ -17,12 +17,12 @@ namespace WorkyOne.Contracts.Repositories.Result
 
         public void AddError(ResultType type, string? entityId, string? entityName)
         {
-            Errors.Add(GenerateMessage(type, entityId, entityName));
+            ErrorItems.Add(GenerateMessage(type, entityId, entityName));
         }
 
         public void AddSucceed(ResultType type, string? entityId, string? entityName)
         {
-            Succeed.Add(GenerateMessage(type, entityId, entityName));
+            SucceedItems.Add(GenerateMessage(type, entityId, entityName));
         }
 
         private string GenerateMessage(ResultType type, string? entityId, string? entityName)

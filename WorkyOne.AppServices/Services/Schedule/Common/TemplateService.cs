@@ -6,6 +6,8 @@ using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Users;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
+using WorkyOne.Contracts.Enums.Result;
+using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.Common;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
 using WorkyOne.Contracts.Services.GetRequests.Common;
@@ -32,7 +34,6 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
         private readonly IMapper _mapper;
         private readonly IEntityUpdateUtility _updateUtility;
-        private readonly IUserAccessInfoProvider _accessInfoProvider;
 
         private TemplateAccessFilter _templateFilter;
         private ScheduleAccessFilter _scheduleFilter;
@@ -54,13 +55,12 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             _mapper = mapper;
             _updateUtility = updateUtility;
             _schedulesRepo = schedulesRepo;
-            _accessInfoProvider = accessInfoProvider;
-
-            InitFiltersAsync().Wait();
             _templatedShiftsRepo = templatedShiftsRepo;
+
+            InitFiltersAsync(accessInfoProvider).Wait();
         }
 
-        public async Task<ServiceResult> CreateAsync(
+        public async Task<RepositoryResult> CreateAsync(
             TemplateModel model,
             CancellationToken cancellation = default
         )
@@ -73,16 +73,23 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             if (schedule == null)
             {
-                return ServiceResult.Error(
-                    $"Указанное расписание (ID: {model.ScheduleId}) не найдено"
+                return RepositoryResult.Error(
+                    ResultType.NotFound,
+                    model.ScheduleId,
+                    nameof(ScheduleEntity)
                 );
             }
 
             if (schedule.Template != null)
             {
-                return ServiceResult.Error(
-                    $"У указанного расписания (ID: {schedule.Id}) уже есть шаблон (ID: {schedule.Template.Id})"
+                var repoResult = RepositoryResult.Error(
+                    ResultType.AlreadyExisted,
+                    schedule.Template.Id,
+                    nameof(TemplateEntity)
                 );
+
+                repoResult.Message = "У указанного расписания уже есть шаблон";
+                return repoResult;
             }
 
             var entity = _mapper.Map<TemplateEntity>(model.Template);
@@ -94,20 +101,18 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             if (cancellation.IsCancellationRequested)
             {
-                return ServiceResult.CancellationRequested();
+                return RepositoryResult.CancellationRequested();
             }
-            if (result.IsSuccess)
+
+            if (result.IsSucceed)
             {
                 await _templatesRepo.SaveChangesAsync(cancellation);
-                return ServiceResult.Ok($"Шаблон (ID: {entity.Id}) успешно создан!");
             }
-            else
-            {
-                return ServiceResult.FromRepositoryResult(result);
-            }
+
+            return result;
         }
 
-        public async Task<ServiceResult> DeleteAsync(
+        public async Task<RepositoryResult> DeleteAsync(
             string id,
             CancellationToken cancellation = default
         )
@@ -119,20 +124,16 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             if (deleted == null)
             {
-                return ServiceResult.Error($"Сущность (ID: {id}) не найдена, либо доступ запрещён");
+                return RepositoryResult.Error(ResultType.NotFound, id, nameof(TemplateEntity));
             }
 
             var result = _templatesRepo.Delete(deleted);
 
-            if (result.IsSuccess)
+            if (result.IsSucceed)
             {
                 await _templatesRepo.SaveChangesAsync(cancellation);
-                return ServiceResult.Ok($"Шаблон (ID: {id}) был успешно удалён!");
             }
-            else
-            {
-                return ServiceResult.FromRepositoryResult(result);
-            }
+            return result;
         }
 
         public async Task<TemplateDto?> GetAsync(
@@ -204,7 +205,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             return dtos;
         }
 
-        public async Task<ServiceResult> UpdateAsync(
+        public async Task<RepositoryResult> UpdateAsync(
             TemplateDto dto,
             CancellationToken cancellation = default
         )
@@ -218,8 +219,10 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             if (target == null)
             {
-                return ServiceResult.Error(
-                    $"Обновляемый шаблон (ID: {dto.Id}) не найден либо доступ запрещён"
+                return RepositoryResult.Error(
+                    ResultType.NotFound,
+                    dto.Id,
+                    nameof(RepositoryResult)
                 );
             }
 
@@ -227,19 +230,22 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             _updateUtility.Update(target, source);
 
-            _templatesRepo.Update(target);
+            var result = _templatesRepo.Update(target);
 
-            await _templatesRepo.SaveChangesAsync(cancellation);
-
-            if (cancellation.IsCancellationRequested)
+            if (result.IsSucceed)
             {
-                return ServiceResult.CancellationRequested();
+                await _templatesRepo.SaveChangesAsync(cancellation);
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    return RepositoryResult.CancellationRequested();
+                }
             }
 
-            return ServiceResult.Ok($"Шаблон (ID: {target.Id}) был успешно обновлён");
+            return result;
         }
 
-        public async Task<ServiceResult> UpdateSequenceAsync(
+        public async Task<RepositoryResult> UpdateSequenceAsync(
             ShiftSequencesModel model,
             CancellationToken cancellation = default
         )
@@ -253,8 +259,10 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             if (template == null)
             {
-                return ServiceResult.Error(
-                    $"Не найден шаблон(ID: {model.TemplateId}), либо доступ запрещён"
+                return RepositoryResult.Error(
+                    ResultType.NotFound,
+                    model.TemplateId,
+                    nameof(TemplateEntity)
                 );
             }
 
@@ -262,8 +270,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             if (!CheckSequence(model.Sequences))
             {
-                return ServiceResult.Error(
-                    $"Значение Position должно быть уникально для каждой сущности"
+                return RepositoryResult.Error(
+                    "Значение Position должно быть уникально для каждой сущности"
                 );
             }
 
@@ -274,7 +282,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                     cancellation
                 );
 
-                return ServiceResult.Ok(
+                return RepositoryResult.Ok(
                     $"Последовательность для шаблона (ID: {template.Id}) была успешно очищена!"
                 );
             }
@@ -289,8 +297,10 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                 var shift = shifts.First(x => x.Id == item.ShiftId);
                 if (shift == null)
                 {
-                    return ServiceResult.Error(
-                        $"Не удалось найти \"шаблонную\" смену (ID: {item.ShiftId})"
+                    return RepositoryResult.Error(
+                        ResultType.NotFound,
+                        item.ShiftId,
+                        nameof(TemplatedShiftEntity)
                     );
                 }
                 item.Shift = shift;
@@ -305,30 +315,23 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             if (cancellation.IsCancellationRequested)
             {
-                return ServiceResult.CancellationRequested();
+                return RepositoryResult.CancellationRequested();
             }
 
-            if (result.IsSuccess)
+            if (result.IsSucceed)
             {
                 await _shiftsSequencesRepo.SaveChangesAsync(cancellation);
                 sequence = sequence.OrderBy(x => x.Position).ToList();
-                var message = new StringBuilder(
-                    $"Последовательность для шаблона (ID: {template.Id}) была успешно обновлена!"
-                );
+            }
 
-                return ServiceResult.Ok(message.ToString());
-            }
-            else
-            {
-                return ServiceResult.FromRepositoryResult(result);
-            }
+            return result;
         }
 
-        private async Task InitFiltersAsync()
+        private async Task InitFiltersAsync(IUserAccessInfoProvider provider)
         {
             if (_sequenceFilter == null)
             {
-                var accessInfo = await _accessInfoProvider.GetCurrentAsync();
+                var accessInfo = await provider.GetCurrentAsync();
 
                 _sequenceFilter = new ShiftSequenceAccessFilter(accessInfo);
                 _templateFilter = new TemplateAccessFilter(accessInfo);

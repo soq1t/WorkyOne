@@ -1,8 +1,7 @@
 ﻿using WorkyOne.Contracts.DTOs.Schedule.Common;
-using WorkyOne.Contracts.Services.Common;
+using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
 using WorkyOne.Contracts.Services.GetRequests.Common;
-using WorkyOne.Domain.Entities.Schedule.Common;
 
 namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
 {
@@ -33,7 +32,7 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// </summary>
         /// <param name="model">Модель, содержащая информацию о создаваемом шаблоне</param>
         /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<ServiceResult> CreateAsync(
+        public Task<RepositoryResult> CreateAsync(
             TemplateModel model,
             CancellationToken cancellation = default
         );
@@ -43,14 +42,17 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// </summary>
         /// <param name="id">Идентификатор шаблона</param>
         /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<ServiceResult> DeleteAsync(string id, CancellationToken cancellation = default);
+        public Task<RepositoryResult> DeleteAsync(
+            string id,
+            CancellationToken cancellation = default
+        );
 
         /// <summary>
         /// Обновляет шаблон на основе <see cref="TemplateDto"/>
         /// </summary>
         /// <param name="dto">DTO, на основе которой обновляется шаблон</param>
         /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<ServiceResult> UpdateAsync(
+        public Task<RepositoryResult> UpdateAsync(
             TemplateDto dto,
             CancellationToken cancellation = default
         );
@@ -60,7 +62,7 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// </summary>
         /// <param name="model">Модель, содержащая информацию о последовательности</param>
         /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<ServiceResult> UpdateSequenceAsync(
+        public Task<RepositoryResult> UpdateSequenceAsync(
             ShiftSequencesModel model,
             CancellationToken cancellation = default
         );

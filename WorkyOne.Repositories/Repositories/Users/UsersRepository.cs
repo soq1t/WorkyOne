@@ -1,7 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.Contracts.Enums.Reposistories;
-using WorkyOne.Contracts.Repositories.Common;
+using WorkyOne.Contracts.Enums.Result;
+using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Repositories.Contextes;
@@ -22,31 +23,34 @@ namespace WorkyOne.Repositories.Repositories.Users
         {
             if (_context.Entry(entity).State == EntityState.Detached)
             {
-                return new RepositoryResult(
-                    RepositoryErrorType.EntityNotTrackedByContext,
-                    entity.Id
-                );
+                return RepositoryResult.Error(ResultType.NotFound, entity.Id, nameof(UserEntity));
             }
 
             _context.Remove(entity);
-            return new RepositoryResult(entity.Id);
+            return RepositoryResult.Ok(ResultType.Deleted, entity.Id, nameof(UserEntity));
         }
 
         public RepositoryResult DeleteMany(IEnumerable<UserEntity> entities)
         {
-            var result = new RepositoryResult();
+            var result = new RepositoryResult(true, "Успех");
 
             foreach (var item in entities)
             {
                 if (_context.Entry(item).State == EntityState.Detached)
                 {
-                    result.AddError(RepositoryErrorType.EntityNotTrackedByContext, item.Id);
+                    result.AddError(ResultType.NotFound, item.Id, nameof(UserEntity));
                 }
                 else
                 {
                     _context.Users.Remove(item);
-                    result.SucceedIds.Add(item.Id);
+                    result.AddSucceed(ResultType.Deleted, item.Id, nameof(UserEntity));
                 }
+            }
+
+            if (result.SucceedItems.Count == 0)
+            {
+                result.IsSucceed = false;
+                result.Message = "Ошибка";
             }
 
             return result;

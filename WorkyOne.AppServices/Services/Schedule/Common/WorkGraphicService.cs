@@ -4,11 +4,12 @@ using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Users;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
+using WorkyOne.Contracts.Enums.Result;
+using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.Common;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
 using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
-using WorkyOne.Domain.Interfaces.Specification;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Domain.Specifications.AccesFilters.Common;
@@ -47,7 +48,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             InitFiltersAsync().Wait();
         }
 
-        public async Task<ServiceResult> ClearAsync(
+        public async Task<RepositoryResult> ClearAsync(
             string scheduleId,
             CancellationToken cancellation = default
         )
@@ -58,19 +59,19 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             var result = await _dailyInfosRepo.DeleteByConditionAsync(filter, cancellation);
 
-            if (result.IsSuccess)
+            if (result.IsSucceed)
             {
-                return ServiceResult.Ok(
+                return RepositoryResult.Ok(
                     $"График для расписания (ID: {scheduleId}) был полностью очищен!"
                 );
             }
             else
             {
-                return ServiceResult.FromRepositoryResult(result);
+                return result;
             }
         }
 
-        public async Task<ServiceResult> CreateAsync(
+        public async Task<RepositoryResult> CreateAsync(
             WorkGraphicModel model,
             CancellationToken cancellation = default
         )
@@ -89,7 +90,11 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             if (schedule == null)
             {
-                return ServiceResult.Error($"Не найдено расписание с ID: {model.ScheduleId}");
+                return RepositoryResult.Error(
+                    ResultType.NotFound,
+                    model.ScheduleId,
+                    nameof(ScheduleEntity)
+                );
             }
 
             var endDate = model.EndDate.Value;
@@ -101,7 +106,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             {
                 if (cancellation.IsCancellationRequested)
                 {
-                    return ServiceResult.CancellationRequested();
+                    return RepositoryResult.CancellationRequested();
                 }
                 DailyInfoEntity info = GetDailyInfo(schedule, date);
                 infos.Add(info);
@@ -111,7 +116,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             var result = await _dailyInfosRepo.CreateManyAsync(infos, cancellation);
 
-            if (result.IsSuccess)
+            if (result.IsSucceed)
             {
                 await _dailyInfosRepo.SaveChangesAsync(cancellation);
 
@@ -123,12 +128,9 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                 );
                 message.AppendLine($"Затронуто дней: {infos.Count}");
 
-                return ServiceResult.Ok(message.ToString());
+                return RepositoryResult.Ok(message.ToString());
             }
-            else
-            {
-                return ServiceResult.FromRepositoryResult(result);
-            }
+            return result;
         }
 
         public async Task<List<DailyInfoDto>> GetGraphicAsync(

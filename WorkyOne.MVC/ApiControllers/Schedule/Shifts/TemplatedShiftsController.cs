@@ -99,11 +99,11 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
 
             if (result.IsSucceed)
             {
-                return Ok(result.SucceedMessage);
+                return Ok(result);
             }
             else
             {
-                return BadRequest(result.GetErrors());
+                return BadRequest(result);
             }
         }
 
@@ -126,11 +126,11 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
             var result = await _shiftsService.UpdateAsync(dto, cancellation);
             if (result.IsSucceed)
             {
-                return Ok(result.SucceedMessage);
+                return Ok(result);
             }
             else
             {
-                return BadRequest(result.GetErrors());
+                return BadRequest(result);
             }
         }
 
@@ -150,11 +150,11 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
 
             if (result.IsSucceed)
             {
-                return Ok(result.SucceedMessage);
+                return Ok(result);
             }
             else
             {
-                return BadRequest(result.GetErrors());
+                return BadRequest(result);
             }
         }
     }

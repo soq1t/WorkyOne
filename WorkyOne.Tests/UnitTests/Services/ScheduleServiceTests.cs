@@ -5,14 +5,7 @@ using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services;
 using WorkyOne.AppServices.Interfaces.Utilities;
-using WorkyOne.AppServices.Services.Schedule.Common;
-using WorkyOne.Contracts.DTOs.Schedule.Common;
-using WorkyOne.Contracts.Repositories.Common;
-using WorkyOne.Domain.Entities.Schedule.Common;
-using WorkyOne.Domain.Entities.Schedule.Shifts;
-using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Common;
-using Xunit;
 
 namespace WorkyOne.Tests.UnitTests.Services
 {

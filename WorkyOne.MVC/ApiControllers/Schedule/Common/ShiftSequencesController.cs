@@ -63,11 +63,11 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
 
             if (result.IsSucceed)
             {
-                return Ok(result.SucceedMessage);
+                return Ok(result);
             }
             else
             {
-                return BadRequest(result.GetErrors());
+                return BadRequest(result);
             }
         }
     }

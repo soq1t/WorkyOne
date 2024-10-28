@@ -83,11 +83,62 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
 
             if (result.IsSucceed)
             {
-                return Ok(result.SucceedMessage);
+                return Ok(result);
             }
             else
             {
-                return BadRequest(result.GetErrors());
+                return BadRequest(result);
+            }
+        }
+
+        /// <summary>
+        /// Удаляет расписание
+        /// </summary>
+        /// <param name="id">Идентификатор расписания</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> DeleteAsync(
+            [FromRoute] string id,
+            CancellationToken cancellation = default
+        )
+        {
+            var result = await _scheduleService.DeleteAsync(id, cancellation);
+
+            if (result.IsSucceed)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+        /// <summary>
+        /// Обновляет расписание
+        /// </summary>
+        /// <param name="id">Идентификатор расписания</param>
+        /// <param name="dto">DTO расписания</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        [HttpPut]
+        [Route("{id}")]
+        public async Task<IActionResult> UpdateAsync(
+            [FromRoute] string id,
+            [FromBody] ScheduleDto dto,
+            CancellationToken cancellation = default
+        )
+        {
+            dto.Id = id;
+            var result = await _scheduleService.UpdateScheduleAsync(dto, cancellation);
+
+            if (result.IsSucceed)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
             }
         }
 
@@ -105,11 +156,11 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
 
             if (result.IsSucceed)
             {
-                return Ok(result.SucceedMessage);
+                return Ok(result);
             }
             else
             {
-                return BadRequest(result.GetErrors());
+                return BadRequest(result);
             }
         }
 

@@ -83,7 +83,7 @@ namespace WorkyOne.AppServices.Services.Users
 
                 var result = await _userDatasRepo.CreateAsync(userData, cancellation);
 
-                if (result.IsSuccess)
+                if (result.IsSucceed)
                 {
                     await _userDatasRepo.SaveChangesAsync(cancellation);
                 }

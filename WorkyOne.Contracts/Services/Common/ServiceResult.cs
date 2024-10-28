@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using WorkyOne.Contracts.Repositories.Common;
+﻿using System.Collections.ObjectModel;
 
 namespace WorkyOne.Contracts.Services.Common
 {
@@ -64,17 +58,5 @@ namespace WorkyOne.Contracts.Services.Common
         }
 
         public static ServiceResult CancellationRequested() => Error("Задача отменена");
-
-        public static ServiceResult FromRepositoryResult(RepositoryResult repoResult)
-        {
-            var result = new ServiceResult();
-
-            foreach (var error in repoResult.Errors)
-            {
-                result.AddError(error.ErrorMessage());
-            }
-
-            return result;
-        }
     }
 }

@@ -5,7 +5,8 @@ using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Users;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts;
-using WorkyOne.Contracts.Services.Common;
+using WorkyOne.Contracts.Enums.Result;
+using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.GetRequests.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
@@ -107,7 +108,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
             return dtos;
         }
 
-        public async Task<ServiceResult> CreateAsync(
+        public async Task<RepositoryResult> CreateAsync(
             DatedShiftDto dto,
             string scheduleId,
             CancellationToken cancellation = default
@@ -121,12 +122,16 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
 
             if (cancellation.IsCancellationRequested)
             {
-                return ServiceResult.CancellationRequested();
+                return RepositoryResult.CancellationRequested();
             }
 
             if (schedule == null)
             {
-                return ServiceResult.Error($"Указанное расписание (ID: {scheduleId}) не найдено");
+                return RepositoryResult.Error(
+                    ResultType.NotFound,
+                    scheduleId,
+                    nameof(ScheduleEntity)
+                );
             }
 
             DatedShiftEntity shift = _mapper.Map<DatedShiftEntity>(dto);
@@ -136,21 +141,22 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
             var result = await _datedShiftsRepository.CreateAsync(shift, cancellation);
             if (cancellation.IsCancellationRequested)
             {
-                return ServiceResult.CancellationRequested();
+                return RepositoryResult.CancellationRequested();
             }
 
-            if (result.IsSuccess)
+            if (result.IsSucceed)
             {
                 await _datedShiftsRepository.SaveChangesAsync(cancellation);
-                return ServiceResult.Ok($"Датированная смена (ID: {shift.Id}) успешно создана!");
+                if (cancellation.IsCancellationRequested)
+                {
+                    return RepositoryResult.CancellationRequested();
+                }
             }
-            else
-            {
-                return ServiceResult.FromRepositoryResult(result);
-            }
+
+            return result;
         }
 
-        public async Task<ServiceResult> UpdateAsync(
+        public async Task<RepositoryResult> UpdateAsync(
             DatedShiftDto dto,
             CancellationToken cancellation = default
         )
@@ -163,7 +169,11 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
 
             if (target == null)
             {
-                return ServiceResult.Error($"Датированная смена (ID: {dto.Id}) не была найдена");
+                return RepositoryResult.Error(
+                    ResultType.NotFound,
+                    dto.Id,
+                    nameof(DatedShiftEntity)
+                );
             }
 
             var source = _mapper.Map<DatedShiftEntity>(dto);
@@ -172,18 +182,20 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
 
             var result = _datedShiftsRepository.Update(target);
 
-            if (result.IsSuccess)
+            if (result.IsSucceed)
             {
                 await _datedShiftsRepository.SaveChangesAsync(cancellation);
-                return ServiceResult.Ok($"Датированная смена (ID: {target.Id}) успешно обновлена");
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    return RepositoryResult.CancellationRequested();
+                }
             }
-            else
-            {
-                return ServiceResult.FromRepositoryResult(result);
-            }
+
+            return result;
         }
 
-        public async Task<ServiceResult> DeleteAsync(
+        public async Task<RepositoryResult> DeleteAsync(
             string id,
             CancellationToken cancellation = default
         )
@@ -196,20 +208,21 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
 
             if (deleted == null)
             {
-                return ServiceResult.Error($"Датированная смена (ID: {id}) не найдена");
+                return RepositoryResult.Error(ResultType.NotFound, id, nameof(DatedShiftEntity));
             }
 
             var result = _datedShiftsRepository.Delete(deleted);
 
-            if (result.IsSuccess)
+            if (result.IsSucceed)
             {
                 await _datedShiftsRepository.SaveChangesAsync(cancellation);
-                return ServiceResult.Ok($"Датированная смена (ID: {id}) успешно удалена");
+                if (cancellation.IsCancellationRequested)
+                {
+                    return RepositoryResult.CancellationRequested();
+                }
             }
-            else
-            {
-                return ServiceResult.FromRepositoryResult(result);
-            }
+
+            return result;
         }
 
         private async Task InitAccessFiltersAsync()

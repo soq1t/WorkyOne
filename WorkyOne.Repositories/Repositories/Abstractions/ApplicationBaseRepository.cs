@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories.CRUD;
-using WorkyOne.Contracts.Enums.Reposistories;
-using WorkyOne.Contracts.Repositories.Common;
+using WorkyOne.Contracts.Enums.Result;
+using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Domain.Entities.Abstractions.Common;
 using WorkyOne.Domain.Interfaces.Specification;
 using WorkyOne.Domain.Requests.Common;
@@ -39,17 +39,21 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
 
             if (cancellation.IsCancellationRequested)
             {
-                return RepositoryResult.CancelationRequested();
+                return RepositoryResult.CancellationRequested();
             }
 
             if (existed == null)
             {
                 _context.Set<TEntity>().Add(entity);
-                return new RepositoryResult(entity.Id);
+                return RepositoryResult.Ok(ResultType.Created, entity.Id, nameof(TEntity));
             }
             else
             {
-                return new RepositoryResult(RepositoryErrorType.EntityAlreadyExists, entity.Id);
+                return RepositoryResult.Error(
+                    ResultType.AlreadyExisted,
+                    entity.Id,
+                    nameof(TEntity)
+                );
             }
         }
 
@@ -58,7 +62,7 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
             CancellationToken cancellation = default
         )
         {
-            var result = new RepositoryResult();
+            var result = new RepositoryResult(false, "Ошибка");
 
             var ids = entities.Select(e => e.Id).ToList();
 
@@ -71,14 +75,14 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
 
             if (cancellation.IsCancellationRequested)
             {
-                return RepositoryResult.CancelationRequested();
+                return RepositoryResult.CancellationRequested();
             }
 
             if (existed.Count == 0)
             {
                 foreach (var id in existedIds)
                 {
-                    result.AddError(RepositoryErrorType.EntityAlreadyExists, id);
+                    result.AddError(ResultType.AlreadyExisted, id, nameof(TEntity));
                 }
 
                 if (existed.Count == entities.Count())
@@ -91,11 +95,18 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
 
             if (cancellation.IsCancellationRequested)
             {
-                return RepositoryResult.CancelationRequested();
+                return RepositoryResult.CancellationRequested();
             }
 
             _context.Set<TEntity>().AddRange(newEntities);
-            result.SucceedIds = newEntities.Select(e => e.Id).ToList();
+
+            foreach (var entity in newEntities)
+            {
+                result.AddSucceed(ResultType.Created, entity.Id, nameof(TEntity));
+            }
+
+            result.IsSucceed = true;
+            result.Message = "Успех!";
             return result;
         }
 
@@ -103,14 +114,11 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
         {
             if (_context.Entry(entity).State == EntityState.Detached)
             {
-                return new RepositoryResult(
-                    RepositoryErrorType.EntityNotTrackedByContext,
-                    entity.Id
-                );
+                return RepositoryResult.Error(ResultType.NotFound, entity.Id, nameof(TEntity));
             }
 
             _context.Remove(entity);
-            return new RepositoryResult(entity.Id);
+            return RepositoryResult.Ok(ResultType.Deleted, entity.Id, nameof(TEntity));
         }
 
         public async Task<RepositoryResult> DeleteByConditionAsync(
@@ -123,24 +131,30 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
                 .Where(specification.ToExpression())
                 .ExecuteDeleteAsync(cancellation);
 
-            return RepositoryResult.Ok("1");
+            return RepositoryResult.Ok();
         }
 
         public RepositoryResult DeleteMany(IEnumerable<TEntity> entities)
         {
-            var result = new RepositoryResult();
+            var result = new RepositoryResult(true, "Успех");
 
             foreach (var item in entities)
             {
                 if (_context.Entry(item).State == EntityState.Detached)
                 {
-                    result.AddError(RepositoryErrorType.EntityNotTrackedByContext, item.Id);
+                    result.AddError(ResultType.NotFound, item.Id, nameof(TEntity));
                 }
                 else
                 {
                     _context.Set<TEntity>().Remove(item);
-                    result.SucceedIds.Add(item.Id);
+                    result.AddSucceed(ResultType.Deleted, item.Id, nameof(TEntity));
                 }
+            }
+
+            if (result.SucceedItems.Count == 0)
+            {
+                result.IsSucceed = false;
+                result.Message = "Ошибка";
             }
             return result;
         }
@@ -178,21 +192,18 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
         {
             if (_context.Entry(entity).State == EntityState.Detached)
             {
-                return new RepositoryResult(
-                    RepositoryErrorType.EntityNotTrackedByContext,
-                    entity.Id
-                );
+                return RepositoryResult.Error(ResultType.NotFound, entity.Id, nameof(TEntity));
             }
             else
             {
                 _context.Set<TEntity>().Update(entity);
-                return RepositoryResult.Ok(entity.Id);
+                return RepositoryResult.Ok(ResultType.Updated, entity.Id, nameof(TEntity));
             }
         }
 
         public RepositoryResult UpdateMany(IEnumerable<TEntity> entities)
         {
-            var result = new RepositoryResult();
+            var result = RepositoryResult.Ok();
 
             var existed = entities
                 .Where(e => _context.Entry(e).State != EntityState.Detached)
@@ -202,29 +213,16 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
             {
                 var notExisted = entities.Except(existed).ToList();
 
-                result.AddErrors(
-                    RepositoryErrorType.EntityNotTrackedByContext,
-                    notExisted.Select(e => e.Id)
-                );
+                foreach (var item in notExisted)
+                {
+                    result.AddError(ResultType.NotFound, item.Id, nameof(TEntity));
+                }
             }
 
-            result.SucceedIds = existed.Select(e => e.Id).ToList();
-
             _context.Set<TEntity>().UpdateRange(existed);
+            existed.ForEach(x => result.AddError(ResultType.Updated, x.Id, nameof(TEntity)));
 
             return result;
         }
-
-        //protected IQueryable<TEntity> AddPagination(
-        //    IQueryable<TEntity> query,
-        //    int pageIndex,
-        //    int amount
-        //)
-        //{
-        //    var skip = (pageIndex - 1) * amount;
-        //    var take = amount;
-
-        //    return query.Skip(skip).Take(take);
-        //}
     }
 }
