@@ -1,0 +1,22 @@
+﻿:root {
+    --color-background: #f4f9f9;
+    --color-background-fg: #020808;
+    --color-primary: #0fbda6;
+    --color-primary-fg: #020808;
+    --color-secondary: #93cfd7;
+    --color-secondary-fg: #020808;
+    --color-accent: #71a3e5;
+    --color-accent-fg: #020808;
+}
+
+$color-background: var(--color-background);
+$color-background-fg: var(--color-background-fg);
+
+$color-primary: var(--color-primary);
+$color-primary-fg: var(--color-primary-fg);
+
+$color-secondary: var(--color-secondary);
+$color-secondary-fg: var(--color-secondary-fg);
+
+$color-accent: var(--color-accent);
+$color-accent-fg: var(--color-accent-fg);

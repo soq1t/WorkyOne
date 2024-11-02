@@ -10,6 +10,8 @@ namespace WorkyOne.MVC
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            builder.WebHost.UseUrls("https://0.0.0.0:7202");
+
             builder.Configuration.AddJsonFile("appsettings.json");
 
 #if DEBUG
