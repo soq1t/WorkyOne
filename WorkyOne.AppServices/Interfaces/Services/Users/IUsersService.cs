@@ -2,7 +2,7 @@
 using WorkyOne.Contracts.DTOs.Common;
 using WorkyOne.Contracts.Services.GetRequests.Users;
 
-namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Users
+namespace WorkyOne.AppServices.Interfaces.Services.Users
 {
     /// <summary>
     /// Интерфейс сервиса по работе с пользователями
@@ -19,12 +19,5 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Users
             UserInfoRequest request,
             CancellationToken cancellation = default
         );
-
-        /// <summary>
-        /// Проверяет, состоит ли пользователь в определённых ролях
-        /// </summary>
-        /// <param name="user">Проверяемый пользователь</param>
-        /// <param name="roles">Роли, которые проверяются для пользователя</param>
-        public bool IsUserInRoles(ClaimsPrincipal user, params string[] roles);
     }
 }

@@ -1,4 +1,4 @@
-﻿using WorkyOne.AppServices.Interfaces.Services.Schedule.Users;
+﻿using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.Domain.Specifications.AccesFilters.Common;
 
 namespace WorkyOne.AppServices.Services.Users

@@ -1,20 +1,24 @@
-﻿using Microsoft.AspNetCore.Authentication.Cookies;
+﻿using System.Text;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
-using WorkyOne.AppServices.Interfaces.Services.Schedule.Users;
+using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.AppServices.Services.Common;
 using WorkyOne.AppServices.Services.Schedule.Common;
 using WorkyOne.AppServices.Services.Schedule.Shifts;
 using WorkyOne.AppServices.Services.Users;
+using WorkyOne.Contracts.Configuration;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Schedule.Common;
 using WorkyOne.Infrastructure.Utilities;
@@ -37,18 +41,21 @@ namespace WorkyOne.DependencyRegister
         /// <param name="configuration">Конфигурация приложения</param>
         public static void RegisterAll(IServiceCollection services, IConfiguration configuration)
         {
-            RegisterOther(services);
             RegisterConfigs(services, configuration);
-            RegisterAuth(services);
             RegisterContextes(services, configuration);
             RegisterRepositories(services);
+            RegisterAuth(services, configuration);
             RegisterServices(services);
+            RegisterOther(services);
         }
 
         private static void RegisterConfigs(
             IServiceCollection services,
             IConfiguration configuration
-        ) { }
+        )
+        {
+            services.Configure<JwtOptions>(configuration.GetSection("JwtSettings"));
+        }
 
         /// <summary>
         /// Регистрирует сервисы, используемые приложением
@@ -60,9 +67,11 @@ namespace WorkyOne.DependencyRegister
 
             services.AddScoped<IDateTimeService, DateTimeService>();
             services.AddScoped<IUsersService, UsersService>();
+            services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IAuthService, AuthService>();
 
 #if DEBUG
-            services.AddScoped<IUserAccessInfoProvider, UserAccessMock>();
+            services.AddScoped<IUserAccessInfoProvider, UserAccessInfoProvider>();
 #else
             services.AddScoped<IUserAccessInfoProvider, UserAccessInfoProvider>();
 #endif
@@ -97,8 +106,41 @@ namespace WorkyOne.DependencyRegister
         /// Регистрирует систему авторизации и аутентификации приложения
         /// </summary>
         /// <param name="services">Сервисы приложения</param>
-        private static void RegisterAuth(IServiceCollection services)
+        private static void RegisterAuth(IServiceCollection services, IConfiguration configuration)
         {
+            services
+                .AddIdentity<UserEntity, IdentityRole>(options =>
+                {
+                    options.Password.RequiredLength = 6;
+                })
+                .AddEntityFrameworkStores<UsersDbContext>()
+                .AddDefaultTokenProviders();
+
+            services
+                .AddAuthentication(options =>
+                {
+                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                })
+                .AddJwtBearer(options =>
+                {
+                    var settings = configuration.GetSection("JwtSettings").Get<JwtOptions>();
+
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = settings.Issuer,
+                        ValidAudience = settings.Audience,
+                        IssuerSigningKey = new SymmetricSecurityKey(
+                            Encoding.UTF8.GetBytes(settings.Secret)
+                        )
+                    };
+                });
+
+            services.AddAuthorization();
             //services
             //    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             //    .AddCookie(options =>
@@ -108,17 +150,9 @@ namespace WorkyOne.DependencyRegister
             //        options.LogoutPath = "account/logout";
             //    });
 
-            services
-                .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie();
-
-            services
-                .AddIdentity<UserEntity, IdentityRole>(options =>
-                {
-                    options.Password.RequiredLength = 6;
-                })
-                .AddEntityFrameworkStores<UsersDbContext>()
-                .AddDefaultTokenProviders();
+            //services
+            //    .AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            //    .AddCookie();
         }
 
         /// <summary>

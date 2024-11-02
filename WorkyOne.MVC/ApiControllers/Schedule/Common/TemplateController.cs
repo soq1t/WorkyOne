@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
 
@@ -8,6 +9,7 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
     /// API для работы с шаблонами
     /// </summary>
     [ApiController]
+    [Authorize]
     [Route("api/schedule/{scheduleId}/template")]
     [Route("api/template")]
     public sealed class TemplateController : Controller

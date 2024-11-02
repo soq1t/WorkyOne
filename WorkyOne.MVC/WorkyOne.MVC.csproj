@@ -18,8 +18,4 @@
     <ProjectReference Include="..\WorkyOne.DependencyRegister\WorkyOne.DependencyRegister.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="ViewModels\Api\Schedule\Common\" />
-  </ItemGroup>
-
 </Project>

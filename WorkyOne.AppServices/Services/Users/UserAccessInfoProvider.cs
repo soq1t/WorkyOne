@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
-using WorkyOne.AppServices.Interfaces.Services.Schedule.Users;
+using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Domain.Requests.Users;
 using WorkyOne.Domain.Specifications.AccesFilters.Common;
@@ -18,23 +18,28 @@ namespace WorkyOne.AppServices.Services.Users
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IUserDatasRepository _userDataRepo;
         private readonly UserManager<UserEntity> _userManager;
-        private readonly IUsersService _usersService;
+        private readonly IAuthService _authService;
 
         public UserAccessInfoProvider(
             IHttpContextAccessor contextAccessor,
             IUserDatasRepository userDataRepo,
             UserManager<UserEntity> userManager,
-            IUsersService usersService
+            IAuthService authService
         )
         {
             _contextAccessor = contextAccessor;
             _userDataRepo = userDataRepo;
             _userManager = userManager;
-            _usersService = usersService;
+            _authService = authService;
         }
 
         public async Task<UserAccessInfo> GetCurrentAsync(CancellationToken cancellation = default)
         {
+            if (_contextAccessor.HttpContext == null)
+            {
+                return new UserAccessInfo(null, null, false);
+            }
+
             ClaimsPrincipal contextUser = _contextAccessor.HttpContext.User;
 
             if (contextUser == null)
@@ -42,7 +47,7 @@ namespace WorkyOne.AppServices.Services.Users
                 return new UserAccessInfo(null, null, false);
             }
 
-            var isAdmin = _usersService.IsUserInRoles(contextUser, "Admin");
+            var isAdmin = _authService.IsUserInRoles(contextUser, "Admin");
 
             var user = await _userManager.FindByNameAsync(contextUser.Identity.Name);
 

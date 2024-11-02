@@ -2,7 +2,7 @@
 using AutoMapper;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
-using WorkyOne.AppServices.Interfaces.Services.Schedule.Users;
+using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Enums.Result;
 using WorkyOne.Contracts.Repositories.Result;

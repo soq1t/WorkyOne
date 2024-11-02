@@ -1,4 +1,5 @@
-using WorkyOne.AppServices.Interfaces.Services.Schedule.Users;
+using WorkyOne.AppServices.Interfaces.Services.Users;
+using WorkyOne.Contracts.Configuration;
 using WorkyOne.Contracts.Services.GetRequests.Users;
 using WorkyOne.DependencyRegister;
 
@@ -20,7 +21,9 @@ namespace WorkyOne.MVC
             builder.Configuration.AddJsonFile("appsettings.Production.json");
 
 #endif
+
             // Add services to the container.
+
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpContextAccessor();
 
@@ -42,8 +45,8 @@ namespace WorkyOne.MVC
             app.UseRouting();
 
             app.UseAntiforgery();
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.MapControllerRoute(
                 name: "default",
@@ -52,7 +55,7 @@ namespace WorkyOne.MVC
 
 #if DEBUG
             //Test(app.Services).Wait();
-            CreateUserData(app.Services).Wait();
+            //CreateUserData(app.Services).Wait();
 #endif
 
             app.Run();

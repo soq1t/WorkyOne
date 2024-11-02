@@ -1,6 +1,6 @@
 ﻿using WorkyOne.Domain.Specifications.AccesFilters.Common;
 
-namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Users
+namespace WorkyOne.AppServices.Interfaces.Services.Users
 {
     /// <summary>
     /// Интерфейс сервиса, предоставляющего <see cref="UserAccessInfo"/>

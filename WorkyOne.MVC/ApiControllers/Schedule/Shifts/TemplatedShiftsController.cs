@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts;
@@ -10,6 +11,7 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
     /// API для взаимодействия с "шаблонными" сменами
     /// </summary>
     [ApiController]
+    [Authorize]
     [Route("api/shifts/templated")]
     [Route("api/template/{templateId}/shifts")]
     [Route("api/schedule/{scheduleId}/template/shifts")]

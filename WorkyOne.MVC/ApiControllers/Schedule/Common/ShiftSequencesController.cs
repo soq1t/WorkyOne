@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
 using WorkyOne.Contracts.Services.GetRequests.Common;
@@ -9,6 +10,7 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
     /// Контроллер для работы с очерёдностью смен в шаблоне
     /// </summary>
     [ApiController]
+    [Authorize]
     [Route("api/schedule/{scheduleId}/template/sequences")]
     [Route("api/template/{templateId}/sequences")]
     public class ShiftSequencesController : Controller

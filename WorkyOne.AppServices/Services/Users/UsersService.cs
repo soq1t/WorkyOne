@@ -1,7 +1,7 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
-using WorkyOne.AppServices.Interfaces.Services.Schedule.Users;
+using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.Contracts.DTOs.Common;
 using WorkyOne.Contracts.Services.GetRequests.Users;
 using WorkyOne.Domain.Entities.Users;
@@ -97,23 +97,6 @@ namespace WorkyOne.AppServices.Services.Users
             _mapper.Map(userData, dto);
 
             return dto;
-        }
-
-        public bool IsUserInRoles(ClaimsPrincipal user, params string[] roles)
-        {
-            if (user == null)
-                return false;
-
-            if (user.IsInRole("God"))
-                return true;
-
-            foreach (var item in roles)
-            {
-                if (user.IsInRole(item))
-                    return true;
-            }
-
-            return false;
         }
     }
 }

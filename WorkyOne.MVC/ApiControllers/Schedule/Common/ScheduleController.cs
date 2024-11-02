@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
@@ -8,6 +9,7 @@ using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
 namespace WorkyOne.MVC.ApiControllers.Schedule.Common
 {
     [ApiController]
+    [Authorize]
     [Route("api/schedule")]
     public class ScheduleController : Controller
     {
