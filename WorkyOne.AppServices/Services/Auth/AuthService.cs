@@ -1,0 +1,88 @@
+﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
+using WorkyOne.AppServices.Interfaces.Services.Auth;
+using WorkyOne.Contracts.Services.Requests;
+using WorkyOne.Domain.Entities.Users;
+
+namespace WorkyOne.AppServices.Services.Auth
+{
+    /// <summary>
+    /// Cервиса, отвечающий за авторизацию и аутентификацию пользователей
+    /// </summary>
+    public class AuthService : IAuthService
+    {
+        private readonly UserManager<UserEntity> _userManager;
+        private readonly IJwtService _jwtService;
+        private readonly ISessionService _sessionService;
+
+        public AuthService(
+            UserManager<UserEntity> userManager,
+            IJwtService jwtService,
+            ISessionService sessionService
+        )
+        {
+            _userManager = userManager;
+            _jwtService = jwtService;
+            _sessionService = sessionService;
+        }
+
+        public bool IsUserInRoles(ClaimsPrincipal user, params string[] roles)
+        {
+            if (user == null)
+                return false;
+
+            if (user.IsInRole("God"))
+                return true;
+
+            foreach (var item in roles)
+            {
+                if (user.IsInRole(item))
+                    return true;
+            }
+
+            return false;
+        }
+
+        public async Task<SignInResult> LogInAsync(
+            LogInRequest request,
+            CancellationToken cancellation = default
+        )
+        {
+            var user = await _userManager.FindByNameAsync(request.Username);
+
+            if (user == null || !(await _userManager.CheckPasswordAsync(user, request.Password)))
+            {
+                return SignInResult.Failed;
+            }
+
+            if (request.CreateSession)
+            {
+                var sessionToken = await _sessionService.CreateSessionAsync(user.Id, cancellation);
+
+                if (sessionToken == null)
+                {
+                    return SignInResult.Failed;
+                }
+
+                _sessionService.WriteTokenToCookies(sessionToken);
+            }
+
+            var jwtToken = await _jwtService.GenerateJwtTokenAsync(user.Id, cancellation);
+
+            if (jwtToken == null)
+            {
+                return SignInResult.Failed;
+            }
+
+            _jwtService.WriteToCookies(jwtToken);
+
+            return SignInResult.Success;
+        }
+
+        public Task LogOutAsync(CancellationToken cancellation = default)
+        {
+            _jwtService.ClearCookies();
+            return _sessionService.DeleteCurrentSessionAsync(cancellation);
+        }
+    }
+}

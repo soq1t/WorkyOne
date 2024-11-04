@@ -6,23 +6,27 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using WorkyOne.AppServices.Interfaces.Repositories.Auth;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services;
+using WorkyOne.AppServices.Interfaces.Services.Auth;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.AppServices.Interfaces.Utilities;
+using WorkyOne.AppServices.Services.Auth;
 using WorkyOne.AppServices.Services.Common;
 using WorkyOne.AppServices.Services.Schedule.Common;
 using WorkyOne.AppServices.Services.Schedule.Shifts;
 using WorkyOne.AppServices.Services.Users;
-using WorkyOne.Contracts.Configuration;
+using WorkyOne.Contracts.Options.Auth;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Schedule.Common;
 using WorkyOne.Infrastructure.Utilities;
 using WorkyOne.Repositories.Contextes;
+using WorkyOne.Repositories.Repositories.Auth;
 using WorkyOne.Repositories.Repositories.Schedule.Common;
 using WorkyOne.Repositories.Repositories.Schedule.Shifts;
 using WorkyOne.Repositories.Repositories.Users;
@@ -41,7 +45,7 @@ namespace WorkyOne.DependencyRegister
         /// <param name="configuration">Конфигурация приложения</param>
         public static void RegisterAll(IServiceCollection services, IConfiguration configuration)
         {
-            RegisterConfigs(services, configuration);
+            RegisterOptions(services, configuration);
             RegisterContextes(services, configuration);
             RegisterRepositories(services);
             RegisterAuth(services, configuration);
@@ -49,12 +53,13 @@ namespace WorkyOne.DependencyRegister
             RegisterOther(services);
         }
 
-        private static void RegisterConfigs(
+        private static void RegisterOptions(
             IServiceCollection services,
             IConfiguration configuration
         )
         {
-            services.Configure<JwtOptions>(configuration.GetSection("JwtSettings"));
+            services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
+            services.Configure<SessionOptions>(configuration.GetSection("SessionOptions"));
         }
 
         /// <summary>
@@ -67,14 +72,12 @@ namespace WorkyOne.DependencyRegister
 
             services.AddScoped<IDateTimeService, DateTimeService>();
             services.AddScoped<IUsersService, UsersService>();
+
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<ISessionService, SessionService>();
 
-#if DEBUG
             services.AddScoped<IUserAccessInfoProvider, UserAccessInfoProvider>();
-#else
-            services.AddScoped<IUserAccessInfoProvider, UserAccessInfoProvider>();
-#endif
 
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<IWorkGraphicService, WorkGraphicService>();
@@ -124,7 +127,7 @@ namespace WorkyOne.DependencyRegister
                 })
                 .AddJwtBearer(options =>
                 {
-                    var settings = configuration.GetSection("JwtSettings").Get<JwtOptions>();
+                    var settings = configuration.GetSection("JwtOptions").Get<JwtOptions>();
 
                     options.TokenValidationParameters = new TokenValidationParameters
                     {
@@ -172,6 +175,8 @@ namespace WorkyOne.DependencyRegister
 
             services.AddScoped<IUsersRepository, UsersRepository>();
             services.AddScoped<IUserDatasRepository, UserDatasRepository>();
+
+            services.AddScoped<ISessionsRepository, SessionsRepository>();
         }
 
         /// <summary>

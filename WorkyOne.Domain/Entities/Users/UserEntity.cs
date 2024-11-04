@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using WorkyOne.Domain.Attributes.Updating;
+using WorkyOne.Domain.Entities.Auth;
 using WorkyOne.Domain.Interfaces.Common;
 
 namespace WorkyOne.Domain.Entities.Users
@@ -17,5 +18,7 @@ namespace WorkyOne.Domain.Entities.Users
         /// </summary>
         [AutoUpdated]
         public bool IsActivated { get; set; }
+
+        public List<SessionEntity> Sessions { get; set; }
     }
 }

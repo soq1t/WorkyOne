@@ -11,6 +11,7 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Shifts
     /// </summary>
     public sealed class PeriodicShiftsRepository
         : ApplicationBaseRepository<
+            ApplicationDbContext,
             PeriodicShiftEntity,
             EntityRequest<PeriodicShiftEntity>,
             PaginatedRequest<PeriodicShiftEntity>

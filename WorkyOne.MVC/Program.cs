@@ -1,7 +1,7 @@
 using WorkyOne.AppServices.Interfaces.Services.Users;
-using WorkyOne.Contracts.Configuration;
 using WorkyOne.Contracts.Services.GetRequests.Users;
 using WorkyOne.DependencyRegister;
+using WorkyOne.MVC.Middlewares;
 
 namespace WorkyOne.MVC
 {
@@ -45,6 +45,7 @@ namespace WorkyOne.MVC
             app.UseRouting();
 
             app.UseAntiforgery();
+            app.UseMiddleware<SessionMiddleware>();
             app.UseAuthentication();
             app.UseAuthorization();
 

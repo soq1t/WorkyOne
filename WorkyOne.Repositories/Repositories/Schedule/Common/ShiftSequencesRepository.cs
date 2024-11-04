@@ -10,6 +10,7 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
 {
     public sealed class ShiftSequencesRepository
         : ApplicationBaseRepository<
+            ApplicationDbContext,
             ShiftSequenceEntity,
             EntityRequest<ShiftSequenceEntity>,
             PaginatedRequest<ShiftSequenceEntity>

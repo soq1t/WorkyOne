@@ -16,16 +16,22 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
     /// <typeparam name="TEntity">Тип сущностей, с которыми работает репозиторий</typeparam>
     /// <typeparam name="TSingleRequest">Тип запроса на получение сущности <typeparamref name="TEntity"/></typeparam>
     /// <typeparam name="TPaginatedRequest">Тип запроса на получения множества сущностей <typeparamref name="TEntity"/></typeparam>
-    public abstract class ApplicationBaseRepository<TEntity, TSingleRequest, TPaginatedRequest>
+    public abstract class ApplicationBaseRepository<
+        TContext,
+        TEntity,
+        TSingleRequest,
+        TPaginatedRequest
+    >
         : ICrudRepository<TEntity, TSingleRequest, TPaginatedRequest>,
             IDeleteByConditionRepository<TEntity>
+        where TContext : DbContext
         where TEntity : EntityBase
         where TSingleRequest : EntityRequest<TEntity>
         where TPaginatedRequest : PaginatedRequest<TEntity>
     {
-        protected readonly ApplicationDbContext _context;
+        protected readonly TContext _context;
 
-        public ApplicationBaseRepository(ApplicationDbContext context)
+        public ApplicationBaseRepository(TContext context)
         {
             _context = context;
         }

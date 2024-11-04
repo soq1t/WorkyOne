@@ -11,5 +11,10 @@ namespace WorkyOne.AppServices.Services.Common
         {
             return DateTime.Now;
         }
+
+        public DateTime GetUtcNow()
+        {
+            return DateTime.UtcNow;
+        }
     }
 }

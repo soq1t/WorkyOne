@@ -12,7 +12,12 @@ namespace WorkyOne.Repositories.Repositories.Users
     /// Репозиторий по работе с <see cref="UserDataEntity"/>
     /// </summary>
     public sealed class UserDatasRepository
-        : ApplicationBaseRepository<UserDataEntity, UserDataRequest, PaginatedUserDataRequest>,
+        : ApplicationBaseRepository<
+            ApplicationDbContext,
+            UserDataEntity,
+            UserDataRequest,
+            PaginatedUserDataRequest
+        >,
             IUserDatasRepository
     {
         public UserDatasRepository(ApplicationDbContext context)

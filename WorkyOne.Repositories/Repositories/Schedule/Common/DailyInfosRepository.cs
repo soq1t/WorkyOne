@@ -10,6 +10,7 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
 {
     public sealed class DailyInfosRepository
         : ApplicationBaseRepository<
+            ApplicationDbContext,
             DailyInfoEntity,
             EntityRequest<DailyInfoEntity>,
             PaginatedRequest<DailyInfoEntity>

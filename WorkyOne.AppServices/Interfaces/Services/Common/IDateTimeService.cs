@@ -10,5 +10,11 @@
         /// </summary>
         /// <returns></returns>
         public DateTime GetNow();
+
+        /// <summary>
+        /// Возвращает текущую дату и время по UTC
+        /// </summary>
+        /// <returns></returns>
+        public DateTime GetUtcNow();
     }
 }

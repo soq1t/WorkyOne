@@ -13,7 +13,12 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
     /// Репозиторий по работе с <see cref="ScheduleEntity"/>
     /// </summary>
     public sealed class ScheduleRepository
-        : ApplicationBaseRepository<ScheduleEntity, ScheduleRequest, PaginatedScheduleRequest>,
+        : ApplicationBaseRepository<
+            ApplicationDbContext,
+            ScheduleEntity,
+            ScheduleRequest,
+            PaginatedScheduleRequest
+        >,
             ISchedulesRepository
     {
         public ScheduleRepository(ApplicationDbContext context)

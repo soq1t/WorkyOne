@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
-using WorkyOne.Contracts.Enums.Reposistories;
 using WorkyOne.Contracts.Enums.Result;
 using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Domain.Entities.Users;

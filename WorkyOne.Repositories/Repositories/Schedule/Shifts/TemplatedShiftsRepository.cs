@@ -11,6 +11,7 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Shifts
     /// </summary>
     public sealed class TemplatedShiftsRepository
         : ApplicationBaseRepository<
+            ApplicationDbContext,
             TemplatedShiftEntity,
             EntityRequest<TemplatedShiftEntity>,
             PaginatedRequest<TemplatedShiftEntity>

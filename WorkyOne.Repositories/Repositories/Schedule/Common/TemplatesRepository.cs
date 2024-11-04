@@ -10,6 +10,7 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
 {
     public sealed class TemplatesRepository
         : ApplicationBaseRepository<
+            ApplicationDbContext,
             TemplateEntity,
             EntityRequest<TemplateEntity>,
             PaginatedRequest<TemplateEntity>

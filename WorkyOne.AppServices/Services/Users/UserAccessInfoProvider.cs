@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
+using WorkyOne.AppServices.Interfaces.Services.Auth;
 using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Domain.Requests.Users;
