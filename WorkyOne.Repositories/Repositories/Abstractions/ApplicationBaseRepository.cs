@@ -182,7 +182,8 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
         {
             IQueryable<TEntity> query = _context
                 .Set<TEntity>()
-                .Where(request.Specification.ToExpression());
+                .Where(request.Specification.ToExpression())
+                .OrderBy(x => x.Id);
 
             query = query.AddPagination(request.PageIndex, request.Amount);
 
