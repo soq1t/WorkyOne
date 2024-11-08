@@ -55,16 +55,17 @@ table {
   --color-background: #f4f9f9;
   --color-background-fg: #020808;
   --color-primary: #0fbda6;
-  --color-primary-fg: #020808;
+  --color-primary-fg: #f4f9f9;
   --color-secondary: #93cfd7;
-  --color-secondary-fg: #020808;
+  --color-secondary-fg: #f4f9f9;
   --color-accent: #71a3e5;
-  --color-accent-fg: #020808;
+  --color-accent-fg: #f4f9f9;
 }
 
 :root {
   --font-family: "M PLUS Rounded 1c", serif;
   --font-size-text: clamp(1rem, 3vw + 0.5rem, 1.5rem);
+  --font-size-h3: clamp(1.2rem, 5vw + 0.5rem, 1.6rem);
 }
 
 ._layout {
@@ -132,11 +133,12 @@ table {
 ._layout .header .nav__panel .panel__element {
   width: 40px;
   height: 40px;
+  color: var(--color-primary-fg);
 }
 ._layout .header .nav__panel .panel__element .material-symbols-outlined {
   text-decoration: none;
   cursor: pointer;
-  color: var(--color-background);
+  color: var(--color-primary-fg);
   font-size: 40px;
 }
 ._layout .header .nav__list {
@@ -148,7 +150,6 @@ table {
   -webkit-box-direction: normal;
       -ms-flex-direction: column;
           flex-direction: column;
-  gap: 15px;
   z-index: 5;
   bottom: 0;
   border-radius: 3px 0px 10px 10px;
@@ -162,11 +163,27 @@ table {
   overflow-y: hidden;
   -webkit-transition: all ease 0.3s;
   transition: all ease 0.3s;
-  padding: 0px 15px;
+  padding: 0px 0px;
+}
+._layout .header .nav__list a {
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--color-primary-fg);
+  font-weight: 500;
+  padding: 12px 15px;
+}
+@media (min-width: 780px) {
+  ._layout .header .nav__list a {
+    padding: 5px 15px;
+  }
+}
+._layout .header .nav__list a:hover {
+  background-color: var(--color-accent);
+  color: var(--color-accent-fg);
 }
 ._layout .header .nav__list--active {
   max-height: 500px;
-  padding: 15px 15px;
+  padding: 5px 0px;
 }
 ._layout .main {
   -webkit-box-flex: 1;
@@ -181,7 +198,7 @@ table {
 }
 .burger__line {
   position: absolute;
-  background-color: var(--color-background);
+  background-color: var(--color-primary-fg);
   width: 100%;
   height: 4px;
   border-radius: 2px;

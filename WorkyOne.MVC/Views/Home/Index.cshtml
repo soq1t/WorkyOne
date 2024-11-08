@@ -1,7 +1,11 @@
-﻿@{
+﻿@using WorkyOne.MVC.Models.Common
+
+@model HomeViewModel
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
 <div class="wrapper wrapper--padding">
-    <p>asd asdas dasd as das dasd</p>
+    @await Html.PartialAsync("_CalendarPartial", Model.CalendarViewModel)
 </div>

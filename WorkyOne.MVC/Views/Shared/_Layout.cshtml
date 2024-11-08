@@ -1,9 +1,13 @@
-﻿<!DOCTYPE html>
+﻿@using WorkyOne.MVC.Models.Common
+@using WorkyOne.AppServices.Interfaces.Services.Auth
+
+@inject IAuthService authService
+<!DOCTYPE html>
 <html lang="ru">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - WorkyOne.MVC</title>
+    <title>@ViewData["Title"] - WorkyOne</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/_Layout.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WorkyOne.MVC.styles.css" asp-append-version="true" />
@@ -11,14 +15,14 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@100;300;400;500;700;800;900&family=Roboto+Slab:wght@100..900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=login" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
 </head>
 <body class="_layout">
     <header class="header">
         <div class="wrapper wrapper--padding">
             <nav class="nav">
                 <div class="nav__panel">
-                    <div class="panel__burger burger">
+                    <div class="panel__element panel__burger burger">
                         <span class="burger__line burger__line--top"></span>
                         <span class="burger__line burger__line--middle"></span>
                         <span class="burger__line burger__line--bottom"></span>
@@ -30,11 +34,16 @@
                     </div>
                 </div>
                 <div class="nav__list">
-                    <a>link</a>
-                    <a>link</a>
-                    <a>link</a>
-                    <a>link</a>
-                    <a>link</a>
+                    <a asp-controller="Home" asp-action="Index">Главная</a>
+                    @if (authService.IsAuthenticated())
+                    {
+                        <a href="#">Профиль</a>
+                        <a href="#">Управление расписаниями</a>
+                        <a href="#">Выйти из аккаунта</a>
+                    } else
+                    {
+                        <a href="#">Вход в аккаунт</a>
+                    }                     
                 </div>
             </nav>
             

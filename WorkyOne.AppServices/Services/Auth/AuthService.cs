@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using WorkyOne.AppServices.Interfaces.Services.Auth;
 using WorkyOne.Contracts.Services.Requests;
@@ -14,16 +15,43 @@ namespace WorkyOne.AppServices.Services.Auth
         private readonly UserManager<UserEntity> _userManager;
         private readonly IJwtService _jwtService;
         private readonly ISessionService _sessionService;
+        private readonly IHttpContextAccessor _contextAccessor;
 
         public AuthService(
             UserManager<UserEntity> userManager,
             IJwtService jwtService,
-            ISessionService sessionService
+            ISessionService sessionService,
+            IHttpContextAccessor contextAccessor
         )
         {
             _userManager = userManager;
             _jwtService = jwtService;
             _sessionService = sessionService;
+            _contextAccessor = contextAccessor;
+        }
+
+        public bool IsAuthenticated()
+        {
+            var user = _contextAccessor.HttpContext.User;
+
+            if (user == null)
+            {
+                return false;
+            }
+
+            if (user.Identity == null)
+            {
+                return false;
+            }
+
+            return user.Identity.IsAuthenticated;
+        }
+
+        public bool IsUserInRoles(params string[] roles)
+        {
+            var user = _contextAccessor.HttpContext.User;
+
+            return IsUserInRoles(user, roles);
         }
 
         public bool IsUserInRoles(ClaimsPrincipal user, params string[] roles)

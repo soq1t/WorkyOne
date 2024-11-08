@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 using WorkyOne.AppServices.Interfaces.Services.Auth;
 using WorkyOne.Contracts.Options.Auth;
 using WorkyOne.Contracts.Services.Requests;
-using WorkyOne.MVC.ViewModels.Authentification;
+using WorkyOne.MVC.Models.Authentification;
 
 namespace WorkyOne.MVC.ApiControllers.Authentification
 {

@@ -10,11 +10,23 @@ namespace WorkyOne.AppServices.Interfaces.Services.Auth
     public interface IAuthService
     {
         /// <summary>
+        /// Проверяет, состоит ли текущий пользователь в определённых ролях
+        /// </summary>
+        /// <param name="roles">Роли, которые проверяются для пользователя</param>
+        public bool IsUserInRoles(params string[] roles);
+
+        /// <summary>
         /// Проверяет, состоит ли пользователь в определённых ролях
         /// </summary>
         /// <param name="user">Проверяемый пользователь</param>
         /// <param name="roles">Роли, которые проверяются для пользователя</param>
         public bool IsUserInRoles(ClaimsPrincipal user, params string[] roles);
+
+        /// <summary>
+        /// Проверяет, аутентифицирован ли пользователь в текущей сессии
+        /// </summary>
+        /// <returns></returns>
+        public bool IsAuthenticated();
 
         /// <summary>
         /// Совершает вход в аккаунт с указанными данными

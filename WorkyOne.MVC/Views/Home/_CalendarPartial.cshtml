@@ -1,0 +1,50 @@
+﻿@using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common
+@using WorkyOne.MVC.Models.Schedule
+
+@model CalendarViewModel
+@inject ICalendarService calendarService
+
+<head>
+    <link rel="stylesheet" href="~/css/Pages/Home/_Calendar.css" asp-append-version="true" />
+    @* <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=arrow_back_ios" /> *@
+</head>
+
+<div class="calendar__body">
+    <div class="calendar__header">
+        <div class="monthSelector">
+            <span id="selector__arrow--left" class="monthSelector__arrow material-symbols-outlined">arrow_back</span>
+            <div class="monthSelector__info">
+                <p class="month">@Model.MonthName</p>
+                <p class="year">@Model.Year</p>
+            </div>
+            <span id="selector__arrow--right" class="monthSelector__arrow material-symbols-outlined">arrow_forward</span>
+        </div>
+    </div>
+    <div class="calendar__main">
+        @{
+            var calendarInfo = calendarService.GetCalendarInfo(Model.Year, Model.Month);
+            var date = calendarInfo.Start;
+
+            while (date <= calendarInfo.End)
+            {
+                <div class="calendar__row">
+                @for (int i = 1; i <= 7; i++)
+                {
+                    var classes = date.Month == Model.Month ? "day" : "day day--inactive";
+
+                    var dailyInfo = Model.WorkGraphic?.FirstOrDefault(x => x.Date == date);
+
+                    <div class="calendar__day @classes">
+                        <div class="day__number">@date.Day</div>
+                    </div>
+                    
+                    date = date.AddDays(1);                        
+                }
+                </div>                
+            }
+
+        }
+    </div>
+    <div class="calendar__footer">
+    </div>
+</div>

@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using WorkyOne.Contracts.DTOs.Common;
+﻿using WorkyOne.Contracts.DTOs.Common;
 using WorkyOne.Contracts.Services.GetRequests.Users;
 
 namespace WorkyOne.AppServices.Interfaces.Services.Users

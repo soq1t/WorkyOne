@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace WorkyOne.MVC.ViewModels.Authentification
+namespace WorkyOne.MVC.Models.Authentification
 {
     public class LogInViewModel
     {
