@@ -29,7 +29,10 @@
                     </div>
                     <div class="panel__instruments">
                         <div class="panel__element">
-                            <a class="material-symbols-outlined">login</a>
+                            @if (!authService.IsAuthenticated())
+                            {
+                                <a asp-controller="Account" asp-action="SignIn" class="material-symbols-outlined">login</a>
+                            }
                         </div>
                     </div>
                 </div>
@@ -39,10 +42,10 @@
                     {
                         <a href="#">Профиль</a>
                         <a href="#">Управление расписаниями</a>
-                        <a href="#">Выйти из аккаунта</a>
+                        <a asp-controller="Account" asp-action="SignOut">Выйти из аккаунта</a>
                     } else
                     {
-                        <a href="#">Вход в аккаунт</a>
+                        <a asp-controller="Account" asp-action="SignIn">Вход в аккаунт</a>
                     }                     
                 </div>
             </nav>

@@ -1,4 +1,15 @@
-﻿@import "../../Imports/_all.scss";
+﻿@import "../../Imports/nullstyle.scss";
+@import "../../Imports/_all.scss";
+
+h3 {
+    font-size: $font-size-h3;
+    font-weight: 500;
+    color: $color-primary;
+}
+
+form {
+    height: 100%;
+}
 
 ._layout {
     height: 100dvh;

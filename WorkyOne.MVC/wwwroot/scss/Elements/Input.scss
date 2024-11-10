@@ -1,0 +1,23 @@
+﻿@import "../Imports/_all.scss";
+
+.input {
+
+    &__text {
+        outline: none;
+        border: 0px solid $color-primary;
+        border-bottom: 2px solid $color-primary;
+        border-radius: 8px;
+        padding: 5px 10px;
+        transition: all 0.1s ease;
+
+        &:focus {
+            border: 0px solid $color-accent;
+            border-bottom: 2px solid $color-accent;
+        }
+    }
+
+    &__checkbox {
+        width: $font-size-text;
+        height: $font-size-text;
+    }
+}

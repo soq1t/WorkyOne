@@ -1,0 +1,41 @@
+﻿@using WorkyOne.MVC.Models.Authentification
+
+@model LogInViewModel
+
+<head>
+    <link rel="stylesheet" href="~/css/Pages/Account/SignIn.css" />
+</head>
+
+<div class="wrapper wrapper--padding">
+    <form class="signIn__body" asp-action="SignIn" method="post">
+        <div class="signIn__header">
+            <h3>Вход в аккаунт</h3>
+        </div>
+        <div class="signIn__main">
+            <div class="section">
+                <label class="title" asp-for="Username"></label>
+                <input class="input__text" asp-for="Username" type="text" />
+            </div>
+            <div class="section">
+                <span class="validation" asp-validation-for="Username"></span>
+            </div>
+            <div class="section">
+                <label class="title" asp-for="Password"></label>
+                <input class="input__text" asp-for="Password" type="password" />
+            </div>
+            <div class="section">
+                <span class="validation" asp-validation-for="Password"></span>
+            </div>
+            <div class="section section--rememberMe">
+                <label class="title" asp-for="RememberMe"></label>
+                <input class="input__checkbox" type="checkbox" asp-for="RememberMe" />
+            </div>
+            <div class="section">
+                <div class="validation" asp-validation-summary="ModelOnly"></div>
+            </div>
+        </div>
+        <div class="signIn__footer">
+            <button class="btn btn__primary" type="submit">Войти</button>
+        </div>
+    </form>
+</div>

@@ -8,14 +8,33 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
     /// </summary>
     public class CalendarService : ICalendarService
     {
+        private readonly IDateTimeService _dateTimeService;
+
+        public CalendarService(IDateTimeService dateTimeService)
+        {
+            _dateTimeService = dateTimeService;
+        }
+
         public CalendarInfo GetCalendarInfo(int year, int month)
         {
-            var calendarInfo = new CalendarInfo();
+            var calendarInfo = new CalendarInfo
+            {
+                Year = year,
+                MonthNumber = month,
+                MonthName = GetMonthName(month)
+            };
 
             calendarInfo.Start = GetStartDate(year, month);
             calendarInfo.End = GetEndDate(year, month);
-
+            calendarInfo.DaysAmount = GetDaysAmount(calendarInfo.Start, calendarInfo.End);
             return calendarInfo;
+        }
+
+        public CalendarInfo GetNowCalendarInfo()
+        {
+            var now = _dateTimeService.GetNow();
+
+            return GetCalendarInfo(now.Year, now.Month);
         }
 
         private DateOnly GetStartDate(int year, int month)
@@ -55,6 +74,18 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
             {
                 return lastDay.AddDays(7 - dayOfWeekNumber);
             }
+        }
+
+        private string GetMonthName(int month)
+        {
+            var date = new DateTime(2000, month, 1);
+
+            return char.ToUpper(date.ToString("MMMM")[0]) + date.ToString("MMMM").Substring(1);
+        }
+
+        private int GetDaysAmount(DateOnly start, DateOnly end)
+        {
+            return end.DayNumber - start.DayNumber + 1;
         }
     }
 }

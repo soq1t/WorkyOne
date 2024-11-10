@@ -30,6 +30,7 @@ namespace WorkyOne.MVC.Middlewares
                 if (sessionToken != null && await sessionService.VerifyTokenAsync(sessionToken))
                 {
                     sessionToken = await sessionService.RefreshTokenAsync(sessionToken);
+                    sessionService.WriteTokenToCookies(sessionToken);
 
                     var session = await sessionService.GetSessionByTokenAsync(sessionToken);
                     jwtToken = await jwtService.GenerateJwtTokenAsync(session.UserId);

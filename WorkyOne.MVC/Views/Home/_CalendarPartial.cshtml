@@ -25,6 +25,16 @@
             var calendarInfo = calendarService.GetCalendarInfo(Model.Year, Model.Month);
             var date = calendarInfo.Start;
 
+            <div class="calendar__row">
+                <div class="dayWeekName">ПН</div>
+                <div class="dayWeekName">ВТ</div>
+                <div class="dayWeekName">СР</div>
+                <div class="dayWeekName">ЧТ</div>
+                <div class="dayWeekName">ПТ</div>
+                <div class="dayWeekName">СБ</div>
+                <div class="dayWeekName">ВС</div>
+            </div>
+
             while (date <= calendarInfo.End)
             {
                 <div class="calendar__row">
@@ -34,8 +44,14 @@
 
                     var dailyInfo = Model.WorkGraphic?.FirstOrDefault(x => x.Date == date);
 
-                    <div class="calendar__day @classes">
+                    <div style="background-color: @dailyInfo.ColorCode" class="calendar__day @classes">
                         <div class="day__number">@date.Day</div>
+                        <div class="day__body">
+                            @*<div class="day__section">@dailyInfo?.Name</div>*@
+                            <div class="day__section">@dailyInfo?.Beginning</div>
+                            <div class="day__section">@dailyInfo?.Ending</div>
+                        </div>
+                        
                     </div>
                     
                     date = date.AddDays(1);                        

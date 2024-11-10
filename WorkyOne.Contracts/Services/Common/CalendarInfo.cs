@@ -14,5 +14,25 @@
         /// Дата, которой оканчивается отрисовка календаря
         /// </summary>
         public DateOnly End { get; set; }
+
+        /// <summary>
+        /// Количество дней в промежутке между <see cref="Start"/> и <see cref="End"/>
+        /// </summary>
+        public int DaysAmount { get; set; }
+
+        /// <summary>
+        /// Название месяца, для которого отрисовывается календарь календарь
+        /// </summary>
+        public string MonthName { get; set; }
+
+        /// <summary>
+        /// Номер месяца, для которого отрисовывается календарь календарь
+        /// </summary>
+        public int MonthNumber { get; set; }
+
+        /// <summary>
+        /// Год, для которого отрисовывается календарь календарь
+        /// </summary>
+        public int Year { get; set; }
     }
 }

@@ -13,5 +13,10 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common
         /// <param name="year">Год</param>
         /// <param name="month">Порядковый номер месяца</param>
         public CalendarInfo GetCalendarInfo(int year, int month);
+
+        /// <summary>
+        /// Возвращает информацию о календаре на текущий день
+        /// </summary>
+        public CalendarInfo GetNowCalendarInfo();
     }
 }
