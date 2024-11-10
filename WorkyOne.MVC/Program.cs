@@ -47,6 +47,7 @@ namespace WorkyOne.MVC
             app.UseAntiforgery();
             app.UseMiddleware<SessionMiddleware>();
             app.UseAuthentication();
+            app.UseMiddleware<UnauthorizedRedirectionMiddleware>();
             app.UseAuthorization();
 
             app.MapControllerRoute(
