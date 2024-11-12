@@ -9,7 +9,7 @@ using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Domain.Interfaces.Specification;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Domain.Requests.Users;
-using WorkyOne.Domain.Specifications.AccesFilters.Common;
+using WorkyOne.Domain.Specifications.AccesFilters.Abstractions;
 using WorkyOne.Domain.Specifications.AccesFilters.Users;
 using WorkyOne.Domain.Specifications.Base;
 using WorkyOne.Domain.Specifications.Common;

@@ -10,13 +10,6 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
     public interface ITemplateService
     {
         /// <summary>
-        /// Возвращает <see cref="TemplateDto"/> из базы данных
-        /// </summary>
-        /// <param name="id">Идентификатор шаблона</param>
-        /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<TemplateDto?> GetAsync(string id, CancellationToken cancellation = default);
-
-        /// <summary>
         /// Возвращает <see cref="TemplateDto"/> согласно расписанию, к которому он относится
         /// </summary>
         /// <param name="scheduleId">Идентификатор расписания</param>

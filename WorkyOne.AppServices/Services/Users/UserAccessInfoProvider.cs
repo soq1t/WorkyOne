@@ -18,6 +18,7 @@ namespace WorkyOne.AppServices.Services.Users
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IUserDatasRepository _userDataRepo;
+
         private readonly UserManager<UserEntity> _userManager;
         private readonly IAuthService _authService;
 
@@ -63,6 +64,13 @@ namespace WorkyOne.AppServices.Services.Users
                 },
                 cancellation
             );
+
+            if (userData == null)
+            {
+                userData = new UserDataEntity(user.Id);
+                await _userDataRepo.CreateAsync(userData, cancellation);
+                await _userDataRepo.SaveChangesAsync(cancellation);
+            }
 
             return new UserAccessInfo(userData.Id, user.Id, isAdmin);
         }

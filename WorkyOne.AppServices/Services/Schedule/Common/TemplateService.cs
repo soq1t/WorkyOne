@@ -136,26 +136,6 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             return result;
         }
 
-        public async Task<TemplateDto?> GetAsync(
-            string id,
-            CancellationToken cancellation = default
-        )
-        {
-            var filter = new EntityIdFilter<TemplateEntity>(id).And(_templateFilter);
-
-            var entity = await _templatesRepo.GetAsync(
-                new EntityRequest<TemplateEntity>(filter),
-                cancellation
-            );
-            if (entity == null)
-            {
-                return null;
-            }
-
-            var dto = _mapper.Map<TemplateDto>(entity);
-            return dto;
-        }
-
         public async Task<TemplateDto?> GetByScheduleIdAsync(
             string scheduleId,
             CancellationToken cancellation = default
@@ -176,6 +156,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             }
 
             var dto = _mapper.Map<TemplateDto>(entity);
+            dto.Shifts = dto.Shifts.OrderBy(x => x.Position).ToList();
             return dto;
         }
 
@@ -208,6 +189,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             }
 
             _updateUtility.Update(target, source);
+            UpdateTemplatedShifts(target, source.Shifts);
 
             await _templatedShiftsRepo.DeleteByConditionAsync(
                 new Specification<TemplatedShiftEntity>(x => x.TemplateId == target.Id).And(
@@ -217,6 +199,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             );
 
             await _templatedShiftsRepo.CreateManyAsync(target.Shifts, cancellation);
+            await _templatedShiftsRepo.SaveChangesAsync(cancellation);
 
             var result = _templatesRepo.Update(target);
 
@@ -269,6 +252,20 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             }
 
             return true;
+        }
+
+        private void UpdateTemplatedShifts(
+            TemplateEntity template,
+            IEnumerable<TemplatedShiftEntity> shifts
+        )
+        {
+            foreach (var shift in shifts)
+            {
+                shift.TemplateId = template.Id;
+                shift.Template = template;
+            }
+
+            template.Shifts = shifts.ToList();
         }
     }
 }

@@ -1,5 +1,7 @@
-﻿using WorkyOne.Domain.Interfaces.Common;
+﻿using System.Linq.Expressions;
+using WorkyOne.Domain.Interfaces.Common;
 using WorkyOne.Domain.Requests.Common;
+using WorkyOne.Domain.Specifications.Base;
 
 namespace WorkyOne.Repositories.Extensions
 {
@@ -15,10 +17,12 @@ namespace WorkyOne.Repositories.Extensions
         /// <param name="query">Объект, к которому добавляется пагинация</param>
         /// <param name="pageIndex">Номер страницы</param>
         /// <param name="amount">Количество элементов на странице</param>
+        /// <param name="useCustomOrder">Использовать ли свою сортировку</param>
         public static IQueryable<T> AddPagination<T>(
             this IQueryable<T> query,
             int pageIndex,
-            int amount
+            int amount,
+            bool useCustomOrder = false
         )
             where T : class, IEntity
         {
@@ -34,7 +38,14 @@ namespace WorkyOne.Repositories.Extensions
             var skip = (pageIndex - 1) * amount;
             var take = amount;
 
-            return query.OrderBy(x => x.Id).Skip(skip).Take(take);
+            if (useCustomOrder)
+            {
+                return query.Skip(skip).Take(take);
+            }
+            else
+            {
+                return query.OrderBy(x => x.Id).Skip(skip).Take(take);
+            }
         }
 
         /// <summary>

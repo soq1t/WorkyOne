@@ -11,8 +11,7 @@ namespace WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts
         /// <summary>
         /// Идентификатор расписания, для которого создаётся смена
         /// </summary>
-        [Required]
-        public string ScheduleId { get; set; }
+        public string? ScheduleId { get; set; }
 
         /// <summary>
         /// DTO создаваемой смены

@@ -17,6 +17,7 @@ using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Basic;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Special;
 using WorkyOne.AppServices.Interfaces.Services.Users;
+using WorkyOne.AppServices.Interfaces.Stores;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.AppServices.Services.Auth;
 using WorkyOne.AppServices.Services.Common;
@@ -28,6 +29,7 @@ using WorkyOne.Contracts.Options.Auth;
 using WorkyOne.Contracts.Options.Common;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Schedule.Common;
+using WorkyOne.Infrastructure.Stores;
 using WorkyOne.Infrastructure.Utilities;
 using WorkyOne.Repositories.Contextes;
 using WorkyOne.Repositories.Repositories.Auth;
@@ -55,7 +57,13 @@ namespace WorkyOne.DependencyRegister
             RegisterRepositories(services);
             RegisterAuth(services, configuration);
             RegisterServices(services);
+            RegisterStores(services);
             RegisterOther(services);
+        }
+
+        private static void RegisterStores(IServiceCollection services)
+        {
+            services.AddScoped<IAccessFiltersStore, AccessFiltersStore>();
         }
 
         private static void RegisterOptions(
@@ -74,8 +82,6 @@ namespace WorkyOne.DependencyRegister
         /// <param name="services">Сервисы</param>
         private static void RegisterServices(IServiceCollection services)
         {
-            services.AddTransient<IEntityUpdateUtility, EntityUpdateUtility>();
-
             services.AddScoped<IDateTimeService, DateTimeService>();
             services.AddScoped<IUsersService, UsersService>();
 
@@ -198,6 +204,9 @@ namespace WorkyOne.DependencyRegister
         private static void RegisterOther(IServiceCollection services)
         {
             services.AddAutoMapper(typeof(DailyInfoProfile).Assembly);
+
+            services.AddSingleton<IEntityUpdateUtility, EntityUpdateUtility>();
+            services.AddScoped<IReferenceShiftUtility, ReferenceShiftUtility>();
         }
     }
 }

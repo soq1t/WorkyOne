@@ -47,6 +47,7 @@ namespace WorkyOne.MVC
             app.UseAntiforgery();
             app.UseMiddleware<SessionMiddleware>();
             app.UseAuthentication();
+            app.UseMiddleware<AccessFiltersMiddleware>();
             app.UseMiddleware<UnauthorizedRedirectionMiddleware>();
             app.UseAuthorization();
 

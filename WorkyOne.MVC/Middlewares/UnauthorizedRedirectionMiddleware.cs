@@ -16,7 +16,7 @@
         {
             await _next(context);
 
-            if (context.Response.StatusCode == 401)
+            if (context.Response.StatusCode == 401 && !context.Request.Path.Value.Contains("api/"))
             {
                 var redirectUrl = configuration.GetSection("LoginRedirectionPath").Value;
 

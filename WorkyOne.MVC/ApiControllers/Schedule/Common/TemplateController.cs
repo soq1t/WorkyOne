@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
+using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
 
 namespace WorkyOne.MVC.ApiControllers.Schedule.Common
@@ -11,7 +12,6 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
     [ApiController]
     [Authorize]
     [Route("api/schedule/{scheduleId}/template")]
-    [Route("api/template")]
     public sealed class TemplateController : Controller
     {
         private readonly ITemplateService _templateService;
@@ -19,23 +19,6 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
         public TemplateController(ITemplateService templateService)
         {
             _templateService = templateService;
-        }
-
-        /// <summary>
-        /// Возвращает шаблон по его идентификатору
-        /// </summary>
-        /// <param name="id">Идентификатор шаблона</param>
-        /// <param name="cancellation">Токен отмены задачи</param>
-        [HttpGet]
-        [Route("{id}")]
-        public async Task<IActionResult> GetAsync(
-            [FromRoute] string id,
-            CancellationToken cancellation = default
-        )
-        {
-            var result = await _templateService.GetAsync(id, cancellation);
-
-            return Json(result);
         }
 
         /// <summary>
@@ -59,24 +42,58 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
         /// Создаёт шаблон в базе данных
         /// </summary>
         /// <param name="scheduleId">Идентификатор расписания, для которого создаётся шаблон</param>
-        /// <param name="model">Модель, содержащая информацию о создаваемом шаблоне</param>
+        /// <param name="dto">DTO создаваемого шаблона</param>
         /// <param name="cancellation">Токен отмены задачи</param>
         [HttpPost]
         [Route("")]
         public async Task<IActionResult> CreateAsync(
-            [FromRoute] [FromQuery] string? scheduleId,
-            [FromBody] TemplateModel model,
+            [FromRoute] [FromQuery] string scheduleId,
+            [FromBody] TemplateDto dto,
             CancellationToken cancellation = default
         )
         {
-            model.ScheduleId = scheduleId;
+            var result = await _templateService.CreateAsync(
+                new TemplateModel { ScheduleId = scheduleId, Template = dto },
+                cancellation
+            );
 
-            if (model.ScheduleId == null)
+            if (result.IsSucceed)
             {
-                return BadRequest($"{nameof(model)}.{nameof(model.ScheduleId)} is required");
+                return Ok(result);
             }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
 
-            var result = await _templateService.CreateAsync(model, cancellation);
+        [HttpPut]
+        [Route("")]
+        public async Task<IActionResult> UpdateAsync(
+            [FromBody] TemplateDto dto,
+            CancellationToken cancellation = default
+        )
+        {
+            var result = await _templateService.UpdateAsync(dto, cancellation);
+
+            if (result.IsSucceed)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+        [HttpDelete]
+        [Route("{id}")]
+        public async Task<IActionResult> DeleteAsync(
+            [FromRoute] string id,
+            CancellationToken cancellation = default
+        )
+        {
+            var result = await _templateService.DeleteAsync(id, cancellation);
 
             if (result.IsSucceed)
             {

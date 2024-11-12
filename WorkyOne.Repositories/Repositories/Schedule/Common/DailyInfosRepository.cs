@@ -25,14 +25,11 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             CancellationToken cancellation = default
         )
         {
-            var query = _context
+            return _context
                 .DailyInfos.Where(request.Specification.ToExpression())
                 .OrderBy(x => x.Date)
-                .AsQueryable();
-
-            query = query.AddPagination(request.PageIndex, request.Amount);
-
-            return query.ToListAsync(cancellation);
+                .AddPagination(request.PageIndex, request.Amount, true)
+                .ToListAsync(cancellation);
         }
     }
 }

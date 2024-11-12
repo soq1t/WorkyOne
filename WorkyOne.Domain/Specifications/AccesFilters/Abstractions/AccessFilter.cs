@@ -1,8 +1,9 @@
 ﻿using WorkyOne.Domain.Interfaces.Common;
 using WorkyOne.Domain.Interfaces.Specification;
+using WorkyOne.Domain.Specifications.AccesFilters.Common;
 using WorkyOne.Domain.Specifications.Base;
 
-namespace WorkyOne.Domain.Specifications.AccesFilters.Common
+namespace WorkyOne.Domain.Specifications.AccesFilters.Abstractions
 {
     /// <summary>
     /// Спецификация, фильтрующая доступ к <typeparamref name="TEntity"/>

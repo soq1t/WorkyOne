@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using WorkyOne.Domain.Entities.Schedule.Common;
+using WorkyOne.Domain.Specifications.AccesFilters.Abstractions;
 using WorkyOne.Domain.Specifications.AccesFilters.Common;
 
 namespace WorkyOne.Domain.Specifications.AccesFilters.Schedule.Common
