@@ -64,6 +64,8 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
 
             if (request.IncludeShifts)
             {
+                query = query.Include(s => s.PersonalShifts);
+                query = query.Include(s => s.SharedShifts);
                 query = query.Include(s => s.PeriodicShifts);
                 query = query.Include(s => s.DatedShifts);
             }

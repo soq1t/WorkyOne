@@ -21,12 +21,14 @@ namespace WorkyOne.Repositories.Configurations.Schedule.Common
                 .HasForeignKey(x => x.UserDataId);
 
             builder
-                .HasMany(x => x.DatedShifts)
+                .HasMany(x => x.PersonalShifts)
                 .WithOne(x => x.Schedule)
                 .HasForeignKey(x => x.ScheduleId);
 
+            builder.HasMany(x => x.SharedShifts).WithMany(x => x.Schedules);
+
             builder
-                .HasMany(x => x.PersonalShifts)
+                .HasMany(x => x.DatedShifts)
                 .WithOne(x => x.Schedule)
                 .HasForeignKey(x => x.ScheduleId);
 

@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using WorkyOne.Domain.Entities.Abstractions.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Entities.Schedule.Shifts.Basic;
 using WorkyOne.Domain.Entities.Users;
 
 namespace WorkyOne.Repositories.Contextes
@@ -46,7 +47,8 @@ namespace WorkyOne.Repositories.Contextes
             modelBuilder
                 .Entity<ShiftEntity>()
                 .HasDiscriminator<string>("ShiftType")
-                .HasValue<PeriodicShiftEntity>("Personal");
+                .HasValue<PersonalShiftEntity>("Personal")
+                .HasValue<SharedShiftEntity>("Shared");
         }
     }
 }
