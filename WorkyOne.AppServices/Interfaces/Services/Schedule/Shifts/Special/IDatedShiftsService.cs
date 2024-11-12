@@ -4,7 +4,7 @@ using WorkyOne.Contracts.Services.GetRequests.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts.Special;
 
-namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
+namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Special
 {
     /// <summary>
     /// Интерфейс сервиса по работе с <see cref="DatedShiftEntity"/>

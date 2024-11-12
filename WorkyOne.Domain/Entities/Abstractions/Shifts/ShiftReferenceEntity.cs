@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WorkyOne.Domain.Attributes.Updating;
 using WorkyOne.Domain.Entities.Abstractions.Common;
 
 namespace WorkyOne.Domain.Entities.Abstractions.Shifts
@@ -14,6 +15,7 @@ namespace WorkyOne.Domain.Entities.Abstractions.Shifts
         /// </summary>
         [Required]
         [ForeignKey(nameof(Shift))]
+        [AutoUpdated]
         public string ShiftId { get; set; }
 
         /// <summary>

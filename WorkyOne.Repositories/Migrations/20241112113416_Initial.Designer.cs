@@ -12,7 +12,7 @@ using WorkyOne.Repositories.Contextes;
 namespace WorkyOne.Repositories.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241112105256_Initial")]
+    [Migration("20241112113416_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -24,21 +24,6 @@ namespace WorkyOne.Repositories.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
-
-            modelBuilder.Entity("ScheduleEntitySharedShiftEntity", b =>
-                {
-                    b.Property<string>("SchedulesId")
-                        .HasColumnType("text");
-
-                    b.Property<string>("SharedShiftsId")
-                        .HasColumnType("text");
-
-                    b.HasKey("SchedulesId", "SharedShiftsId");
-
-                    b.HasIndex("SharedShiftsId");
-
-                    b.ToTable("ScheduleEntitySharedShiftEntity");
-                });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Abstractions.Shifts.ShiftEntity", b =>
                 {
@@ -58,7 +43,7 @@ namespace WorkyOne.Repositories.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("ShiftType")
+                    b.Property<string>("Type")
                         .IsRequired()
                         .HasMaxLength(13)
                         .HasColumnType("character varying(13)");
@@ -67,7 +52,7 @@ namespace WorkyOne.Repositories.Migrations
 
                     b.ToTable("Shifts");
 
-                    b.HasDiscriminator<string>("ShiftType").HasValue("ShiftEntity");
+                    b.HasDiscriminator<string>("Type").HasValue("ShiftEntity");
 
                     b.UseTphMappingStrategy();
                 });
@@ -261,21 +246,6 @@ namespace WorkyOne.Repositories.Migrations
                     b.HasBaseType("WorkyOne.Domain.Entities.Abstractions.Shifts.ShiftEntity");
 
                     b.HasDiscriminator().HasValue("Shared");
-                });
-
-            modelBuilder.Entity("ScheduleEntitySharedShiftEntity", b =>
-                {
-                    b.HasOne("WorkyOne.Domain.Entities.Schedule.Common.ScheduleEntity", null)
-                        .WithMany()
-                        .HasForeignKey("SchedulesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WorkyOne.Domain.Entities.Schedule.Shifts.Basic.SharedShiftEntity", null)
-                        .WithMany()
-                        .HasForeignKey("SharedShiftsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.DailyInfoEntity", b =>

@@ -76,7 +76,7 @@ namespace WorkyOne.Repositories.Migrations
                     ColorCode = table.Column<string>(type: "text", nullable: true),
                     Beginning = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
                     Ending = table.Column<TimeOnly>(type: "time without time zone", nullable: true),
-                    ShiftType = table.Column<string>(type: "character varying(13)", maxLength: 13, nullable: false),
+                    Type = table.Column<string>(type: "character varying(13)", maxLength: 13, nullable: false),
                     ScheduleId = table.Column<string>(type: "text", nullable: true)
                 },
                 constraints: table =>
@@ -163,30 +163,6 @@ namespace WorkyOne.Repositories.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "ScheduleEntitySharedShiftEntity",
-                columns: table => new
-                {
-                    SchedulesId = table.Column<string>(type: "text", nullable: false),
-                    SharedShiftsId = table.Column<string>(type: "text", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ScheduleEntitySharedShiftEntity", x => new { x.SchedulesId, x.SharedShiftsId });
-                    table.ForeignKey(
-                        name: "FK_ScheduleEntitySharedShiftEntity_Schedules_SchedulesId",
-                        column: x => x.SchedulesId,
-                        principalTable: "Schedules",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ScheduleEntitySharedShiftEntity_Shifts_SharedShiftsId",
-                        column: x => x.SharedShiftsId,
-                        principalTable: "Shifts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "TemplatedShifts",
                 columns: table => new
                 {
@@ -238,11 +214,6 @@ namespace WorkyOne.Repositories.Migrations
                 column: "ShiftId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ScheduleEntitySharedShiftEntity_SharedShiftsId",
-                table: "ScheduleEntitySharedShiftEntity",
-                column: "SharedShiftsId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Schedules_UserDataId",
                 table: "Schedules",
                 column: "UserDataId");
@@ -280,9 +251,6 @@ namespace WorkyOne.Repositories.Migrations
 
             migrationBuilder.DropTable(
                 name: "PeriodicShifts");
-
-            migrationBuilder.DropTable(
-                name: "ScheduleEntitySharedShiftEntity");
 
             migrationBuilder.DropTable(
                 name: "TemplatedShifts");

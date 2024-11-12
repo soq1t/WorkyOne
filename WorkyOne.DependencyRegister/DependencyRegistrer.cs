@@ -14,13 +14,15 @@ using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services;
 using WorkyOne.AppServices.Interfaces.Services.Auth;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
-using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
+using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Basic;
+using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Special;
 using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.AppServices.Services.Auth;
 using WorkyOne.AppServices.Services.Common;
 using WorkyOne.AppServices.Services.Schedule.Common;
-using WorkyOne.AppServices.Services.Schedule.Shifts;
+using WorkyOne.AppServices.Services.Schedule.Shifts.Basic;
+using WorkyOne.AppServices.Services.Schedule.Shifts.Special;
 using WorkyOne.AppServices.Services.Users;
 using WorkyOne.Contracts.Options.Auth;
 using WorkyOne.Contracts.Options.Common;
@@ -88,7 +90,10 @@ namespace WorkyOne.DependencyRegister
             services.AddScoped<ITemplateService, TemplateService>();
             services.AddScoped<ICalendarService, CalendarService>();
 
+            services.AddScoped<IPersonalShiftsService, PersonalShiftsService>();
+            services.AddScoped<ISharedShiftsService, SharedShiftsService>();
             services.AddScoped<IDatedShiftsService, DatedShiftsService>();
+            services.AddScoped<IPeriodicShiftsService, PeriodicShiftsService>();
             services.AddScoped<ITemplatedShiftService, TemplatedShiftService>();
         }
 

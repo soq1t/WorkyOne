@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
+using WorkyOne.Domain.Entities.Schedule.Shifts.Basic;
 using WorkyOne.Domain.Interfaces.Requests.Schedule;
 using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Repositories.Contextes;
@@ -46,8 +47,8 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
                 request.Specification.ToExpression()
             );
             query = query.AddPagination(request.PageIndex, request.Amount);
-
             query = QueryBuilder(request, query);
+
             return query.ToListAsync(cancellation);
         }
 
@@ -67,8 +68,6 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             if (request.IncludeShifts)
             {
                 query = query.Include(s => s.PersonalShifts);
-                query = query.Include(s => s.SharedShifts);
-                query = query.Include(s => s.PeriodicShifts);
                 query = query.Include(s => s.DatedShifts);
             }
 

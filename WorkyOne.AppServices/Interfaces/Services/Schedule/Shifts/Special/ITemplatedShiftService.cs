@@ -3,7 +3,7 @@ using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts;
 using WorkyOne.Contracts.Services.GetRequests.Common;
 
-namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
+namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Special
 {
     /// <summary>
     /// Интерфейс сервиса по работе с "шаблонными" сменамиы
@@ -60,7 +60,7 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
         /// <param name="model">Модель, содержащая информацию о создаваемой смене</param>
         /// <param name="cancellation">Токен отмены задачи</param>
         public Task<RepositoryResult> CreateAsync(
-            ShiftModel<TemplatedShiftDto> model,
+            ShiftReferenceModel<TemplatedShiftDto> model,
             CancellationToken cancellation = default
         );
 

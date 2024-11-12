@@ -46,11 +46,6 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         public List<PersonalShiftEntity> PersonalShifts { get; set; } = [];
 
         /// <summary>
-        /// Список смен, во всём приложении для всех расписаний
-        /// </summary>
-        public List<SharedShiftEntity> SharedShifts { get; set; } = [];
-
-        /// <summary>
         /// Список смен, выставляемых на конкретную дату
         /// </summary>
         public List<DatedShiftEntity> DatedShifts { get; set; } = new List<DatedShiftEntity>();

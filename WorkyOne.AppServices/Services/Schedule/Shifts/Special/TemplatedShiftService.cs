@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
-using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
+using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Special;
 using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts.Special;
@@ -17,7 +17,7 @@ using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Shifts;
 using WorkyOne.Domain.Specifications.Base;
 using WorkyOne.Domain.Specifications.Common;
 
-namespace WorkyOne.AppServices.Services.Schedule.Shifts
+namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
 {
     /// <summary>
     /// Сервис по работе с "шаблонными" сменамиы
@@ -51,7 +51,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
         }
 
         public async Task<RepositoryResult> CreateAsync(
-            ShiftModel<TemplatedShiftDto> model,
+            ShiftReferenceModel<TemplatedShiftDto> model,
             CancellationToken cancellation = default
         )
         {

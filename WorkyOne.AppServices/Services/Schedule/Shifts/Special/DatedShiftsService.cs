@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
-using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
+using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Special;
 using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts.Special;
@@ -12,12 +12,13 @@ using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts.Special;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
+using WorkyOne.Domain.Specifications.AccesFilters.Common;
 using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Common;
 using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Shifts;
 using WorkyOne.Domain.Specifications.Base;
 using WorkyOne.Domain.Specifications.Common;
 
-namespace WorkyOne.AppServices.Services.Schedule.Shifts
+namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
 {
     /// <summary>
     /// Сервис по работе с <see cref="DatedShiftEntity"/>
@@ -227,13 +228,10 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts
 
         private async Task InitAccessFiltersAsync()
         {
-            if (_scheduleAccessFilter == null || _shiftAccessFilter == null)
-            {
-                var accessInfo = await _userAccessInfoProvider.GetCurrentAsync();
+            var accessInfo = await _userAccessInfoProvider.GetCurrentAsync();
 
-                _scheduleAccessFilter = new ScheduleAccessFilter(accessInfo);
-                _shiftAccessFilter = new DatedShiftAccessFilter(accessInfo);
-            }
+            _scheduleAccessFilter = new ScheduleAccessFilter(accessInfo);
+            _shiftAccessFilter = new DatedShiftAccessFilter(accessInfo);
         }
     }
 }

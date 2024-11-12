@@ -1,14 +1,18 @@
 ﻿using AutoMapper;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
+using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts.Basic;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
+using WorkyOne.Contracts.DTOs.Schedule.Shifts.Basic;
 using WorkyOne.Contracts.Enums.Result;
 using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Domain.Entities.Schedule.Common;
+using WorkyOne.Domain.Entities.Schedule.Shifts.Basic;
 using WorkyOne.Domain.Entities.Users;
+using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Domain.Requests.Users;
 using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Common;
@@ -25,6 +29,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
     public sealed class ScheduleService : IScheduleService
     {
         private readonly ISchedulesRepository _schedulesRepository;
+        private readonly ISharedShiftsRepository _sharedShiftsRepository;
         private readonly IUserDatasRepository _userDatasRepository;
         private readonly IDailyInfosRepository _dailyInfosRepository;
         private readonly IMapper _mapper;
@@ -39,11 +44,14 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             IMapper mapper,
             IEntityUpdateUtility entityUpdateUtility,
             IUserAccessInfoProvider accessInfoProvider,
-            IDailyInfosRepository dailyInfosRepository
+            IDailyInfosRepository dailyInfosRepository,
+            ISharedShiftsRepository sharedShiftsRepository
         )
         {
             _schedulesRepository = schedulesRepository;
             _userDatasRepository = userDatasRepository;
+            _sharedShiftsRepository = sharedShiftsRepository;
+
             _mapper = mapper;
             _entityUpdateUtility = entityUpdateUtility;
 
@@ -154,6 +162,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             }
 
             var dto = _mapper.Map<ScheduleDto>(entity);
+            await AddSharedShiftsAsync(cancellation, dto);
+
             return dto;
         }
 
@@ -204,6 +214,11 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             var entities = await _schedulesRepository.GetManyAsync(repoRequest, cancellation);
 
             var dtos = _mapper.Map<List<ScheduleDto>>(entities);
+
+            if (request.IncludeFullData)
+            {
+                await AddSharedShiftsAsync(cancellation, dtos.ToArray());
+            }
             return dtos;
         }
 
@@ -225,6 +240,11 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             var entities = await _schedulesRepository.GetManyAsync(repoRequest, cancellation);
 
             var dtos = _mapper.Map<List<ScheduleDto>>(entities);
+
+            if (request.IncludeFullData)
+            {
+                await AddSharedShiftsAsync(cancellation, dtos.ToArray());
+            }
 
             return dtos;
         }
@@ -261,6 +281,31 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                 await _schedulesRepository.SaveChangesAsync(cancellation);
             }
             return result;
+        }
+
+        private async Task AddSharedShiftsAsync(
+            CancellationToken cancellation = default,
+            params ScheduleDto[] schedules
+        )
+        {
+            if (schedules.Length > 0)
+            {
+                var sharedShifts = await _sharedShiftsRepository.GetManyAsync(
+                    new PaginatedRequest<SharedShiftEntity>(
+                        new Specification<SharedShiftEntity>(x => true),
+                        1,
+                        50
+                    ),
+                    cancellation
+                );
+
+                var shiftsDtos = _mapper.Map<List<SharedShiftDto>>(sharedShifts);
+
+                foreach (var schedule in schedules)
+                {
+                    schedule.SharedShifts = shiftsDtos;
+                }
+            }
         }
 
         private async Task InitAccessFiltersAsync(IUserAccessInfoProvider provider)

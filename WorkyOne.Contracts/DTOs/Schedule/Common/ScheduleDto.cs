@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using WorkyOne.Contracts.DTOs.Abstractions;
+using WorkyOne.Contracts.DTOs.Schedule.Shifts.Basic;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts.Special;
 
 namespace WorkyOne.Contracts.DTOs.Schedule.Common
@@ -26,6 +27,16 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
         /// Шаблон, который используется в текущем расписании
         /// </summary>
         public TemplateDto? Template { get; set; }
+
+        /// <summary>
+        /// Список смен, используемых в текущем расписании
+        /// </summary>
+        public List<PersonalShiftDto> PersonalShifts { get; set; } = [];
+
+        /// <summary>
+        /// Список смен, используемых во всём приложении
+        /// </summary>
+        public List<SharedShiftDto> SharedShifts { get; set; } = [];
 
         /// <summary>
         /// Список смен, выставляемых на конкретную дату

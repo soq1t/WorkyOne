@@ -19,7 +19,7 @@ namespace WorkyOne.Repositories.Contextes
     public class ApplicationDbContext : DbContext
     {
         public DbSet<ShiftEntity> Shifts { get; set; }
-        public virtual DbSet<TemplatedShiftEntity> TemplatedShifts { get; set; }
+        public DbSet<TemplatedShiftEntity> TemplatedShifts { get; set; }
         public DbSet<DatedShiftEntity> DatedShifts { get; set; }
         public DbSet<PeriodicShiftEntity> PeriodicShifts { get; set; }
 
@@ -46,7 +46,7 @@ namespace WorkyOne.Repositories.Contextes
 
             modelBuilder
                 .Entity<ShiftEntity>()
-                .HasDiscriminator<string>("ShiftType")
+                .HasDiscriminator<string>("Type")
                 .HasValue<PersonalShiftEntity>("Personal")
                 .HasValue<SharedShiftEntity>("Shared");
         }

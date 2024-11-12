@@ -25,8 +25,6 @@ namespace WorkyOne.Repositories.Configurations.Schedule.Common
                 .WithOne(x => x.Schedule)
                 .HasForeignKey(x => x.ScheduleId);
 
-            builder.HasMany(x => x.SharedShifts).WithMany(x => x.Schedules);
-
             builder
                 .HasMany(x => x.DatedShifts)
                 .WithOne(x => x.Schedule)

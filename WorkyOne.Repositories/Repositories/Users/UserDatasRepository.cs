@@ -53,7 +53,6 @@ namespace WorkyOne.Repositories.Repositories.Users
             if (request.IncludeFullSchedulesInfo)
             {
                 query = query.Include(x => x.Schedules).ThenInclude(x => x.PersonalShifts);
-                query = query.Include(x => x.Schedules).ThenInclude(x => x.SharedShifts);
                 query = query.Include(x => x.Schedules).ThenInclude(x => x.DatedShifts);
                 query = query.Include(x => x.Schedules).ThenInclude(x => x.PeriodicShifts);
                 query = query

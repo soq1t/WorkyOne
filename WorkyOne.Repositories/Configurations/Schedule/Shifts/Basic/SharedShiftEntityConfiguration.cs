@@ -6,9 +6,6 @@ namespace WorkyOne.Repositories.Configurations.Schedule.Shifts.Basic
 {
     public class SharedShiftEntityConfiguration : IEntityTypeConfiguration<SharedShiftEntity>
     {
-        public void Configure(EntityTypeBuilder<SharedShiftEntity> builder)
-        {
-            builder.HasMany(x => x.Schedules).WithMany(x => x.SharedShifts);
-        }
+        public void Configure(EntityTypeBuilder<SharedShiftEntity> builder) { }
     }
 }

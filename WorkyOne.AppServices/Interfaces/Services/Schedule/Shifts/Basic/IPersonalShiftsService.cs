@@ -1,54 +1,45 @@
-﻿using WorkyOne.Contracts.DTOs.Schedule.Shifts.Special;
+﻿using WorkyOne.Contracts.DTOs.Schedule.Shifts.Basic;
 using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts;
 using WorkyOne.Contracts.Services.GetRequests.Common;
 
-namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
+namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Basic
 {
     /// <summary>
-    /// Интерфейс сервиса по работе с "периодическими" сменами
+    /// Интерфейс сервиса по работе со сменами в расписании
     /// </summary>
-    public interface IPeriodicShiftsService
+    public interface IPersonalShiftsService
     {
-        /// <summary>
-        /// Возвращает смену по её идентификатору
-        /// </summary>
-        /// <param name="id">Идентификатор возвращаемой смены</param>
-        /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<PeriodicShiftDto?> GetAsync(
-            string id,
-            CancellationToken cancellation = default
-        );
-
         /// <summary>
         /// Возвращает список смен для определённого расписания
         /// </summary>
         /// <param name="scheduleId">Идентификатор расписания</param>
-        /// <param name="request">Запрос, содержащий информацию о пагинации</param>
+        /// <param name="request">Пагинированный запрос</param>
         /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<List<PeriodicShiftDto>> GetByScheduleIdAsync(
+        public Task<List<PersonalShiftDto>> GetForScheduleAsync(
             string scheduleId,
             PaginatedRequest request,
             CancellationToken cancellation = default
         );
 
         /// <summary>
-        /// Возвращает множество смен
+        /// Возвращает смену
         /// </summary>
-        /// <param name="request">Запрос, содержащий информацию о пагинации</param>
+        /// <param name="id">Идентификатор смены</param>
         /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<List<PeriodicShiftDto>> GetManyAsync(
-            PaginatedRequest request,
+        public Task<PersonalShiftDto?> GetAsync(
+            string id,
             CancellationToken cancellation = default
         );
 
         /// <summary>
         /// Создаёт смену
         /// </summary>
-        /// <param name="model">Модель, слдержащая информацию о создаваемой смене</param>
+        /// <param name="model">Модель создаваемой смены</param>
         /// <param name="cancellation">Токен отмены задачи</param>
+
         public Task<RepositoryResult> CreateAsync(
-            ShiftModel<PeriodicShiftDto> model,
+            PersonalShiftModel model,
             CancellationToken cancellation = default
         );
 
@@ -57,8 +48,9 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
         /// </summary>
         /// <param name="dto">DTO обновляемой смены</param>
         /// <param name="cancellation">Токен отмены задачи</param>
+
         public Task<RepositoryResult> UpdateAsync(
-            PeriodicShiftDto dto,
+            PersonalShiftDto dto,
             CancellationToken cancellation = default
         );
 
@@ -67,6 +59,7 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
         /// </summary>
         /// <param name="id">Идентификатор удаляемой смены</param>
         /// <param name="cancellation">Токен отмены задачи</param>
+
         public Task<RepositoryResult> DeleteAsync(
             string id,
             CancellationToken cancellation = default

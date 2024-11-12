@@ -7,7 +7,7 @@ namespace WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts
     /// Модель, содержащая информацию о создаваемой смене
     /// </summary>
     /// <typeparam name="TShift">Тип создаваемой смены</typeparam>
-    public class ShiftModel<TShift>
+    public class ShiftReferenceModel<TShift>
         where TShift : ShiftReferenceDto
     {
         /// <summary>

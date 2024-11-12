@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
+using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Special;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts.Special;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts;
 using WorkyOne.Contracts.Services.GetRequests.Common;
@@ -92,7 +92,7 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Shifts
         [Route("")]
         public async Task<IActionResult> CreateAsync(
             [FromRoute] [FromQuery] string templateId,
-            [FromBody] ShiftModel<TemplatedShiftDto> model,
+            [FromBody] ShiftReferenceModel<TemplatedShiftDto> model,
             CancellationToken cancellation = default
         )
         {
