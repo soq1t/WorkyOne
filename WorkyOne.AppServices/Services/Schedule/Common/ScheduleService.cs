@@ -157,6 +157,29 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             return dto;
         }
 
+        public async Task<List<ScheduleDto>> GetByUserAsync(
+            string userId,
+            Contract.PaginatedScheduleRequest request,
+            CancellationToken cancellation = default
+        )
+        {
+            var filter = new Specification<UserDataEntity>(x => x.UserId == userId).And(
+                _userDataAccessFilter
+            );
+
+            var userData = await _userDatasRepository.GetAsync(
+                new UserDataRequest(filter),
+                cancellation
+            );
+
+            if (userData == null)
+            {
+                return [];
+            }
+
+            return await GetByUserDataAsync(userData.Id, request, cancellation);
+        }
+
         public async Task<List<ScheduleDto>> GetByUserDataAsync(
             string userDataId,
             Contract.PaginatedScheduleRequest request,

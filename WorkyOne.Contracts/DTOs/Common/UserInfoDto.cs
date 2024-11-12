@@ -9,11 +9,6 @@ namespace WorkyOne.Contracts.DTOs.Common
     public class UserInfoDto : DtoBase
     {
         /// <summary>
-        /// Идентификатор пользователя
-        /// </summary>
-        public string Id { get; set; }
-
-        /// <summary>
         /// Идентификатор данных пользователя
         /// </summary>
         public string UserDataId { get; set; }

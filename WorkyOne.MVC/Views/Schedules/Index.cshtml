@@ -1,0 +1,45 @@
+﻿@using WorkyOne.MVC.Models.Schedule
+
+@model SchedulesViewModel
+
+<head>
+
+</head>
+
+<div class="wrapper wrapper--padding">
+    <div class="schedules__body">
+        <div class="schedules__header">
+            <div class="header__info">
+                <span>Количество расписаний:</span>
+                <span>@Model.Schedules.Count</span>
+            </div>
+            <div class="header__controls">
+                <a href="#" class="control control--create">
+                    <span class="material-symbols-outlined">add_circle</span>
+                    <span>Создать расписание</span>
+                </a>
+            </div>
+        </div>
+        <div class="schedules__main">
+            <div class="schedules__list">
+                @foreach (var schedule in Model.Schedules)
+                {
+                    <div class="schedules__item item">
+                        <input type="text" hidden="hidden" value="@schedule.Id" />
+                        <div class="item__section">
+                            <button class="favorite material-symbols-outlined">star</button>
+                        </div>
+                        <div class="item__section">
+                            <h3>@schedule.Name</h3>
+                        </div>
+                        <div class="item__section item__section--controls">
+                            <a href="#" class="material-symbols-outlined">edit</a>
+                            <a href="#" class="material-symbols-outlined">delete_forever</a>
+                        </div>
+                    </div>
+                }
+            </div>            
+        </div>
+    </div>
+</div>
+

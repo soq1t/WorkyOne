@@ -41,7 +41,7 @@
                     @if (authService.IsAuthenticated())
                     {
                         <a href="#">Профиль</a>
-                        <a href="#">Управление расписаниями</a>
+                        <a asp-controller="Schedules" asp-action="Index">Управление расписаниями</a>
                         <a asp-controller="Account" asp-action="SignOut">Выйти из аккаунта</a>
                     } else
                     {

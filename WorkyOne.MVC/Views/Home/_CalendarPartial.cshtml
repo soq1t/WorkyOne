@@ -43,8 +43,9 @@
                     var classes = date.Month == Model.Month ? "day" : "day day--inactive";
 
                     var dailyInfo = Model.WorkGraphic?.FirstOrDefault(x => x.Date == date);
+                    var color = dailyInfo?.ColorCode ?? "transparent";
 
-                    <div style="background-color: @dailyInfo.ColorCode" class="calendar__day @classes">
+                    <div style="background-color: @color" class="calendar__day @classes">
                         <div class="day__number">@date.Day</div>
                         <div class="day__body">
                             @*<div class="day__section">@dailyInfo?.Name</div>*@

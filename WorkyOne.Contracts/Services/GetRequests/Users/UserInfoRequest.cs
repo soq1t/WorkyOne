@@ -15,6 +15,8 @@ namespace WorkyOne.Contracts.Services.GetRequests.Users
         [Required]
         public string UserName { get; set; }
 
+        public bool IsCurrentUserRequired { get; set; } = false;
+
         [Required]
         public bool IncludeSchedules { get; set; }
 

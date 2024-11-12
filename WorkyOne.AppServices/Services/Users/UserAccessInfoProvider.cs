@@ -43,7 +43,11 @@ namespace WorkyOne.AppServices.Services.Users
 
             ClaimsPrincipal contextUser = _contextAccessor.HttpContext.User;
 
-            if (contextUser == null)
+            if (
+                contextUser == null
+                || contextUser.Identity == null
+                || contextUser.Identity.IsAuthenticated == false
+            )
             {
                 return new UserAccessInfo(null, null, false);
             }

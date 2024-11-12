@@ -31,6 +31,18 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         );
 
         /// <summary>
+        /// Возвращает из базы данных расписания, относящиеся к определённому пользователю
+        /// </summary>
+        /// <param name="userId">Идентификатор пользователя</param>
+        /// <param name="request">Пагинированный запрос на получение данных</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        public Task<List<ScheduleDto>> GetByUserAsync(
+            string userId,
+            PaginatedScheduleRequest request,
+            CancellationToken cancellation = default
+        );
+
+        /// <summary>
         /// Возвращает множестно расписаний из базы данных
         /// </summary>
         /// <param name="request">Запрос на получение данных</param>
