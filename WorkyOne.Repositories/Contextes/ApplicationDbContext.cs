@@ -5,9 +5,10 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using WorkyOne.Domain.Entities.Abstractions.Shifts;
+using WorkyOne.Domain.Entities.Auth;
 using WorkyOne.Domain.Entities.Schedule.Common;
-using WorkyOne.Domain.Entities.Schedule.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Shifts.Basic;
+using WorkyOne.Domain.Entities.Schedule.Shifts.Special;
 using WorkyOne.Domain.Entities.Users;
 
 namespace WorkyOne.Repositories.Contextes
@@ -18,16 +19,12 @@ namespace WorkyOne.Repositories.Contextes
     public class ApplicationDbContext : DbContext
     {
         public DbSet<ShiftEntity> Shifts { get; set; }
-
         public virtual DbSet<TemplatedShiftEntity> TemplatedShifts { get; set; }
         public DbSet<DatedShiftEntity> DatedShifts { get; set; }
         public DbSet<PeriodicShiftEntity> PeriodicShifts { get; set; }
-        public DbSet<ExampleShiftEntity> ExampleShifts { get; set; }
 
         public DbSet<ScheduleEntity> Schedules { get; set; }
         public DbSet<TemplateEntity> Templates { get; set; }
-
-        public DbSet<ShiftSequenceEntity> ShiftSequences { get; set; }
 
         public DbSet<DailyInfoEntity> DailyInfos { get; set; }
 
@@ -42,7 +39,10 @@ namespace WorkyOne.Repositories.Contextes
         {
             base.OnModelCreating(modelBuilder);
 
-            modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+            modelBuilder
+                .ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly)
+                .Ignore<UserEntity>()
+                .Ignore<SessionEntity>();
 
             modelBuilder
                 .Entity<ShiftEntity>()

@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts;
-using WorkyOne.Contracts.DTOs.Schedule.Shifts;
+using WorkyOne.Contracts.DTOs.Schedule.Shifts.Special;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts;
 using WorkyOne.Contracts.Services.GetRequests.Common;
 

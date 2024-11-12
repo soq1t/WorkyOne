@@ -11,8 +11,6 @@ namespace WorkyOne.Repositories.Configurations.Schedule.Shifts.Basic
     {
         public void Configure(EntityTypeBuilder<PersonalShiftEntity> builder)
         {
-            builder.HasKey(x => x.Id);
-
             builder
                 .HasOne(x => x.Schedule)
                 .WithMany(x => x.PersonalShifts)

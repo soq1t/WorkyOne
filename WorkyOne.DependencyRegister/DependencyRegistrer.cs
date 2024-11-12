@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using WorkyOne.AppServices.Interfaces.Repositories.Auth;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
+using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts.Basic;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services;
 using WorkyOne.AppServices.Interfaces.Services.Auth;
@@ -29,7 +30,8 @@ using WorkyOne.Infrastructure.Utilities;
 using WorkyOne.Repositories.Contextes;
 using WorkyOne.Repositories.Repositories.Auth;
 using WorkyOne.Repositories.Repositories.Schedule.Common;
-using WorkyOne.Repositories.Repositories.Schedule.Shifts;
+using WorkyOne.Repositories.Repositories.Schedule.Shifts.Basic;
+using WorkyOne.Repositories.Repositories.Schedule.Shifts.Special;
 using WorkyOne.Repositories.Repositories.Users;
 
 namespace WorkyOne.DependencyRegister
@@ -169,8 +171,10 @@ namespace WorkyOne.DependencyRegister
         {
             services.AddScoped<IDailyInfosRepository, DailyInfosRepository>();
             services.AddScoped<ISchedulesRepository, ScheduleRepository>();
-            services.AddScoped<IShiftSequencesRepository, ShiftSequencesRepository>();
             services.AddScoped<ITemplatesRepository, TemplatesRepository>();
+
+            services.AddScoped<IPersonalShiftRepository, PersonalShiftRepository>();
+            services.AddScoped<ISharedShiftsRepository, SharedShiftsRepository>();
 
             services.AddScoped<IDatedShiftsRepository, DatedShiftsRepository>();
             services.AddScoped<IPeriodicShiftsRepository, PeriodicShiftsRepository>();

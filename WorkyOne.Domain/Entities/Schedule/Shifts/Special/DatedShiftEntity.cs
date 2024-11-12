@@ -4,26 +4,19 @@ using WorkyOne.Domain.Attributes.Updating;
 using WorkyOne.Domain.Entities.Abstractions.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Common;
 
-namespace WorkyOne.Domain.Entities.Schedule.Shifts
+namespace WorkyOne.Domain.Entities.Schedule.Shifts.Special
 {
     /// <summary>
-    /// Сущность, описывающая смену, которая длится определённое количество дней
+    /// Сущность, описывающая смену, которая выставляется на определённую дату
     /// </summary>
-    public sealed class PeriodicShiftEntity : ShiftEntity
+    public sealed class DatedShiftEntity : ShiftReferenceEntity
     {
         /// <summary>
-        /// Дата начала действия смены
+        /// Дата, на которую установлена смена
         /// </summary>
         [Required]
         [AutoUpdated]
-        public DateOnly StartDate { get; set; }
-
-        /// <summary>
-        /// Дата окончания действия смены
-        /// </summary>
-        [Required]
-        [AutoUpdated]
-        public DateOnly EndDate { get; set; }
+        public DateOnly Date { get; set; }
 
         /// <summary>
         /// ID расписания

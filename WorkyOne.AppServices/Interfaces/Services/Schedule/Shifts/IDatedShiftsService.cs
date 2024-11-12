@@ -1,8 +1,8 @@
-﻿using WorkyOne.Contracts.DTOs.Schedule.Shifts;
+﻿using WorkyOne.Contracts.DTOs.Schedule.Shifts.Special;
 using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.GetRequests.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
-using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Entities.Schedule.Shifts.Special;
 
 namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts
 {

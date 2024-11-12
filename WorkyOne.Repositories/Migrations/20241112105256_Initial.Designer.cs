@@ -12,7 +12,7 @@ using WorkyOne.Repositories.Contextes;
 namespace WorkyOne.Repositories.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20241024154004_Initial")]
+    [Migration("20241112105256_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -20,10 +20,57 @@ namespace WorkyOne.Repositories.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.8")
+                .HasAnnotation("ProductVersion", "8.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
+
+            modelBuilder.Entity("ScheduleEntitySharedShiftEntity", b =>
+                {
+                    b.Property<string>("SchedulesId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("SharedShiftsId")
+                        .HasColumnType("text");
+
+                    b.HasKey("SchedulesId", "SharedShiftsId");
+
+                    b.HasIndex("SharedShiftsId");
+
+                    b.ToTable("ScheduleEntitySharedShiftEntity");
+                });
+
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Abstractions.Shifts.ShiftEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<TimeOnly?>("Beginning")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<string>("ColorCode")
+                        .HasColumnType("text");
+
+                    b.Property<TimeOnly?>("Ending")
+                        .HasColumnType("time without time zone");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShiftType")
+                        .IsRequired()
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Shifts");
+
+                    b.HasDiscriminator<string>("ShiftType").HasValue("ShiftEntity");
+
+                    b.UseTphMappingStrategy();
+                });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.DailyInfoEntity", b =>
                 {
@@ -34,7 +81,6 @@ namespace WorkyOne.Repositories.Migrations
                         .HasColumnType("time without time zone");
 
                     b.Property<string>("ColorCode")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateOnly>("Date")
@@ -85,7 +131,80 @@ namespace WorkyOne.Repositories.Migrations
                     b.ToTable("Schedules");
                 });
 
-            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.ShiftSequenceEntity", b =>
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.TemplateEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("ScheduleId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScheduleId")
+                        .IsUnique();
+
+                    b.ToTable("Templates");
+                });
+
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.Special.DatedShiftEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("Date")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ScheduleId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShiftId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScheduleId");
+
+                    b.HasIndex("ShiftId");
+
+                    b.ToTable("DatedShifts");
+                });
+
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.Special.PeriodicShiftEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("EndDate")
+                        .HasColumnType("date");
+
+                    b.Property<string>("ScheduleId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("ShiftId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<DateOnly>("StartDate")
+                        .HasColumnType("date");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ScheduleId");
+
+                    b.HasIndex("ShiftId");
+
+                    b.ToTable("PeriodicShifts");
+                });
+
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.Special.TemplatedShiftEntity", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("text");
@@ -107,149 +226,6 @@ namespace WorkyOne.Repositories.Migrations
 
                     b.HasIndex("TemplateId");
 
-                    b.ToTable("ShiftSequences");
-                });
-
-            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.TemplateEntity", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<string>("ScheduleId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ScheduleId")
-                        .IsUnique();
-
-                    b.ToTable("Templates");
-                });
-
-            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.DatedShiftEntity", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly?>("Beginning")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<string>("ColorCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateOnly>("Date")
-                        .HasColumnType("date");
-
-                    b.Property<TimeOnly?>("Ending")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ScheduleId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ScheduleId");
-
-                    b.ToTable("DatedShifts");
-                });
-
-            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.ExampleShiftEntity", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly?>("Beginning")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<string>("ColorCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly?>("Ending")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("ExampleShifts");
-                });
-
-            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.PeriodicShiftEntity", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly?>("Beginning")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<string>("ColorCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateOnly>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<TimeOnly?>("Ending")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("ScheduleId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateOnly>("StartDate")
-                        .HasColumnType("date");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ScheduleId");
-
-                    b.ToTable("PeriodicShifts");
-                });
-
-            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.TemplatedShiftEntity", b =>
-                {
-                    b.Property<string>("Id")
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly?>("Beginning")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<string>("ColorCode")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<TimeOnly?>("Ending")
-                        .HasColumnType("time without time zone");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<string>("TemplateId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TemplateId");
-
                     b.ToTable("TemplatedShifts");
                 });
 
@@ -265,6 +241,41 @@ namespace WorkyOne.Repositories.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("UserDatas");
+                });
+
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.Basic.PersonalShiftEntity", b =>
+                {
+                    b.HasBaseType("WorkyOne.Domain.Entities.Abstractions.Shifts.ShiftEntity");
+
+                    b.Property<string>("ScheduleId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasIndex("ScheduleId");
+
+                    b.HasDiscriminator().HasValue("Personal");
+                });
+
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.Basic.SharedShiftEntity", b =>
+                {
+                    b.HasBaseType("WorkyOne.Domain.Entities.Abstractions.Shifts.ShiftEntity");
+
+                    b.HasDiscriminator().HasValue("Shared");
+                });
+
+            modelBuilder.Entity("ScheduleEntitySharedShiftEntity", b =>
+                {
+                    b.HasOne("WorkyOne.Domain.Entities.Schedule.Common.ScheduleEntity", null)
+                        .WithMany()
+                        .HasForeignKey("SchedulesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("WorkyOne.Domain.Entities.Schedule.Shifts.Basic.SharedShiftEntity", null)
+                        .WithMany()
+                        .HasForeignKey("SharedShiftsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.DailyInfoEntity", b =>
@@ -289,25 +300,6 @@ namespace WorkyOne.Repositories.Migrations
                     b.Navigation("UserData");
                 });
 
-            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.ShiftSequenceEntity", b =>
-                {
-                    b.HasOne("WorkyOne.Domain.Entities.Schedule.Shifts.TemplatedShiftEntity", "Shift")
-                        .WithMany("Sequences")
-                        .HasForeignKey("ShiftId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("WorkyOne.Domain.Entities.Schedule.Common.TemplateEntity", "Template")
-                        .WithMany("Sequences")
-                        .HasForeignKey("TemplateId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Shift");
-
-                    b.Navigation("Template");
-                });
-
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.TemplateEntity", b =>
                 {
                     b.HasOne("WorkyOne.Domain.Entities.Schedule.Common.ScheduleEntity", "Schedule")
@@ -319,7 +311,7 @@ namespace WorkyOne.Repositories.Migrations
                     b.Navigation("Schedule");
                 });
 
-            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.DatedShiftEntity", b =>
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.Special.DatedShiftEntity", b =>
                 {
                     b.HasOne("WorkyOne.Domain.Entities.Schedule.Common.ScheduleEntity", "Schedule")
                         .WithMany("DatedShifts")
@@ -327,10 +319,18 @@ namespace WorkyOne.Repositories.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WorkyOne.Domain.Entities.Abstractions.Shifts.ShiftEntity", "Shift")
+                        .WithMany("DatedShifts")
+                        .HasForeignKey("ShiftId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Schedule");
+
+                    b.Navigation("Shift");
                 });
 
-            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.PeriodicShiftEntity", b =>
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.Special.PeriodicShiftEntity", b =>
                 {
                     b.HasOne("WorkyOne.Domain.Entities.Schedule.Common.ScheduleEntity", "Schedule")
                         .WithMany("PeriodicShifts")
@@ -338,18 +338,54 @@ namespace WorkyOne.Repositories.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WorkyOne.Domain.Entities.Abstractions.Shifts.ShiftEntity", "Shift")
+                        .WithMany("PeriodicShifts")
+                        .HasForeignKey("ShiftId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Schedule");
+
+                    b.Navigation("Shift");
                 });
 
-            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.TemplatedShiftEntity", b =>
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.Special.TemplatedShiftEntity", b =>
                 {
+                    b.HasOne("WorkyOne.Domain.Entities.Abstractions.Shifts.ShiftEntity", "Shift")
+                        .WithMany("TemplatedShifts")
+                        .HasForeignKey("ShiftId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("WorkyOne.Domain.Entities.Schedule.Common.TemplateEntity", "Template")
                         .WithMany("Shifts")
                         .HasForeignKey("TemplateId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Shift");
+
                     b.Navigation("Template");
+                });
+
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.Basic.PersonalShiftEntity", b =>
+                {
+                    b.HasOne("WorkyOne.Domain.Entities.Schedule.Common.ScheduleEntity", "Schedule")
+                        .WithMany("PersonalShifts")
+                        .HasForeignKey("ScheduleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Schedule");
+                });
+
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Abstractions.Shifts.ShiftEntity", b =>
+                {
+                    b.Navigation("DatedShifts");
+
+                    b.Navigation("PeriodicShifts");
+
+                    b.Navigation("TemplatedShifts");
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.ScheduleEntity", b =>
@@ -358,6 +394,8 @@ namespace WorkyOne.Repositories.Migrations
 
                     b.Navigation("PeriodicShifts");
 
+                    b.Navigation("PersonalShifts");
+
                     b.Navigation("Template");
 
                     b.Navigation("Timetable");
@@ -365,14 +403,7 @@ namespace WorkyOne.Repositories.Migrations
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.TemplateEntity", b =>
                 {
-                    b.Navigation("Sequences");
-
                     b.Navigation("Shifts");
-                });
-
-            modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.TemplatedShiftEntity", b =>
-                {
-                    b.Navigation("Sequences");
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Users.UserDataEntity", b =>

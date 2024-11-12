@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 using WorkyOne.Domain.Attributes.Updating;
 using WorkyOne.Domain.Entities.Abstractions.Common;
 using WorkyOne.Domain.Entities.Abstractions.Shifts;
-using WorkyOne.Domain.Entities.Schedule.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Shifts.Basic;
+using WorkyOne.Domain.Entities.Schedule.Shifts.Special;
 using WorkyOne.Domain.Entities.Users;
 
 namespace WorkyOne.Domain.Entities.Schedule.Common

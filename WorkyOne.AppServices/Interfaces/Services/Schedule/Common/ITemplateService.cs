@@ -1,7 +1,6 @@
 ﻿using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
-using WorkyOne.Contracts.Services.GetRequests.Common;
 
 namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
 {
@@ -54,29 +53,6 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// <param name="cancellation">Токен отмены задачи</param>
         public Task<RepositoryResult> UpdateAsync(
             TemplateDto dto,
-            CancellationToken cancellation = default
-        );
-
-        /// <summary>
-        /// Обновляет последовательность смен в шаблоне
-        /// </summary>
-        /// <param name="model">Модель, содержащая информацию о последовательности</param>
-        /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<RepositoryResult> UpdateSequenceAsync(
-            ShiftSequencesModel model,
-            CancellationToken cancellation = default
-        );
-
-        /// <summary>
-        /// Возвращает последовательность смен в шаблоне
-        /// </summary>
-        /// <param name="templateId">Идентификатор расписания, для которого запрашивается последовательность</param>
-        /// <param name="request">Запрос, содержащий информацию о пагинации</param>
-        /// <param name="cancellation">Токен отмены задачи</param>
-        /// <returns></returns>
-        public Task<List<ShiftSequenceDto>> GetSequencesAsync(
-            string templateId,
-            PaginatedRequest request,
             CancellationToken cancellation = default
         );
     }

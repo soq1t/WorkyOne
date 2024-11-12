@@ -8,8 +8,6 @@ namespace WorkyOne.Repositories.Configurations.Schedule.Shifts.Basic
     {
         public void Configure(EntityTypeBuilder<SharedShiftEntity> builder)
         {
-            builder.HasKey(x => x.Id);
-
             builder.HasMany(x => x.Schedules).WithMany(x => x.SharedShifts);
         }
     }

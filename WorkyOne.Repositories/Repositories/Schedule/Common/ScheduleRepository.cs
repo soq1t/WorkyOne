@@ -58,8 +58,10 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
         {
             if (request.IncludeTemplate)
             {
-                query = query.Include(s => s.Template).ThenInclude(t => t.Sequences);
-                query = query.Include(s => s.Template).ThenInclude(t => t.Shifts);
+                query = query
+                    .Include(s => s.Template)
+                    .ThenInclude(t => t.Shifts)
+                    .ThenInclude(s => s.Shift);
             }
 
             if (request.IncludeShifts)

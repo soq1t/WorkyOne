@@ -1,16 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Entities.Schedule.Shifts.Special;
 
-namespace WorkyOne.Domain.Configurations.Schedule.Shifts
+namespace WorkyOne.Repositories.Configurations.Schedule.Shifts.Special
 {
     /// <summary>
-    /// Конфигурация TemplatedShiftEntity для EntityFrameworkCore
+    /// Конфигурация <see cref="TemplatedShiftEntity"/> для EntityFrameworkCore
     /// </summary>
     public class TemplatedShiftEntityConfiguration : IEntityTypeConfiguration<TemplatedShiftEntity>
     {
@@ -22,7 +17,10 @@ namespace WorkyOne.Domain.Configurations.Schedule.Shifts
                 .WithMany(s => s.Shifts)
                 .HasForeignKey(s => s.TemplateId);
 
-            builder.HasMany(s => s.Sequences).WithOne(s => s.Shift).HasForeignKey(s => s.ShiftId);
+            builder
+                .HasOne(x => x.Shift)
+                .WithMany(x => x.TemplatedShifts)
+                .HasForeignKey(x => x.ShiftId);
         }
     }
 }

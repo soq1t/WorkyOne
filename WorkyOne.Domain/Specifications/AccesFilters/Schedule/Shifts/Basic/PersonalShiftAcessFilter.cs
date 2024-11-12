@@ -1,18 +1,18 @@
 ﻿using System.Linq.Expressions;
-using WorkyOne.Domain.Entities.Schedule.Shifts.Special;
+using WorkyOne.Domain.Entities.Schedule.Shifts.Basic;
 using WorkyOne.Domain.Specifications.AccesFilters.Common;
 
-namespace WorkyOne.Domain.Specifications.AccesFilters.Schedule.Shifts
+namespace WorkyOne.Domain.Specifications.AccesFilters.Schedule.Shifts.Basic
 {
     /// <summary>
     /// <inheritdoc/>
     /// </summary>
-    public sealed class DatedShiftAccessFilter : AccessFilter<DatedShiftEntity>
+    public class PersonalShiftAcessFilter : AccessFilter<PersonalShiftEntity>
     {
-        public DatedShiftAccessFilter(UserAccessInfo accessInfo)
+        public PersonalShiftAcessFilter(UserAccessInfo accessInfo)
             : base(accessInfo) { }
 
-        public override Expression<Func<DatedShiftEntity, bool>> ToExpression()
+        public override Expression<Func<PersonalShiftEntity, bool>> ToExpression()
         {
             if (_accessInfo.IsAdmin)
             {

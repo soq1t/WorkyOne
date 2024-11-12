@@ -1,11 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using WorkyOne.Domain.Attributes;
 using WorkyOne.Domain.Attributes.Updating;
 using WorkyOne.Domain.Entities.Abstractions.Common;
-using WorkyOne.Domain.Entities.Schedule.Shifts;
-using WorkyOne.Domain.Interfaces.Common;
+using WorkyOne.Domain.Entities.Schedule.Shifts.Special;
 
 namespace WorkyOne.Domain.Entities.Schedule.Common
 {
@@ -32,12 +30,6 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// </summary>
         [Required]
         public List<TemplatedShiftEntity> Shifts { get; set; } = new List<TemplatedShiftEntity>();
-
-        /// <summary>
-        /// Последовательность смен в шаблоне
-        /// </summary>
-        [Required]
-        public List<ShiftSequenceEntity> Sequences { get; set; } = new List<ShiftSequenceEntity>();
 
         /// <summary>
         /// Дата, с которой начинается отсчёт повторений шаблона

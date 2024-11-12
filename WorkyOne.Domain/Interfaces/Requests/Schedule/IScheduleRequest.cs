@@ -1,5 +1,5 @@
 ﻿using WorkyOne.Domain.Entities.Schedule.Common;
-using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Entities.Schedule.Shifts.Special;
 
 namespace WorkyOne.Domain.Interfaces.Requests.Schedule
 {

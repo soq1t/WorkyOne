@@ -25,9 +25,7 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             CancellationToken cancellation = default
         )
         {
-            var query = _context.Templates.Where(request.Specification.ToExpression());
-            query = QueryBuilder(query);
-            return query.FirstOrDefaultAsync(cancellation);
+            return QueryBuilder(request).FirstOrDefaultAsync(cancellation);
         }
 
         public override Task<List<TemplateEntity>> GetManyAsync(
@@ -35,16 +33,15 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             CancellationToken cancellation = default
         )
         {
-            var query = _context.Templates.Where(request.Specification.ToExpression());
-            query = query.AddPagination(request.PageIndex, request.Amount);
-            query = QueryBuilder(query);
-            return query.ToListAsync(cancellation);
+            return QueryBuilder(request).AddPagination(request).ToListAsync(cancellation);
         }
 
-        private static IQueryable<TemplateEntity> QueryBuilder(IQueryable<TemplateEntity> query)
+        private IQueryable<TemplateEntity> QueryBuilder(EntityRequest<TemplateEntity> request)
         {
-            query = query.Include(t => t.Shifts).Include(t => t.Sequences);
-            return query;
+            return _context
+                .Templates.Where(request.Specification.ToExpression())
+                .Include(x => x.Shifts)
+                .ThenInclude(x => x.Shift);
         }
     }
 }

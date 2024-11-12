@@ -1,5 +1,4 @@
-﻿using System.Text;
-using AutoMapper;
+﻿using AutoMapper;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
@@ -8,11 +7,9 @@ using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Enums.Result;
 using WorkyOne.Contracts.Repositories.Result;
-using WorkyOne.Contracts.Services.Common;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
-using WorkyOne.Contracts.Services.GetRequests.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
-using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Entities.Schedule.Shifts.Special;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Common;
@@ -27,9 +24,10 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
     /// </summary>
     public sealed class TemplateService : ITemplateService
     {
+        private const string _positionsError = "Неверно указаны номера позиций в сменах";
+
         private readonly ITemplatesRepository _templatesRepo;
         private readonly ISchedulesRepository _schedulesRepo;
-        private readonly IShiftSequencesRepository _shiftsSequencesRepo;
         private readonly ITemplatedShiftsRepository _templatedShiftsRepo;
 
         private readonly IMapper _mapper;
@@ -37,12 +35,10 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
         private TemplateAccessFilter _templateFilter;
         private ScheduleAccessFilter _scheduleFilter;
-        private ShiftSequenceAccessFilter _sequenceFilter;
         private TemplatedShiftAccessFilter _shiftFilter;
 
         public TemplateService(
             ITemplatesRepository templatesRepo,
-            IShiftSequencesRepository shiftsSequencesRepo,
             IMapper mapper,
             IEntityUpdateUtility updateUtility,
             ISchedulesRepository schedulesRepo,
@@ -51,7 +47,6 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
         )
         {
             _templatesRepo = templatesRepo;
-            _shiftsSequencesRepo = shiftsSequencesRepo;
             _mapper = mapper;
             _updateUtility = updateUtility;
             _schedulesRepo = schedulesRepo;
@@ -93,9 +88,14 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             }
 
             var entity = _mapper.Map<TemplateEntity>(model.Template);
-            entity.Id = Guid.NewGuid().ToString();
 
+            entity.Id = Guid.NewGuid().ToString();
             entity.ScheduleId = schedule.Id;
+
+            if (!CheckShiftsPositions(entity.Shifts))
+            {
+                return RepositoryResult.Error(_positionsError);
+            }
 
             var result = await _templatesRepo.CreateAsync(entity, cancellation);
 
@@ -179,32 +179,6 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             return dto;
         }
 
-        public async Task<List<ShiftSequenceDto>> GetSequencesAsync(
-            string templateId,
-            PaginatedRequest request,
-            CancellationToken cancellation = default
-        )
-        {
-            var filter = new Specification<ShiftSequenceEntity>(x =>
-                x.TemplateId == templateId
-            ).And(_sequenceFilter);
-
-            var entities = await _shiftsSequencesRepo.GetManyAsync(
-                new PaginatedRequest<ShiftSequenceEntity>(
-                    filter,
-                    request.PageIndex,
-                    request.Amount
-                ),
-                cancellation
-            );
-
-            var dtos = _mapper.Map<List<ShiftSequenceDto>>(entities);
-
-            dtos = dtos.OrderBy(x => x.Position).ToList();
-
-            return dtos;
-        }
-
         public async Task<RepositoryResult> UpdateAsync(
             TemplateDto dto,
             CancellationToken cancellation = default
@@ -228,7 +202,21 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             var source = _mapper.Map<TemplateEntity>(dto);
 
+            if (!CheckShiftsPositions(source.Shifts))
+            {
+                return RepositoryResult.Error(_positionsError);
+            }
+
             _updateUtility.Update(target, source);
+
+            await _templatedShiftsRepo.DeleteByConditionAsync(
+                new Specification<TemplatedShiftEntity>(x => x.TemplateId == target.Id).And(
+                    _shiftFilter
+                ),
+                cancellation
+            );
+
+            await _templatedShiftsRepo.CreateManyAsync(target.Shifts, cancellation);
 
             var result = _templatesRepo.Update(target);
 
@@ -245,115 +233,13 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             return result;
         }
 
-        public async Task<RepositoryResult> UpdateSequenceAsync(
-            ShiftSequencesModel model,
-            CancellationToken cancellation = default
-        )
-        {
-            var filter = new EntityIdFilter<TemplateEntity>(model.TemplateId).And(_templateFilter);
-
-            var template = await _templatesRepo.GetAsync(
-                new EntityRequest<TemplateEntity>(filter),
-                cancellation
-            );
-
-            if (template == null)
-            {
-                return RepositoryResult.Error(
-                    ResultType.NotFound,
-                    model.TemplateId,
-                    nameof(TemplateEntity)
-                );
-            }
-
-            model.Sequences = model.Sequences.OrderBy(x => x.Position).ToList();
-
-            if (!CheckSequence(model.Sequences))
-            {
-                return RepositoryResult.Error(
-                    "Значение Position должно быть уникально для каждой сущности"
-                );
-            }
-
-            if (!model.Sequences.Any())
-            {
-                await _shiftsSequencesRepo.DeleteByConditionAsync(
-                    new Specification<ShiftSequenceEntity>(x => x.TemplateId == template.Id),
-                    cancellation
-                );
-
-                return RepositoryResult.Ok(
-                    $"Последовательность для шаблона (ID: {template.Id}) была успешно очищена!"
-                );
-            }
-
-            var sequence = _mapper.Map<List<ShiftSequenceEntity>>(model.Sequences);
-            var shifts = await GetTemplatedShiftAsync(template.Id, cancellation);
-
-            foreach (var item in sequence)
-            {
-                item.Template = template;
-
-                var shift = shifts.First(x => x.Id == item.ShiftId);
-                if (shift == null)
-                {
-                    return RepositoryResult.Error(
-                        ResultType.NotFound,
-                        item.ShiftId,
-                        nameof(TemplatedShiftEntity)
-                    );
-                }
-                item.Shift = shift;
-            }
-            sequence = sequence.OrderBy(x => x.Position).ToList();
-
-            await _shiftsSequencesRepo.DeleteByConditionAsync(
-                new Specification<ShiftSequenceEntity>(x => x.TemplateId == template.Id),
-                cancellation
-            );
-            var result = await _shiftsSequencesRepo.CreateManyAsync(sequence, cancellation);
-
-            if (cancellation.IsCancellationRequested)
-            {
-                return RepositoryResult.CancellationRequested();
-            }
-
-            if (result.IsSucceed)
-            {
-                await _shiftsSequencesRepo.SaveChangesAsync(cancellation);
-                sequence = sequence.OrderBy(x => x.Position).ToList();
-            }
-
-            return result;
-        }
-
         private async Task InitFiltersAsync(IUserAccessInfoProvider provider)
         {
-            if (_sequenceFilter == null)
-            {
-                var accessInfo = await provider.GetCurrentAsync();
+            var accessInfo = await provider.GetCurrentAsync();
 
-                _sequenceFilter = new ShiftSequenceAccessFilter(accessInfo);
-                _templateFilter = new TemplateAccessFilter(accessInfo);
-                _scheduleFilter = new ScheduleAccessFilter(accessInfo);
-                _shiftFilter = new TemplatedShiftAccessFilter(accessInfo);
-            }
-        }
-
-        private bool CheckSequence(IEnumerable<ShiftSequenceDto> sequence)
-        {
-            var i = 0;
-            foreach (var item in sequence)
-            {
-                if (item.Position == i)
-                {
-                    return false;
-                }
-
-                item.Position = ++i;
-            }
-
-            return true;
+            _templateFilter = new TemplateAccessFilter(accessInfo);
+            _scheduleFilter = new ScheduleAccessFilter(accessInfo);
+            _shiftFilter = new TemplatedShiftAccessFilter(accessInfo);
         }
 
         private Task<List<TemplatedShiftEntity>> GetTemplatedShiftAsync(
@@ -368,6 +254,21 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             return _templatedShiftsRepo.GetManyAsync(
                 new PaginatedRequest<TemplatedShiftEntity>(filter, 1, 100)
             );
+        }
+
+        private bool CheckShiftsPositions(IEnumerable<TemplatedShiftEntity> shifts)
+        {
+            var amount = shifts.Count();
+
+            for (var i = 1; i <= amount; i++)
+            {
+                if (shifts.Count(x => x.Position == i) != 1)
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
     }
 }

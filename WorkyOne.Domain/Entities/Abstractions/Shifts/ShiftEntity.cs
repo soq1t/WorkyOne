@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using WorkyOne.Domain.Attributes.Updating;
 using WorkyOne.Domain.Entities.Abstractions.Common;
+using WorkyOne.Domain.Entities.Schedule.Shifts.Special;
 using WorkyOne.Domain.Exceptions.Scedule;
 
 namespace WorkyOne.Domain.Entities.Abstractions.Shifts
@@ -75,5 +76,20 @@ namespace WorkyOne.Domain.Entities.Abstractions.Shifts
                 }
             }
         }
+
+        /// <summary>
+        /// Список <see cref="DatedShiftEntity"/>, которые ссылаются на данную смену
+        /// </summary>
+        public List<DatedShiftEntity> DatedShifts { get; set; } = [];
+
+        /// <summary>
+        /// Список <see cref="PeriodicShiftEntity"/>, которые ссылаются на данную смену
+        /// </summary>
+        public List<PeriodicShiftEntity> PeriodicShifts { get; set; } = [];
+
+        /// <summary>
+        /// Список <see cref="TemplatedShiftEntity"/>, которые ссылаются на данную смену
+        /// </summary>
+        public List<TemplatedShiftEntity> TemplatedShifts { get; set; } = [];
     }
 }

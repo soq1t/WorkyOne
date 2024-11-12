@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using WorkyOne.Contracts.DTOs.Abstractions;
-using WorkyOne.Contracts.DTOs.Schedule.Shifts;
+using WorkyOne.Contracts.DTOs.Schedule.Shifts.Special;
 
 namespace WorkyOne.Contracts.DTOs.Schedule.Common
 {
@@ -14,12 +14,6 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
         /// </summary>
         [Required]
         public List<TemplatedShiftDto> Shifts { get; set; } = new List<TemplatedShiftDto>();
-
-        /// <summary>
-        /// Последовательность смен в шаблоне
-        /// </summary>
-        [Required]
-        public List<ShiftSequenceDto> Sequences { get; set; } = new List<ShiftSequenceDto>();
 
         /// <summary>
         /// Дата, с которой начинается отсчёт повторений шаблона

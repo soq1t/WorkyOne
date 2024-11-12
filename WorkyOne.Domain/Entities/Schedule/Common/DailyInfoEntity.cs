@@ -29,7 +29,7 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// Код цвета, которым выделяется данный день на графике
         /// </summary>
         [AutoUpdated]
-        public string ColorCode { get; set; } = "#FFFFFF";
+        public string? ColorCode { get; set; }
 
         /// <summary>
         /// Расписание, которое описывает сущность
@@ -68,24 +68,5 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// </summary>
         [AutoUpdated]
         public TimeSpan? ShiftProlongation { get; set; }
-
-        public static DailyInfoEntity CreateFromShiftEntity(ShiftEntity shift, DateOnly date)
-        {
-            var info = new DailyInfoEntity();
-
-            info.Name = shift.Name;
-            info.ColorCode = shift.ColorCode ?? "#FFFFFF";
-            info.IsBusyDay = shift.Beginning.HasValue && shift.Ending.HasValue;
-            info.Date = date;
-
-            if (info.IsBusyDay)
-            {
-                info.Beginning = shift.Beginning.Value;
-                info.Ending = shift.Ending.Value;
-                info.ShiftProlongation = shift.Duration();
-            }
-
-            return info;
-        }
     }
 }

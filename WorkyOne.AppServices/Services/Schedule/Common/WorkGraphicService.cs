@@ -9,6 +9,7 @@ using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.Common;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
 using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
+using WorkyOne.Domain.Entities.Abstractions.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
@@ -162,10 +163,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             if (datedShift != null)
             {
-                var info = DailyInfoEntity.CreateFromShiftEntity(datedShift, date);
-                info.ScheduleId = schedule.Id;
-                info.Schedule = schedule;
-                return info;
+                return GetFromShift(datedShift.Shift, schedule, date);
             }
 
             var periodicShift = schedule.PeriodicShifts.FirstOrDefault(d =>
@@ -174,10 +172,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             if (periodicShift != null)
             {
-                var info = DailyInfoEntity.CreateFromShiftEntity(periodicShift, date);
-                info.ScheduleId = schedule.Id;
-                info.Schedule = schedule;
-                return info;
+                return GetFromShift(periodicShift.Shift, schedule, date);
             }
 
             if (schedule.Template == null)
@@ -193,41 +188,68 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             }
             else
             {
-                var info = GetFromTemplate(schedule.Template, date);
-                info.ScheduleId = schedule.Id;
-                info.Schedule = schedule;
-                return info;
+                return GetFromTemplate(schedule.Template, schedule, date);
             }
         }
 
-        private static DailyInfoEntity GetFromTemplate(TemplateEntity template, DateOnly date)
+        private static DailyInfoEntity GetFromTemplate(
+            TemplateEntity template,
+            ScheduleEntity schedule,
+            DateOnly date
+        )
         {
-            if (template.Sequences.Count == 0)
+            if (template.Shifts.Count == 0)
             {
                 return new DailyInfoEntity { IsBusyDay = false, Date = date };
             }
 
-            int sequenceLength = template.Sequences.Count;
+            int sequenceLength = template.Shifts.Count;
             var passedDays = date.DayNumber - template.StartDate.DayNumber;
             passedDays = Math.Abs(passedDays);
             var position = passedDays % sequenceLength;
 
             if (date >= template.StartDate)
             {
-                var sequence = template.Sequences.OrderBy(s => s.Position).ToList();
+                var sequence = template.Shifts.OrderBy(s => s.Position).ToList();
                 var shift = sequence[position].Shift;
 
-                return DailyInfoEntity.CreateFromShiftEntity(shift, date);
+                return GetFromShift(shift, schedule, date);
             }
             else
             {
                 position = position == 0 ? sequenceLength - 1 : position - 1;
 
-                var sequence = template.Sequences.OrderByDescending(s => s.Position).ToList();
+                var sequence = template.Shifts.OrderByDescending(s => s.Position).ToList();
                 var shift = sequence[position].Shift;
 
-                return DailyInfoEntity.CreateFromShiftEntity(shift, date);
+                return GetFromShift(shift, schedule, date);
             }
+        }
+
+        private static DailyInfoEntity GetFromShift(
+            ShiftEntity shift,
+            ScheduleEntity schedule,
+            DateOnly date
+        )
+        {
+            var result = new DailyInfoEntity
+            {
+                IsBusyDay = shift.Beginning.HasValue && shift.Ending.HasValue,
+                Name = shift.Name,
+                ColorCode = shift.ColorCode,
+                Schedule = schedule,
+                ScheduleId = schedule.Id,
+                Date = date
+            };
+
+            if (!result.IsBusyDay)
+            {
+                result.ShiftProlongation = shift.Duration();
+                result.Beginning = shift.Beginning;
+                result.Ending = shift.Ending;
+            }
+
+            return result;
         }
 
         private async Task InitFiltersAsync(CancellationToken cancellation = default)

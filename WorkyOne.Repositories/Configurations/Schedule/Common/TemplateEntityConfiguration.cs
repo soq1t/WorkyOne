@@ -22,11 +22,6 @@ namespace WorkyOne.Domain.Configurations.Schedule.Common
                 .HasOne(x => x.Schedule)
                 .WithOne(x => x.Template)
                 .HasForeignKey<TemplateEntity>(x => x.ScheduleId);
-
-            builder
-                .HasMany(t => t.Sequences)
-                .WithOne(s => s.Template)
-                .HasForeignKey(s => s.TemplateId);
         }
     }
 }

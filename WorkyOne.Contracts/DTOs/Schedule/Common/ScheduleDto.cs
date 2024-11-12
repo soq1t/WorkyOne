@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using WorkyOne.Contracts.DTOs.Abstractions;
-using WorkyOne.Contracts.DTOs.Schedule.Shifts;
+using WorkyOne.Contracts.DTOs.Schedule.Shifts.Special;
 
 namespace WorkyOne.Contracts.DTOs.Schedule.Common
 {

@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Entities.Schedule.Shifts.Special;
 
-namespace WorkyOne.Repositories.Configurations.Schedule.Shifts
+namespace WorkyOne.Repositories.Configurations.Schedule.Shifts.Special
 {
     /// <summary>
     /// Конфигурация DatedShiftEntity для EntityFrameworkCore
@@ -17,6 +17,8 @@ namespace WorkyOne.Repositories.Configurations.Schedule.Shifts
                 .HasOne(x => x.Schedule)
                 .WithMany(x => x.DatedShifts)
                 .HasForeignKey(x => x.ScheduleId);
+
+            builder.HasOne(x => x.Shift).WithMany(x => x.DatedShifts).HasForeignKey(x => x.ShiftId);
         }
     }
 }

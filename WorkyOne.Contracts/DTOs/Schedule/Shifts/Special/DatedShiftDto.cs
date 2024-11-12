@@ -2,12 +2,12 @@
 using WorkyOne.Contracts.Attributes.Validation;
 using WorkyOne.Contracts.DTOs.Abstractions;
 
-namespace WorkyOne.Contracts.DTOs.Schedule.Shifts
+namespace WorkyOne.Contracts.DTOs.Schedule.Shifts.Special
 {
     /// <summary>
     /// DTO для DatedShiftEntity
     /// </summary>
-    public sealed class DatedShiftDto : ShiftDtoBase
+    public sealed class DatedShiftDto : ShiftReferenceDto
     {
         /// <summary>
         /// Дата, на которую установлена смена

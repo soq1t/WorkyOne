@@ -1,4 +1,4 @@
-﻿using WorkyOne.Contracts.DTOs.Schedule;
+﻿using WorkyOne.Contracts.DTOs.Schedule.Shifts.Special;
 using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts;
 using WorkyOne.Contracts.Services.GetRequests.Common;

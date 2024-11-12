@@ -1,14 +1,15 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using WorkyOne.Domain.Attributes.Updating;
 using WorkyOne.Domain.Entities.Abstractions.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Common;
 
-namespace WorkyOne.Domain.Entities.Schedule.Shifts
+namespace WorkyOne.Domain.Entities.Schedule.Shifts.Special
 {
     /// <summary>
     /// Сущность смены, используемой в <see cref="TemplateEntity"/>
     /// </summary>
-    public sealed class TemplatedShiftEntity : ShiftEntity
+    public sealed class TemplatedShiftEntity : ShiftReferenceEntity
     {
         /// <summary>
         /// ID шаблона
@@ -24,9 +25,11 @@ namespace WorkyOne.Domain.Entities.Schedule.Shifts
         public TemplateEntity Template { get; set; }
 
         /// <summary>
-        /// Список последовательностей, которые включают в себя данную схему
+        /// Указатель позиции смены в последовательности
         /// </summary>
+        [Range(1, 31)]
         [Required]
-        public List<ShiftSequenceEntity> Sequences { get; set; } = new List<ShiftSequenceEntity>();
+        [AutoUpdated]
+        public int Position { get; set; }
     }
 }
