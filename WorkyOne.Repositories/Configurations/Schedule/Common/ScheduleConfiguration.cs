@@ -5,7 +5,7 @@ using WorkyOne.Domain.Entities.Schedule.Common;
 namespace WorkyOne.Repositories.Configurations.Schedule.Common
 {
     /// <summary>
-    /// Конфигурация ScheduleEntity для EntityFrameworkCore
+    /// Конфигурация <see cref="ScheduleEntity"/> для EntityFrameworkCore
     /// </summary>
     public class ScheduleConfiguration : IEntityTypeConfiguration<ScheduleEntity>
     {
@@ -22,6 +22,11 @@ namespace WorkyOne.Repositories.Configurations.Schedule.Common
 
             builder
                 .HasMany(x => x.DatedShifts)
+                .WithOne(x => x.Schedule)
+                .HasForeignKey(x => x.ScheduleId);
+
+            builder
+                .HasMany(x => x.PersonalShifts)
                 .WithOne(x => x.Schedule)
                 .HasForeignKey(x => x.ScheduleId);
 

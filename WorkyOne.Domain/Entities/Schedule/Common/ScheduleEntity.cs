@@ -2,7 +2,9 @@
 using System.ComponentModel.DataAnnotations.Schema;
 using WorkyOne.Domain.Attributes.Updating;
 using WorkyOne.Domain.Entities.Abstractions.Common;
+using WorkyOne.Domain.Entities.Abstractions.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
+using WorkyOne.Domain.Entities.Schedule.Shifts.Basic;
 using WorkyOne.Domain.Entities.Users;
 
 namespace WorkyOne.Domain.Entities.Schedule.Common
@@ -37,6 +39,8 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         [MaxLength(100)]
         [AutoUpdated]
         public string Name { get; set; }
+
+        public List<PersonalShiftEntity> PersonalShifts { get; set; } = [];
 
         /// <summary>
         /// Список смен, выставляемых на конкретную дату

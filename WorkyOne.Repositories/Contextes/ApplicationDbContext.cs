@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using WorkyOne.Domain.Entities.Abstractions.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts;
 using WorkyOne.Domain.Entities.Users;
@@ -15,6 +16,8 @@ namespace WorkyOne.Repositories.Contextes
     /// </summary>
     public class ApplicationDbContext : DbContext
     {
+        public DbSet<ShiftEntity> Shifts { get; set; }
+
         public virtual DbSet<TemplatedShiftEntity> TemplatedShifts { get; set; }
         public DbSet<DatedShiftEntity> DatedShifts { get; set; }
         public DbSet<PeriodicShiftEntity> PeriodicShifts { get; set; }
@@ -39,6 +42,11 @@ namespace WorkyOne.Repositories.Contextes
             base.OnModelCreating(modelBuilder);
 
             modelBuilder.ApplyConfigurationsFromAssembly(typeof(ApplicationDbContext).Assembly);
+
+            modelBuilder
+                .Entity<ShiftEntity>()
+                .HasDiscriminator<string>("ShiftType")
+                .HasValue<PeriodicShiftEntity>("Personal");
         }
     }
 }

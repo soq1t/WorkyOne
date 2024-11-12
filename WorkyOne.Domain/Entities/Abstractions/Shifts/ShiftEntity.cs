@@ -21,7 +21,6 @@ namespace WorkyOne.Domain.Entities.Abstractions.Shifts
         /// <summary>
         /// Цветовой код смены
         /// </summary>
-        [Required]
         [Length(
             4,
             7,

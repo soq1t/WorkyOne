@@ -7,11 +7,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
+    <Compile Remove="AppConfiguration\**" />
+    <EmbeddedResource Remove="AppConfiguration\**" />
+    <None Remove="AppConfiguration\**" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="AppConfiguration\" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.8" />
   </ItemGroup>
 
 </Project>
