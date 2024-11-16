@@ -242,7 +242,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                 Date = date
             };
 
-            if (!result.IsBusyDay)
+            if (result.IsBusyDay)
             {
                 result.ShiftProlongation = shift.Duration();
                 result.Beginning = shift.Beginning;
