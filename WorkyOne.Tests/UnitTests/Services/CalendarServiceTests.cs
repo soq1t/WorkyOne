@@ -1,6 +1,7 @@
 ﻿using Moq;
 using WorkyOne.AppServices.Interfaces.Services;
-using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
+using WorkyOne.AppServices.Services.Schedule.Common;
+using WorkyOne.Contracts.Services.Requests;
 using Xunit;
 
 namespace WorkyOne.Tests.UnitTests.Services
@@ -33,7 +34,9 @@ namespace WorkyOne.Tests.UnitTests.Services
             var calendarService = new CalendarService(_dateTimeServiceMock.Object);
 
             // Act
-            var calendarInfo = calendarService.GetCalendarInfo(year, month);
+            var calendarInfo = calendarService.GetCalendarInfo(
+                new CalendarInfoRequest { Year = year, Month = month }
+            );
 
             // Assert
 

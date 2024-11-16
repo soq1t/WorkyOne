@@ -1,13 +1,13 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services;
 using WorkyOne.AppServices.Interfaces.Services.Auth;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
 using WorkyOne.Contracts.Services.GetRequests.Users;
+using WorkyOne.Contracts.Services.Requests;
 using WorkyOne.MVC.Models;
 using WorkyOne.MVC.Models.Common;
 using WorkyOne.MVC.Models.Schedule;
@@ -42,49 +42,51 @@ namespace WorkyOne.MVC.Controllers.Home
 
         public async Task<IActionResult> Index(CancellationToken cancellation = default)
         {
-            var calendarInfo = _calendarService.GetNowCalendarInfo();
+            var now = _dateTimeService.GetNow();
+            var model = new HomeViewModel { Year = now.Year, Month = now.Month };
 
-            var model = new HomeViewModel
-            {
-                CalendarViewModel = new CalendarViewModel
+            return View(model);
+        }
+
+        [HttpPost]
+        [Route("calendar")]
+        public async Task<IActionResult> GetCalendarAsync(
+            [FromBody] CalendarInfoRequest request,
+            CancellationToken cancellation = default
+        )
+        {
+            var calendarInfo = _calendarService.GetCalendarInfo(request);
+
+            var model = new CalendarViewModel { Info = calendarInfo };
+
+            var userInfo = await _userService.GetUserInfoAsync(
+                new UserInfoRequest
                 {
-                    Year = calendarInfo.Year,
-                    Month = calendarInfo.MonthNumber,
-                    MonthName = calendarInfo.MonthName,
-                }
-            };
+                    IncludeSchedules = true,
+                    UserName = HttpContext.User.Identity.Name
+                },
+                cancellation
+            );
 
-            if (_authService.IsAuthenticated())
+            var schedule = userInfo?.Schedules.FirstOrDefault();
+
+            if (schedule != null)
             {
-                var userInfo = await _userService.GetUserInfoAsync(
-                    new UserInfoRequest
+                model.ScheduleDto = schedule;
+                model.WorkGraphic = await _workGraphicService.GetGraphicAsync(
+                    new PaginatedWorkGraphicRequest
                     {
-                        IncludeSchedules = true,
-                        UserName = HttpContext.User.Identity.Name
+                        PageIndex = 1,
+                        Amount = calendarInfo.DaysAmount,
+                        ScheduleId = schedule.Id,
+                        StartDate = calendarInfo.Start,
+                        EndDate = calendarInfo.End,
                     },
                     cancellation
                 );
-
-                var schedule = userInfo?.Schedules.FirstOrDefault();
-
-                if (schedule != null)
-                {
-                    model.CalendarViewModel.ScheduleDto = schedule;
-                    model.CalendarViewModel.WorkGraphic = await _workGraphicService.GetGraphicAsync(
-                        new PaginatedWorkGraphicRequest
-                        {
-                            PageIndex = 1,
-                            Amount = calendarInfo.DaysAmount,
-                            ScheduleId = schedule.Id,
-                            StartDate = calendarInfo.Start,
-                            EndDate = calendarInfo.End,
-                        },
-                        cancellation
-                    );
-                }
             }
 
-            return View(model);
+            return PartialView("_CalendarPartial", model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

@@ -6,6 +6,14 @@
     ViewData["Title"] = "Home Page";
 }
 
+<head>
+    <link rel="stylesheet" href="~/css/Pages/Home/Home.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/Pages/Home/_Calendar.css" asp-append-version="true" />
+    <script src="~/js/Home/script.js" asp-append-version="true"></script>
+</head>
+
 <div class="wrapper wrapper--padding">
-    @await Html.PartialAsync("_CalendarPartial", Model.CalendarViewModel)
+    <div data-month="@Model.Month" data-year="@Model.Year" id="calendar" class="home__calendar">
+        
+    </div>
 </div>

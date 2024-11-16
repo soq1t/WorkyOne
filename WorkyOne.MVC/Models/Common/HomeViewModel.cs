@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using WorkyOne.MVC.Models.Schedule;
+using WorkyOne.Contracts.Services.Common;
 
 namespace WorkyOne.MVC.Models.Common
 {
@@ -9,9 +9,17 @@ namespace WorkyOne.MVC.Models.Common
     public class HomeViewModel
     {
         /// <summary>
-        /// Вью модель календаря с графиком
+        /// Год, отображаемый календарём на странице
         /// </summary>
         [Required]
-        public CalendarViewModel CalendarViewModel { get; set; }
+        [Range(1900, 3000)]
+        public int Year { get; set; }
+
+        /// <summary>
+        /// Месяц, отображаемый календарём на странице
+        /// </summary>
+        [Required]
+        [Range(1, 12)]
+        public int Month { get; set; }
     }
 }

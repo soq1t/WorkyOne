@@ -1,38 +1,35 @@
-﻿@using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common
+﻿@using WorkyOne.AppServices.Interfaces.Services.Schedule.Common
+@using WorkyOne.AppServices.Interfaces.Services
+@using WorkyOne.AppServices.Interfaces.Utilities
 @using WorkyOne.MVC.Models.Schedule
 
 @model CalendarViewModel
 @inject ICalendarService calendarService
-
-<head>
-    <link rel="stylesheet" href="~/css/Pages/Home/_Calendar.css" asp-append-version="true" />
-    @* <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=arrow_back_ios" /> *@
-</head>
+@inject IColorUtility colorUtility
+@inject IDateTimeService dateTimeService
 
 <div class="calendar__body">
     <div class="calendar__header">
-        <div class="monthSelector">
-            <span id="selector__arrow--left" class="monthSelector__arrow material-symbols-outlined">arrow_back</span>
+        <div data-year="@Model.Info.Year" data-month="@Model.Info.MonthNumber" class="monthSelector">
+            <span data-dir="back" class="monthSelector__arrow material-symbols-outlined">arrow_back</span>
             <div class="monthSelector__info">
-                <p class="month">@Model.MonthName</p>
-                <p class="year">@Model.Year</p>
+                <p class="month">@Model.Info.MonthName</p>
+                <p class="year">@Model.Info.Year</p>
             </div>
-            <span id="selector__arrow--right" class="monthSelector__arrow material-symbols-outlined">arrow_forward</span>
+            <span data-dir="forward" id="selector__arrow--right" class="monthSelector__arrow material-symbols-outlined">arrow_forward</span>
         </div>
     </div>
     <div class="calendar__main">
         @{
-            var calendarInfo = calendarService.GetCalendarInfo(Model.Year, Model.Month);
+            var calendarInfo = Model.Info;
             var date = calendarInfo.Start;
 
+            var weekDayNames = calendarService.GetWeekdaysNames();
             <div class="calendar__row">
-                <div class="dayWeekName">ПН</div>
-                <div class="dayWeekName">ВТ</div>
-                <div class="dayWeekName">СР</div>
-                <div class="dayWeekName">ЧТ</div>
-                <div class="dayWeekName">ПТ</div>
-                <div class="dayWeekName">СБ</div>
-                <div class="dayWeekName">ВС</div>
+                @foreach (var day in weekDayNames)
+                {
+                    <div class="dayWeekName row__item">@day.ToUpper()</div>
+                }
             </div>
 
             while (date <= calendarInfo.End)
@@ -40,20 +37,34 @@
                 <div class="calendar__row">
                 @for (int i = 1; i <= 7; i++)
                 {
-                    var classes = date.Month == Model.Month ? "day" : "day day--inactive";
-
                     var dailyInfo = Model.WorkGraphic?.FirstOrDefault(x => x.Date == date);
-                    var color = dailyInfo?.ColorCode ?? "transparent";
+                    var now = DateOnly.FromDateTime(dateTimeService.GetNow());
 
-                    <div style="background-color: @color" class="calendar__day @classes">
-                        <div class="day__number">@date.Day</div>
-                        <div class="day__body">
-                            @*<div class="day__section">@dailyInfo?.Name</div>*@
-                            <div class="day__section">@dailyInfo?.Beginning</div>
-                            <div class="day__section">@dailyInfo?.Ending</div>
+                    var classes = "day";
+
+                    if (date.Month != Model.Info.MonthNumber)
+                    {
+                        classes += " day--inactive";
+                    }
+
+                    if (now.DayNumber == date.DayNumber)
+                    {
+                        classes += " day--today";
+                    }
+                    var color = $"background-color: {colorUtility.GetRgbaFromHex(dailyInfo?.ColorCode, 0.8)}; color: {colorUtility.GetForegroundColor(dailyInfo?.ColorCode)}";
+
+                    <div class="row__item">
+                        <div style="@color" class="calendar__day @classes">
+                            <div class="day__title">
+                                <div class="day__number">@date.Day</div>
+                                @*<div class="day__name">@dailyInfo?.Name.ToUpper()[0]</div>*@
+                            </div>                            
+                            <div class="day__body">
+                                <div class="day__section">@dailyInfo?.Beginning</div>
+                                <div class="day__section">@dailyInfo?.Ending</div>
+                            </div>                        
                         </div>
-                        
-                    </div>
+                    </div>                   
                     
                     date = date.AddDays(1);                        
                 }
@@ -63,5 +74,30 @@
         }
     </div>
     <div class="calendar__footer">
+        @{
+            if (Model.WorkGraphic != null)
+            {
+                var colorPairs = new Dictionary<string, string>();
+
+                foreach (var day in Model.WorkGraphic)
+                {
+                    if (!colorPairs.ContainsKey(day.Name))
+                    {
+                        colorPairs.Add(day.Name, day.ColorCode);
+                    }
+                }
+
+                <div class="calendar__legend legend">
+                    @foreach(var pair in colorPairs)
+                    {
+                        <div class="legend__item">
+                            <div style="background-color: @pair.Value" class="legend__color"></div>
+                            <div class="legend__name">@pair.Key</div>
+                        </div>
+                    }
+                </div>
+                
+            }
+        }        
     </div>
 </div>

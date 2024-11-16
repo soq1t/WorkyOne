@@ -7,7 +7,7 @@
         display: flex;
         flex-direction: column;
         gap: 10px;
-        max-width: 1000px;
+        max-width: 700px;
         margin: 0 auto;
     }
 
@@ -45,70 +45,117 @@
         flex-direction: column;
         width: 100%;
         height: 100%;
-        border: 1px solid $color-primary;
+        border: 2px solid $color-primary;
     }
 
+    &__footer {
 
+        .legend {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+
+            &__item {
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 20px;
+            }
+
+            &__color {
+                width: 30px;
+                height: 30px;
+                border: 1px solid $color-background-fg;
+            }
+
+            &__name {
+                flex: 1;
+            }
+        }
+    }
 
     &__row {
         display: flex;
         flex-direction: row;
         width: 100%;
 
+
+        .row {
+
+            &__item {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                max-width: calc(100% / 7);
+                border-bottom: 1px solid $color-primary;
+                border-right: 1px solid $color-primary;
+
+                &:last-child {
+                    border-right: 0px solid $color-primary;
+                }
+            }
+        }
+
+
         &:last-child {
 
-            .day {
+            .row__item {
                 border-bottom: 0px solid $color-secondary;
             }
         }
 
         .dayWeekName {
-            flex: 1;
-            max-width: calc(100% / 7);
             padding: 5px;
             text-align: center;
-            border-bottom: 1px solid $color-secondary;
-            border-right: 1px solid $color-secondary;
-
-            &:last-child {
-                border-right: 0px solid $color-secondary;
-            }
         }
 
         .day {
             flex: 1;
             display: flex;
             flex-direction: column;
-            gap: 20px;
-            align-items: center;
-            padding: 7px 5px;
-            max-width: calc(100% / 7);
-            box-sizing: border-box;
-            border-right: 1px solid $color-secondary;
-            border-bottom: 1px solid $color-secondary;
+            gap: 10px;
+            align-items: stretch;
+            padding: 10px 7px;
+            width: 100%;
+            font-size: clamp(0.9rem, 1.5vw + 0.5rem, 1.3rem);
+            //min-height: 80px;
 
-            &:last-child {
-                border-right: 0px solid $color-secondary;
+            &__title {
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
             }
 
             &__number {
             }
 
+            &__name {
+            }
+
             &__body {
                 display: flex;
                 flex-direction: column;
+                gap: 3px;
             }
 
             &__section {
-                word-wrap: break-word;
+                text-align: left;
             }
 
             &--inactive {
-                opacity: 0.2;
+                opacity: 0.3;
+            }
+
+            &--today {
+                border: 2px solid red;
+                padding: 8px 5px;
             }
         }
     }
 
     &__day {
+    }
+
+    &__legend {
     }
 }
