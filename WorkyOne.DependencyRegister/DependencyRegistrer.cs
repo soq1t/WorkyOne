@@ -1,5 +1,4 @@
 ﻿using System.Text;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -206,6 +205,8 @@ namespace WorkyOne.DependencyRegister
             services.AddAutoMapper(typeof(DailyInfoProfile).Assembly);
 
             services.AddSingleton<IEntityUpdateUtility, EntityUpdateUtility>();
+            services.AddSingleton<IColorUtility, ColorUtility>();
+
             services.AddScoped<IReferenceShiftUtility, ReferenceShiftUtility>();
         }
     }

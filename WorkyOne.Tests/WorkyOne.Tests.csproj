@@ -7,6 +7,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="UnitTests\Repositories\**" />
+    <EmbeddedResource Remove="UnitTests\Repositories\**" />
+    <None Remove="UnitTests\Repositories\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.10" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
@@ -24,10 +30,6 @@
     <ProjectReference Include="..\WorkyOne.DependencyRegister\WorkyOne.DependencyRegister.csproj" />
     <ProjectReference Include="..\WorkyOne.Infrastructure\WorkyOne.Infrastructure.csproj" />
     <ProjectReference Include="..\WorkyOne.Repositories\WorkyOne.Repositories.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="UnitTests\Repositories\" />
   </ItemGroup>
 
 </Project>
