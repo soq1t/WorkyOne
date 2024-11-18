@@ -62,56 +62,6 @@ $color-accent-fg: var(--color-accent-fg);*/
 $font-family: var(--font-family);
 $font-size-text: var(--font-size-text);
 $font-size-h3: var(--font-size-h3);*/
-.input__text {
-  outline: none;
-  border: 0px solid #0fbda6;
-  border-bottom: 2px solid #0fbda6;
-  border-radius: 8px;
-  padding: 5px 10px;
-  -webkit-transition: all 0.1s ease;
-  transition: all 0.1s ease;
-}
-.input__text:focus {
-  border: 0px solid #71a3e5;
-  border-bottom: 2px solid #71a3e5;
-}
-.input__checkbox {
-  width: clamp(1rem, 3vw + 0.5rem, 1.5rem);
-  height: clamp(1rem, 3vw + 0.5rem, 1.5rem);
-}
-
-/*:root {
-    --color-background: #f4f9f9;
-    --color-background-fg: #020808;
-    --color-primary: #0fbda6;
-    --color-primary-fg: #f4f9f9;
-    --color-secondary: #93cfd7;
-    --color-secondary-fg: #f4f9f9;
-    --color-accent: #71a3e5;
-    --color-accent-fg: #f4f9f9;
-}
-
-$color-background: var(--color-background);
-$color-background-fg: var(--color-background-fg);
-
-$color-primary: var(--color-primary);
-$color-primary-fg: var(--color-primary-fg);
-
-$color-secondary: var(--color-secondary);
-$color-secondary-fg: var(--color-secondary-fg);
-
-$color-accent: var(--color-accent);
-$color-accent-fg: var(--color-accent-fg);*/
-/*:root {
-    --font-family: "M PLUS Rounded 1c", serif;
-
-    --font-size-text: clamp(1rem, 3vw + 0.5rem, 1.5rem);
-    --font-size-h3: clamp(1.2rem, 5vw + 0.5rem, 1.6rem);
-}
-
-$font-family: var(--font-family);
-$font-size-text: var(--font-size-text);
-$font-size-h3: var(--font-size-h3);*/
 .btn {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -150,34 +100,7 @@ $font-size-h3: var(--font-size-h3);*/
   color: #f4f9f9;
 }
 
-.signIn__body {
-  height: 100%;
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: vertical;
-  -webkit-box-direction: normal;
-      -ms-flex-direction: column;
-          flex-direction: column;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  gap: 30px;
-  width: 100%;
-  max-width: 500px;
-  margin: 0px auto;
-}
-.signIn__header {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  -ms-flex-line-pack: center;
-      align-content: center;
-}
-.signIn__main {
+.schedules {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -186,9 +109,54 @@ $font-size-h3: var(--font-size-h3);*/
       -ms-flex-direction: column;
           flex-direction: column;
   gap: 20px;
-  width: 100%;
+  height: 100%;
 }
-.signIn__main .section {
+.schedules__header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  gap: 15px;
+}
+.schedules .header__info {
+  font-size: clamp(1.2rem, 4vw + 0.5rem, 1.6rem);
+  font-weight: 500;
+  color: #0fbda6;
+}
+.schedules .header__controls {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+.schedules__body {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+}
+.schedules__list {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+@media (min-width: 780px) {
+  .schedules__list {
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: row;
+            flex-direction: row;
+    -webkit-box-pack: justify;
+        -ms-flex-pack: justify;
+            justify-content: space-between;
+  }
+}
+.schedules__list .item {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -197,21 +165,57 @@ $font-size-h3: var(--font-size-h3);*/
       -ms-flex-direction: column;
           flex-direction: column;
   gap: 10px;
-  width: 100%;
+  border: 3px solid #0fbda6;
+  border-radius: 15px;
+  padding: 5px 15px;
 }
-.signIn__main .section--rememberMe {
+@media (min-width: 780px) {
+  .schedules__list .item {
+    width: 48%;
+  }
+}
+@media (min-width: 1060px) {
+  .schedules__list .item {
+    width: 28%;
+  }
+}
+.schedules__list .item__section {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+}
+.schedules__list .item__section--title {
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
 }
-.signIn__main .section .title {
+.schedules__list .item__section--title h3 {
+  -webkit-box-flex: 1;
+      -ms-flex: 1;
+          flex: 1;
+  word-wrap: normal;
+}
+.schedules__list .item__section--title .favorite {
+  background-color: transparent;
+  border: 0px solid black;
+  color: #93cfd7;
+  -webkit-transition: all 0.3s ease;
+  transition: all 0.3s ease;
+}
+.schedules__list .item__section--title .favorite--active {
+  font-variation-settings: "FILL" 1;
   color: #0fbda6;
-  font-weight: 500;
 }
-.signIn__main .section .validation {
-  color: #71a3e5;
+.schedules__list .item__section--controls {
+  margin: 20px 0 0 0;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  gap: 20px;
 }

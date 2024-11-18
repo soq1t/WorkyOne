@@ -1,15 +1,39 @@
 ﻿@import "../Imports/_all.scss";
 
 .btn {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+    text-decoration: none;
     cursor: pointer;
     padding: 5px 15px;
     font-weight: 500;
     border-radius: 8px;
     transition: all 0.3s ease;
 
+
+
     &__primary {
         border: 2px solid $color-primary;
         background-color: $color-primary;
         color: $color-primary-fg;
+
+        &:hover {
+            border: 2px solid $color-primary;
+            background-color: $color-primary;
+            color: $color-primary-fg;
+        }
+    }
+
+    &__accent {
+        border: 2px solid $color-accent;
+        background-color: $color-accent;
+        color: $color-accent-fg;
+
+        &:hover {
+            border: 2px solid $color-accent;
+            background-color: $color-accent;
+            color: $color-accent-fg;
+        }
     }
 }

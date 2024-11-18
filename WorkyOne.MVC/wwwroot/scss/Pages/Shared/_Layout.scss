@@ -1,6 +1,10 @@
 ﻿@import "../../Imports/nullstyle.scss";
 @import "../../Imports/_all.scss";
 
+@import "../../Elements/Modal.scss";
+
+
+
 h3 {
     font-size: $font-size-h3;
     font-weight: 500;
@@ -11,6 +15,16 @@ form {
     height: 100%;
 }
 
+
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+
+    &--filled {
+        font-variation-settings: 'FILL' 1;
+    }
+}
+
+
 ._layout {
     height: 100dvh;
     background-color: $color-background;
@@ -18,7 +32,7 @@ form {
     display: flex;
     flex-direction: column;
     font-family: $font-family;
-    font-size: $font-size-text;
+    font-size: $font-size-text;    
 
     .header {
 
@@ -93,13 +107,14 @@ form {
                 overflow-y: hidden;
                 transition: $transition;
                 padding: 0px 0px;
+
                 a {
                     cursor: pointer;
                     text-decoration: none;
                     color: $color-primary-fg;
                     font-weight: 500;
                     padding: 12px 15px;
-                    
+
                     @media(min-width: $bp-tablet) {
                         padding: 5px 15px;
                     }

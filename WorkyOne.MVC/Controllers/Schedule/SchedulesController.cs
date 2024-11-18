@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Users;
+using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Options.Common;
 using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
 using WorkyOne.Contracts.Services.GetRequests.Users;
@@ -57,6 +58,30 @@ namespace WorkyOne.MVC.Controllers.Schedule
             var model = new SchedulesViewModel { Schedules = schedules };
 
             return View(model);
+        }
+
+        [HttpGet]
+        [Route("{id}")]
+        public async Task<IActionResult> GetScheduleAsync(
+            [FromRoute] string? id,
+            CancellationToken cancellation = default
+        )
+        {
+            if (id == null)
+            {
+                return PartialView("Schedule", new ScheduleDto());
+            }
+
+            var schedule = await _scheduleService.GetAsync(id, cancellation);
+
+            if (schedule != null)
+            {
+                return PartialView("_SchedulePartial", schedule);
+            }
+            else
+            {
+                return BadRequest();
+            }
         }
     }
 }

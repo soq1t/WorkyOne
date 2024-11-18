@@ -1,0 +1,20 @@
+﻿@import "../../Imports/_all.scss";
+
+._schedule {
+
+    display: flex;
+    flex-direction: column;
+    background-color: $color-background;
+    padding: 15px;
+    border-radius: 10px;
+
+    &__header {
+    }
+
+    &__body {
+        flex: 1;
+    }
+
+    &__footer {
+    }
+}

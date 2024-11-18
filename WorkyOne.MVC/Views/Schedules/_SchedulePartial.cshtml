@@ -1,0 +1,23 @@
+﻿@using WorkyOne.Contracts.DTOs.Schedule.Common
+
+@model ScheduleDto
+
+<head>
+    <link rel="stylesheet" href="~/css/Pages/Schedules/_SchedulePartial.css" asp-append-version="true" />
+</head>
+
+<div id="schedule" class="_schedule">
+    <div class="_schedule__header">
+        <div class="title">
+            <h1>@Model.Name</h1>
+        </div>
+    </div>
+    <div class="_schedule__body">
+
+    </div>
+    <div class="_schedule__footer">
+        <button class="btn btn__primary">Ok</button>
+    </div>
+</div>
+
+<script src="~/js/Schedule/partial.js" asp-append-version="true"></script>
