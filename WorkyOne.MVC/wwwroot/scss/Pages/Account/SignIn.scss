@@ -4,29 +4,21 @@
 @import "../../Elements/Button.scss";
 
 .signIn {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    max-width: 500px;
+    margin: auto;
 
     &__body {
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: center;
-        gap: 30px;
-        width: 100%;
-        max-width: 500px;
-        margin: 0px auto;
     }
 
     &__header {
-        display: flex;
-        justify-content: center;
-        align-content: center;
     }
 
     &__main {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        width: 100%;
 
         .section {
             display: flex;
@@ -45,7 +37,7 @@
             }
 
             .validation {
-                color: $color-accent;
+                color: $color-danger;
             }
         }
     }

@@ -30,6 +30,9 @@ $font-size-h3: var(--font-size-h3);*/
   -webkit-box-align: center;
       -ms-flex-align: center;
           align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
   text-decoration: none;
   cursor: pointer;
   padding: 5px 15px;
@@ -43,7 +46,7 @@ $font-size-h3: var(--font-size-h3);*/
   border-style: solid;
   border-color: #0fbda6;
   background-color: #0fbda6;
-  color: #f4f9f9;
+  color: #f3f6f9;
 }
 .btn__primary:hover {
   border-color: #1accb4;
@@ -60,21 +63,21 @@ $font-size-h3: var(--font-size-h3);*/
 }
 .btn__primary--flat:hover {
   background-color: #1accb4;
-  color: #f4f9f9;
+  color: #f3f6f9;
 }
 .btn__primary--flat:active {
   background-color: #0cb19b;
-  color: #f4f9f9;
+  color: #f3f6f9;
 }
 .btn__accent {
   border: 2px solid #71a3e5;
   background-color: #71a3e5;
-  color: #f4f9f9;
+  color: #f3f6f9;
 }
 .btn__accent:hover {
   border: 2px solid #71a3e5;
   background-color: #71a3e5;
-  color: #f4f9f9;
+  color: #f3f6f9;
 }
 .btn__accent--flat {
   border: 0px solid #71a3e5;
@@ -84,7 +87,7 @@ $font-size-h3: var(--font-size-h3);*/
 .btn__accent--flat:hover {
   border: 0px solid #71a3e5;
   background-color: #71a3e5;
-  color: #f4f9f9;
+  color: #f3f6f9;
 }
 
 .schedule {

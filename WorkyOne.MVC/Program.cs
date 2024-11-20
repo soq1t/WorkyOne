@@ -1,3 +1,4 @@
+using AspNetCore.ReCaptcha;
 using Serilog;
 using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.Contracts.Services.GetRequests.Users;
@@ -27,6 +28,7 @@ namespace WorkyOne.MVC
 
             builder.Services.AddControllersWithViews();
             builder.Services.AddHttpContextAccessor();
+            builder.Services.AddReCaptcha(builder.Configuration.GetSection("ReCaptcha"));
 
             DependencyRegistrer.RegisterAll(builder.Services, builder.Configuration);
 

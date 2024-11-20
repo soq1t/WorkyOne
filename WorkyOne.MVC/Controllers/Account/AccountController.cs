@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AspNetCore.ReCaptcha;
+using Microsoft.AspNetCore.Mvc;
 using WorkyOne.AppServices.Interfaces.Services.Auth;
 using WorkyOne.Contracts.Services.Requests;
 using WorkyOne.MVC.Models.Authentification;
@@ -29,6 +30,7 @@ namespace WorkyOne.MVC.Controllers.Account
             }
         }
 
+        [ValidateReCaptcha]
         [HttpPost]
         [Route("signin")]
         public async Task<IActionResult> SignIn(
