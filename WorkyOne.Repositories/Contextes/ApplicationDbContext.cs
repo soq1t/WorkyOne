@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using WorkyOne.Contracts.Enums.Reposistories;
 using WorkyOne.Domain.Entities.Abstractions.Shifts;
 using WorkyOne.Domain.Entities.Auth;
 using WorkyOne.Domain.Entities.Schedule.Common;
@@ -46,9 +47,9 @@ namespace WorkyOne.Repositories.Contextes
 
             modelBuilder
                 .Entity<ShiftEntity>()
-                .HasDiscriminator<string>("Type")
-                .HasValue<PersonalShiftEntity>("Personal")
-                .HasValue<SharedShiftEntity>("Shared");
+                .HasDiscriminator<ShiftType>("Type")
+                .HasValue<PersonalShiftEntity>(ShiftType.Schedule)
+                .HasValue<SharedShiftEntity>(ShiftType.Shared);
         }
     }
 }
