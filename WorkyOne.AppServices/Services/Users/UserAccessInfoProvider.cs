@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Logging;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services.Auth;
 using WorkyOne.AppServices.Interfaces.Services.Users;
@@ -21,22 +22,28 @@ namespace WorkyOne.AppServices.Services.Users
 
         private readonly UserManager<UserEntity> _userManager;
         private readonly IAuthService _authService;
+        private readonly ILogger<UserAccessInfoProvider> _logger;
 
         public UserAccessInfoProvider(
             IHttpContextAccessor contextAccessor,
             IUserDatasRepository userDataRepo,
             UserManager<UserEntity> userManager,
-            IAuthService authService
+            IAuthService authService,
+            ILogger<UserAccessInfoProvider> logger
         )
         {
             _contextAccessor = contextAccessor;
             _userDataRepo = userDataRepo;
             _userManager = userManager;
             _authService = authService;
+            _logger = logger;
         }
 
         public async Task<UserAccessInfo> GetCurrentAsync(CancellationToken cancellation = default)
         {
+            //_logger.LogInformation(
+            //    "Запрошена информация об уровне доступа для текущего пользователя"
+            //);
             if (_contextAccessor.HttpContext == null)
             {
                 return new UserAccessInfo(null, null, false);

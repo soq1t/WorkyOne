@@ -1,3 +1,4 @@
+using Serilog;
 using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.Contracts.Services.GetRequests.Users;
 using WorkyOne.DependencyRegister;
@@ -28,6 +29,15 @@ namespace WorkyOne.MVC
             builder.Services.AddHttpContextAccessor();
 
             DependencyRegistrer.RegisterAll(builder.Services, builder.Configuration);
+
+            builder.Host.UseSerilog(
+                (context, services, configuration) =>
+                    configuration
+                        .ReadFrom.Configuration(context.Configuration)
+                        .Enrich.FromLogContext()
+                        .WriteTo.Console()
+                        .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
+            );
 
             var app = builder.Build();
 
