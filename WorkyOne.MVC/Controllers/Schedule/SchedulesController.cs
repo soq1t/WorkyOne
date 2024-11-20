@@ -11,6 +11,9 @@ using WorkyOne.MVC.Models.Schedule;
 
 namespace WorkyOne.MVC.Controllers.Schedule
 {
+    /// <summary>
+    /// Контроллер по работе с расписаниями пользователя
+    /// </summary>
     [Authorize]
     [Route("schedules")]
     public class SchedulesController : Controller
@@ -30,22 +33,26 @@ namespace WorkyOne.MVC.Controllers.Schedule
             _paginationOptions = paginationOptions;
         }
 
+        /// <summary>
+        /// Главная страница с расписаниями
+        /// </summary>
+        /// <param name="cancellation">Токен отмены задачи</param>
         [HttpGet]
         [Route("")]
         public async Task<IActionResult> Index(CancellationToken cancellation = default)
         {
-            var user = await _usersService.GetUserInfoAsync(
+            var userInfo = await _usersService.GetUserInfoAsync(
                 new UserInfoRequest { IsCurrentUserRequired = true },
                 cancellation
             );
 
-            if (user == null)
+            if (userInfo == null)
             {
                 return NotFound();
             }
 
             var schedules = await _scheduleService.GetByUserAsync(
-                user.Id,
+                userInfo.Id,
                 new PaginatedScheduleRequest
                 {
                     PageIndex = 1,
@@ -55,32 +62,85 @@ namespace WorkyOne.MVC.Controllers.Schedule
                 cancellation
             );
 
-            var model = new SchedulesViewModel { Schedules = schedules };
+            var model = new SchedulesViewModel
+            {
+                Schedules = schedules,
+                FavoriteScheduleId = userInfo.FavoriteScheduleId
+            };
 
             return View(model);
         }
 
+        /// <summary>
+        /// Возвращает страницу с указанным расписанием
+        /// </summary>
+        /// <param name="id">Идентификатор расписания</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
         [HttpGet]
         [Route("{id}")]
         public async Task<IActionResult> GetScheduleAsync(
-            [FromRoute] string? id,
+            [FromRoute] string id,
             CancellationToken cancellation = default
         )
         {
-            if (id == null)
-            {
-                return PartialView("Schedule", new ScheduleDto());
-            }
-
             var schedule = await _scheduleService.GetAsync(id, cancellation);
 
             if (schedule != null)
             {
-                return PartialView("_SchedulePartial", schedule);
+                return View("Schedule", schedule);
             }
             else
             {
                 return BadRequest();
+            }
+        }
+
+        /// <summary>
+        /// Возвращает страницу для создания расписания
+        /// </summary>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        [HttpGet]
+        [Route("create")]
+        public IActionResult CreateScheduleAsync(CancellationToken cancellation = default)
+        {
+            return View("Schedule", new ScheduleDto() { Name = "Новое расписание" });
+        }
+
+        /// <summary>
+        /// Меняет "любимое" расписание
+        /// </summary>
+        /// <param name="id">Идентификатор расписания</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        [HttpPut]
+        [Route("{id}/favorite")]
+        public async Task<IActionResult> ChangeFavoriteAsync(
+            [FromRoute] string id,
+            CancellationToken cancellation = default
+        )
+        {
+            var userInfo = await _usersService.GetUserInfoAsync(
+                new UserInfoRequest { IsCurrentUserRequired = true },
+                cancellation
+            );
+
+            if (userInfo == null)
+            {
+                return Unauthorized();
+            }
+
+            var result = await _usersService.SetFavoriteScheduleAsync(
+                userInfo.UserDataId,
+                id,
+                cancellation
+            );
+
+            if (result.IsSucceed)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
             }
         }
     }

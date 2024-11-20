@@ -1,0 +1,73 @@
+﻿@using WorkyOne.AppServices.Interfaces.Services
+@using WorkyOne.AppServices.Interfaces.Services.Schedule.Common
+@using WorkyOne.AppServices.Interfaces.Utilities
+@using WorkyOne.MVC.Models.Schedule
+
+@model CalendarViewModel
+
+@inject ICalendarService calendarService
+@inject IColorUtility colorUtility
+@inject IDateTimeService dateTimeService
+
+<div class="card card--border-primary card--no-padding">
+    <section class="card__section">
+        <div class="_calendar__info">
+            @{
+                var calendarInfo = Model.Info;
+                var date = calendarInfo.Start;
+
+                var weekDayNames = calendarService.GetWeekdaysNames();
+                <div class="_calendar__info-row">
+                    @foreach (var day in weekDayNames)
+                    {
+                        <div class="week-day-name row__item">@day.ToUpper()</div>
+                    }
+                </div>
+
+                while (date <= calendarInfo.End)
+                {
+                    <div class="_calendar__info-row">
+                        @for (int i = 1; i <= 7; i++)
+                        {
+                            var dailyInfo = Model.WorkGraphic?.FirstOrDefault(x => x.Date == date);
+                            var now = DateOnly.FromDateTime(dateTimeService.GetNow());
+
+                            var classes = "day";
+
+                            if (date.Month != Model.Info.MonthNumber)
+                            {
+                                classes += " day--inactive";
+                            }
+
+                            if (now.DayNumber == date.DayNumber)
+                            {
+                                classes += " day--today";
+                            }
+                            var color = $"background-color: {colorUtility.GetRgbaFromHex(dailyInfo?.ColorCode, 0.8)}; color: {colorUtility.GetForegroundColor(dailyInfo?.ColorCode)}";
+
+                            <div class="row__item">
+                                <div style="@color" class="_calendar__day @classes">
+                                    <div class="day__title">
+                                        <span class="day__number">@date.Day</span>
+                                    </div>
+                                    <div class="day__body">
+                                        @if (dailyInfo != null && dailyInfo.IsBusyDay) {
+                                            <span class="day__section">@dailyInfo?.Beginning</span>
+                                            <span class="day__section">@dailyInfo?.Ending</span>
+                                        } else {
+                                            <span class="day__section">ㅤ</span>
+                                            <span class="day__section">ㅤ</span>
+                                        }
+                                        
+                                    </div>
+                                </div>
+                            </div>
+
+                            date = date.AddDays(1);
+                        }
+                    </div>
+                }
+            }
+        </div>        
+    </section>
+</div>

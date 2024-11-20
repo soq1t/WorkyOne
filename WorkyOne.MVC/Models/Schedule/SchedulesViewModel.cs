@@ -14,6 +14,9 @@ namespace WorkyOne.MVC.Models.Schedule
         [Required]
         public List<ScheduleDto> Schedules { get; set; } = new List<ScheduleDto>();
 
+        /// <summary>
+        /// Идентификатор "любимого" расписания
+        /// </summary>
         public string? FavoriteScheduleId { get; set; }
     }
 }

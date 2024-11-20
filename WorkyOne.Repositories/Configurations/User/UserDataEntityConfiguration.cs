@@ -14,6 +14,12 @@ namespace WorkyOne.Repositories.Configurations.User
                 .HasMany(u => u.Schedules)
                 .WithOne(t => t.UserData)
                 .HasForeignKey(t => t.UserDataId);
+
+            builder
+                .HasOne(x => x.FavoriteSchedule)
+                .WithMany()
+                .HasForeignKey(x => x.FavoriteScheduleId)
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

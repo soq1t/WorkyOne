@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - WorkyOne</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    @* <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" /> *@
     <link rel="stylesheet" href="~/css/_Layout.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/WorkyOne.MVC.styles.css" asp-append-version="true" />
 
@@ -23,50 +23,44 @@
 
 </head>
 <body class="_layout">
-    <div id="modal" class="modal">
-
+    <div id="modal-global" class="modal">
     </div>
-    <header class="header">
-        <div class="wrapper wrapper--padding">
-            <nav class="nav">
-                <div class="nav__panel">
-                    <div class="panel__element panel__burger burger">
-                        <span class="burger__line burger__line--top"></span>
-                        <span class="burger__line burger__line--middle"></span>
-                        <span class="burger__line burger__line--bottom"></span>
-                    </div>
-                    <div class="panel__instruments">
-                        <div class="panel__element">
-                            @if (!authService.IsAuthenticated())
-                            {
-                                <a asp-controller="Account" asp-action="SignIn" class="material-symbols-outlined">login</a>
-                            }
-                        </div>
+    <header class="header wrapper wrapper--padding">
+        <nav class="nav">
+            <div class="nav__panel">
+                <div class="panel__element panel__burger burger">
+                    <span class="burger__line burger__line--top"></span>
+                    <span class="burger__line burger__line--middle"></span>
+                    <span class="burger__line burger__line--bottom"></span>
+                </div>
+                <div class="panel__instruments">
+                    <div class="panel__element">
+                        @if (!authService.IsAuthenticated())
+                        {
+                            <a asp-controller="Account" asp-action="SignIn" class="material-symbols-outlined">login</a>
+                        }
                     </div>
                 </div>
-                <div class="nav__list">
-                    <a asp-controller="Home" asp-action="Index">Главная</a>
-                    @if (authService.IsAuthenticated())
-                    {
-                        <a href="#">Профиль</a>
-                        <a asp-controller="Schedules" asp-action="Index">Управление расписаниями</a>
-                        <a asp-controller="Account" asp-action="SignOut">Выйти из аккаунта</a>
-                    } else
-                    {
-                        <a asp-controller="Account" asp-action="SignIn">Вход в аккаунт</a>
-                    }                     
-                </div>
-            </nav>
-            
-        </div>        
-        
+            </div>
+            <div class="nav__list">
+                <a asp-controller="Home" asp-action="Index">Главная</a>
+                @if (authService.IsAuthenticated())
+                {
+                    <a href="#">Профиль</a>
+                    <a asp-controller="Schedules" asp-action="Index">Управление расписаниями</a>
+                    <a asp-controller="Account" asp-action="SignOut">Выйти из аккаунта</a>
+                }
+                else
+                {
+                    <a asp-controller="Account" asp-action="SignIn">Вход в аккаунт</a>
+                }
+            </div>
+        </nav>
     </header>
     <main class="main">
         @RenderBody()
     </main>
-    <footer class="footer">
-        <div class="wrapper">
-        </div>
+    <footer class="footer">        
     </footer>   
     
     @* <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script> *@

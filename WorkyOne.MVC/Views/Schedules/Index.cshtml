@@ -2,38 +2,46 @@
 
 @model SchedulesViewModel
 
-<head>
+@{
+    ViewData["Title"] = "Управление расписаниями";
+}
+<head>    
     <link rel="stylesheet" href="~/css/Pages/Schedules/Schedules.css" asp-append-version="true" />    
 </head>
 
 <div class="wrapper wrapper--padding">
     <div class="schedules">
         <div class="schedules__header">
-            <div class="header__info">
-                <span>Количество расписаний:</span>
-                <span>@Model.Schedules.Count</span>
-            </div>
-            <div class="header__controls">
-                <a href="#" class="btn btn__primary control control--create">
-                    <span class="material-symbols-outlined">add_circle</span>
-                    <span>Создать расписание</span>
-                </a>
+            <div class="card">
+                <section class="card__section card__section--row header__info">
+                    <span>Количество расписаний:</span> 
+                    <span>@Model.Schedules.Count</span>
+                </section>
+                <section class="card__section card__section--row header__control">
+                    <a asp-controller="schedules" asp-action="create" class="btn btn__primary">
+                        <span class="material-symbols-outlined">add_circle</span>
+                        <span>Создать расписание</span>
+                    </a>
+                </section>
             </div>
         </div>
         <div class="schedules__body">
             <div class="schedules__list">
                 @foreach (var schedule in Model.Schedules)
                 {
-                    <div data-id="@schedule.Id" class="schedules__item item">                        
-                        <div class="item__section item__section--title">
+                    string favorite = schedule.Id == Model.FavoriteScheduleId ? "favorite favorite--active" : "favorite";
+
+                    <div data-id="@schedule.Id" class="card schedules__item">
+                        <section class="card__section schedules__item-controls">
+                            <button class="material-symbols-outlined btn btn__primary btn__primary--flat @favorite">star</button>
+                            <button class="material-symbols-outlined btn btn__primary btn__primary--flat edit">edit</button>
+                            <button class="material-symbols-outlined btn btn__primary btn__primary--flat delete">delete_forever</button>
+                        </section>
+                        <div class="card__divider card__divider--primary"></div>
+                        <section class="card__section schedules__item-title">
                             <h3>@schedule.Name</h3>
-                            <button class="favorite material-symbols-outlined favorite--active">star</button>
-                        </div>
-                        <div class="item__section item__section--controls">
-                            <button class="edit btn btn__primary material-symbols-outlined">edit</button>
-                            <button class="delete btn btn__accent material-symbols-outlined">delete_forever</button>
-                        </div>
-                    </div>
+                        </section>
+                    </div>                    
                 }
             </div>            
         </div>

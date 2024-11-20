@@ -1,13 +1,19 @@
 ﻿using System.Security.Claims;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services.Users;
+using WorkyOne.AppServices.Interfaces.Stores;
 using WorkyOne.Contracts.DTOs.Common;
+using WorkyOne.Contracts.Repositories.Result;
+using WorkyOne.Contracts.Services.Common;
 using WorkyOne.Contracts.Services.GetRequests.Users;
+using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Domain.Interfaces.Specification;
 using WorkyOne.Domain.Requests.Common;
+using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Domain.Requests.Users;
 using WorkyOne.Domain.Specifications.AccesFilters.Abstractions;
 using WorkyOne.Domain.Specifications.AccesFilters.Users;
@@ -22,19 +28,21 @@ namespace WorkyOne.AppServices.Services.Users
     public sealed class UsersService : IUsersService
     {
         private readonly IUsersRepository _usersRepo;
+        private readonly ISchedulesRepository _schedulesRepository;
         private readonly IUserDatasRepository _userDatasRepo;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _contextAccessor;
 
-        private AccessFilter<UserEntity> _userFilter;
-        private AccessFilter<UserDataEntity> _userDataFilter;
+        private readonly IAccessFiltersStore _accessFiltersStore;
 
         public UsersService(
             IUsersRepository usersRepo,
             IUserDatasRepository userDatasRepo,
             IMapper mapper,
             IHttpContextAccessor contextAccessor,
-            IUserAccessInfoProvider accessInfoProvider
+            IUserAccessInfoProvider accessInfoProvider,
+            ISchedulesRepository schedulesRepository,
+            IAccessFiltersStore accessFiltersStore
         )
         {
             _usersRepo = usersRepo;
@@ -42,7 +50,8 @@ namespace WorkyOne.AppServices.Services.Users
             _mapper = mapper;
             _contextAccessor = contextAccessor;
 
-            InitFiltersAsync(accessInfoProvider).Wait();
+            _schedulesRepository = schedulesRepository;
+            _accessFiltersStore = accessFiltersStore;
         }
 
         public async Task<UserInfoDto?> GetUserInfoAsync(
@@ -61,7 +70,7 @@ namespace WorkyOne.AppServices.Services.Users
             {
                 filter = new Specification<UserEntity>(x =>
                     x.Id == request.UserId || x.UserName == request.UserName
-                ).And(_userFilter);
+                ).And(_accessFiltersStore.GetFilter<UserEntity>());
             }
 
             var user = await _usersRepo.GetAsync(
@@ -108,15 +117,83 @@ namespace WorkyOne.AppServices.Services.Users
             return dto;
         }
 
-        private async Task InitFiltersAsync(IUserAccessInfoProvider accessInfoProvider)
+        public async Task<ServiceResult> SetFavoriteScheduleAsync(
+            string userDataId,
+            string scheduleId,
+            CancellationToken cancellation = default
+        )
         {
-            var accessInfo = await accessInfoProvider.GetCurrentAsync();
+            var userData = await _userDatasRepo.GetAsync(
+                new UserDataRequest(
+                    new EntityIdFilter<UserDataEntity>(userDataId).And(
+                        _accessFiltersStore.GetFilter<UserDataEntity>()
+                    )
+                )
+                {
+                    IncludeSchedules = true
+                },
+                cancellation
+            );
 
-            if (accessInfo == null)
-                return;
+            if (userData == null)
+            {
+                return ServiceResult.Error("UserData not found or inaccessible");
+            }
 
-            _userDataFilter = new UserDataAccessFilter(accessInfo);
-            _userFilter = new UserAccessFilter(accessInfo);
+            RepositoryResult? result;
+
+            if (userData.FavoriteScheduleId == scheduleId)
+            {
+                userData.FavoriteScheduleId = null;
+                userData.FavoriteSchedule = null;
+
+                result = _userDatasRepo.Update(userData);
+
+                if (result.IsSucceed)
+                {
+                    await _userDatasRepo.SaveChangesAsync(cancellation);
+
+                    if (cancellation.IsCancellationRequested)
+                    {
+                        return ServiceResult.CancellationRequested();
+                    }
+                    else
+                    {
+                        return ServiceResult.Ok("Success");
+                    }
+                }
+                else
+                {
+                    return ServiceResult.Error("Error");
+                }
+            }
+
+            var schedule = userData.Schedules.FirstOrDefault(x => x.Id == scheduleId);
+
+            if (schedule == null)
+            {
+                return ServiceResult.Error("Schedule not found");
+            }
+
+            userData.FavoriteSchedule = schedule;
+            userData.FavoriteScheduleId = schedule.Id;
+            result = _userDatasRepo.Update(userData);
+
+            if (result.IsSucceed)
+            {
+                await _userDatasRepo.SaveChangesAsync(cancellation);
+
+                if (cancellation.IsCancellationRequested)
+                {
+                    return ServiceResult.CancellationRequested();
+                }
+
+                return ServiceResult.Ok("Success");
+            }
+            else
+            {
+                return ServiceResult.Error("Error");
+            }
         }
     }
 }

@@ -1,0 +1,23 @@
+﻿@using WorkyOne.MVC.Models.Schedule
+
+@model CalendarLegendViewModel
+
+@if (Model.Legend.Count > 0) {
+    <div class="card">
+        <section class="card__section">
+            <h3>Легенда:</h3>
+        </section>
+        <section class="card__section">
+            <div class="calendar__legend legend">
+                @foreach (var pair in Model.Legend)
+                {
+                    <div class="legend__item">
+                        <div style="background-color: @pair.Value" class="legend__color"></div>
+                        <div class="legend__name">@pair.Key</div>
+                    </div>
+                }
+            </div>
+        </section>
+    </div>
+}
+

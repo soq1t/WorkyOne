@@ -1,12 +1,27 @@
-﻿@import "../../Imports/nullstyle.scss";
+﻿@import "../../Imports/bootstrap_reboot.scss";
 @import "../../Imports/_all.scss";
 
 @import "../../Elements/Modal.scss";
+@import "../../Elements/Card.scss";
+@import "../../Elements/Select.scss";
 
-
+html {
+}
 
 h3 {
     font-size: $font-size-h3;
+    font-weight: 500;
+    color: $color-primary;
+}
+
+h2 {
+    font-size: $font-size-h2;
+    font-weight: 500;
+    color: $color-primary;
+}
+
+h1 {
+    font-size: $font-size-h1;
     font-weight: 500;
     color: $color-primary;
 }
@@ -15,6 +30,17 @@ form {
     height: 100%;
 }
 
+.wrapper {
+    /*position: relative;*/
+    /*height: 100%;*/
+    width: 100%;
+    margin: 0 auto;
+    max-width: 1500px;
+
+    &--padding {
+        padding: 0 15px;
+    }
+}
 
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -32,7 +58,8 @@ form {
     display: flex;
     flex-direction: column;
     font-family: $font-family;
-    font-size: $font-size-text;    
+    font-size: $font-size-text;
+
 
     .header {
 
@@ -92,12 +119,12 @@ form {
                 }
             }
 
-            &__list {
+            &__list {                
                 position: absolute;
                 display: flex;
                 flex-direction: column;
                 z-index: 5;
-                bottom: 0;
+                bottom: -5px;
                 border-radius: 3px 0px 10px 10px;
                 box-shadow: $shadow;
                 transform: translate(0, 100%);
@@ -135,6 +162,7 @@ form {
 
     .main {
         flex: 1 0 auto;
+        padding: 15px 0;
     }
 
     .footer {
@@ -192,14 +220,4 @@ form {
     }
 }
 
-.wrapper {
-    position: relative;
-    height: 100%;
-    width: 100%;
-    margin: 0 auto;
-    max-width: 1500px;
 
-    &--padding {
-        padding: 0 15px;
-    }
-}

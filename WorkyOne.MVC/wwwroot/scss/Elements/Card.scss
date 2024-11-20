@@ -1,0 +1,40 @@
+﻿@import "../Imports/_all.scss";
+
+.card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background-color: $color-background;
+    color: $color-background-fg;
+    border-radius: $container-border-radius;
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+    padding: 10px 15px;
+
+    &__section {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+
+        &--row {
+            flex-direction: row;
+        }
+    }
+
+    &--no-padding {
+        padding: 0;
+    }
+
+    &--border-primary {
+        border: 1px solid $color-primary;
+        box-shadow: 0 0 3px $color-primary-transparent-5;
+    }
+
+    &__divider {
+        border-radius: 15px;
+        border: 1px solid rgba(0, 0, 0, 0.1);
+
+        &--primary {
+            border-color: $color-primary;
+        }
+    }
+}

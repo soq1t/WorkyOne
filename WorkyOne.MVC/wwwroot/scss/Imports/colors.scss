@@ -1,31 +1,16 @@
-﻿/*:root {
-    --color-background: #f4f9f9;
-    --color-background-fg: #020808;
-    --color-primary: #0fbda6;
-    --color-primary-fg: #f4f9f9;
-    --color-secondary: #93cfd7;
-    --color-secondary-fg: #f4f9f9;
-    --color-accent: #71a3e5;
-    --color-accent-fg: #f4f9f9;
-}
-
-$color-background: var(--color-background);
-$color-background-fg: var(--color-background-fg);
-
-$color-primary: var(--color-primary);
-$color-primary-fg: var(--color-primary-fg);
-
-$color-secondary: var(--color-secondary);
-$color-secondary-fg: var(--color-secondary-fg);
-
-$color-accent: var(--color-accent);
-$color-accent-fg: var(--color-accent-fg);*/
-
-$color-background: #f4f9f9;
+﻿$color-background: #f4f9f9;
 $color-background-fg: #020808;
 
+// Primary
 $color-primary: #0fbda6;
+$color-primary-300: #1accb4;
+$color-primary-500: $color-primary;
+$color-primary-800: #0cb19b;
+
+$color-primary-transparent-5: rgba(15, 189, 166, 0.5);
+
 $color-primary-fg: #f4f9f9;
+//
 
 $color-secondary: #93cfd7;
 $color-secondary-fg: #f4f9f9;

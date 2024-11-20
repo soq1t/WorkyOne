@@ -1,0 +1,32 @@
+﻿@import "../../Imports/_all.scss";
+@import "../../Elements/Button.scss";
+
+.schedule {
+
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    &__header {
+    }
+
+    &__main {
+        flex: 1;
+    }
+
+    &__footer {
+    }
+}
+
+.shift {
+    
+
+    &__color {
+        width: 40px;
+        height: 40px;
+        border: 1px solid $color-primary;
+    }
+
+    &__name {
+    }
+}

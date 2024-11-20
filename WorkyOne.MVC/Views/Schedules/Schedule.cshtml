@@ -1,0 +1,76 @@
+﻿@using WorkyOne.Contracts.DTOs.Abstractions
+@using WorkyOne.Contracts.DTOs.Schedule.Common
+
+@model ScheduleDto
+@{
+    ViewData["Title"] = Model.Name;
+}
+<head>
+    <link rel="stylesheet" href="~/css/Pages/Schedules/Schedule.css" asp-append-version="true" />
+</head>
+
+<form method="post" data-id="@Model.Id" class="schedule wrapper wrapper--padding">
+    <header class="schedules__header">
+        <div class="card">
+            <section class="card__section">
+                <h3>@Model.Name</h3>
+            </section>
+        </div>
+    </header>
+    <main class="schedules__main">
+        <div class="card">
+            <section class="card__section">
+                <h3>Шаблон</h3>
+            </section>
+            <section class="card__section card__section--row">
+                @if (Model.Template != null) {
+                    @foreach (var templatedShift in Model.Template.Shifts.OrderBy(x => x.Position))
+                    {
+                        ShiftDtoBase? shift = Model.PersonalShifts.FirstOrDefault(x => x.Id == templatedShift.ShiftId);
+
+                        if (shift == null) {
+                            shift = Model.SharedShifts.First(x => x.Id == templatedShift.ShiftId);
+                        }
+
+                        <div class="card card--border-primary shift">
+                            <section class="card__section card__section--row">
+                                <div style="background-color: @shift.ColorCode" class="shift__color"></div>
+                                <div class="shift__name">@shift.Name</div>
+                            </section>
+                        </div>
+                    }
+                } else {
+                    <span>Отсутствует</span>
+                }                
+            </section>
+            <section class="card__section">
+                <h3>Используемые в расписании смены</h3>
+            </section>
+            <section class="card__section card__section--row">
+                @foreach(var shift in Model.PersonalShifts) {
+                    <div data-id="@shift.Id" class="card card--border-primary shift">
+                        <section class="card__section card__section--row">
+                            <div style="background-color: @shift.ColorCode" class="shift__color"></div>
+                            <div class="shift__name">@shift.Name</div>
+                        </section>                        
+                    </div>
+                }
+            </section>
+            <div class="card__divider card__divider--primary"></div>
+            <section class="card__section card__section--row">
+                <button class="material-symbols-outlined btn btn__primary">save</button>
+                <button class="material-symbols-outlined btn btn__accent">close</button>
+            </section>
+        </div>
+    </main>
+    <footer class="schedules__footer">
+       @*  <div class="card">
+            <section class="card__section card__section--row">
+                <button class="material-symbols-outlined btn btn__primary">save</button>
+                <button class="material-symbols-outlined btn btn__accent">close</button>
+            </section>
+        </div> *@
+    </footer>
+</form>
+
+<script src="~/js/Schedule/partial.js" asp-append-version="true"></script>

@@ -65,12 +65,15 @@ namespace WorkyOne.Repositories.Repositories.Users
                     .ThenInclude(x => x.Template)
                     .ThenInclude(x => x.Shifts);
 
+                query = query.Include(x => x.FavoriteSchedule);
+
                 return query;
             }
 
             if (request.IncludeSchedules)
             {
                 query = query.Include(x => x.Schedules);
+                query = query.Include(x => x.FavoriteSchedule);
                 return query;
             }
 

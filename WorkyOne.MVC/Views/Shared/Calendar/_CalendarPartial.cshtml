@@ -1,0 +1,28 @@
+﻿@using WorkyOne.MVC.Models.Schedule
+
+@model CalendarViewModel
+
+<head>
+    <script src="~/js/Home/calendar.js" asp-append-version="true"></script>
+</head>
+
+<div class="_calendar">
+    <header class="_calendar__header">
+        <div class="card">
+            <section class="card__section _calendar__month-selector month-selector" data-year="@Model.Info.Year" data-month="@Model.Info.MonthNumber">
+                <button class="btn btn__primary--flat month-selector__arrow material-symbols-outlined" data-dir="back">arrow_back</button>
+                <div class="month-selector__info">
+                    <span class="month">@Model.Info.MonthName</span>
+                    <span class="year">@Model.Info.Year</span>
+                </div>
+                <button class="btn btn__primary--flat month-selector__arrow material-symbols-outlined" data-dir="forward" id="selector__arrow--right">arrow_forward</button>
+            </section>
+        </div>        
+    </header>
+    <main class="_calendar__main">        
+        @await Html.PartialAsync("Calendar/_CalendarInfoPartial", Model)
+    </main>
+    <footer class="_calendar__footer">
+        @await Html.PartialAsync("Calendar/_CalendarLegendPartial", new CalendarLegendViewModel { Legend = Model.Legend })
+    </footer>
+</div>

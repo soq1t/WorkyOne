@@ -24,5 +24,10 @@ namespace WorkyOne.MVC.Models.Schedule
         /// Расписание, для которого отображается график
         /// </summary>
         public ScheduleDto? ScheduleDto { get; set; }
+
+        /// <summary>
+        /// Легенда цветовых значений смен для календаря
+        /// </summary>
+        public Dictionary<string, string> Legend { get; set; } = [];
     }
 }

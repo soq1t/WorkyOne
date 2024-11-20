@@ -1,8 +1,16 @@
 ﻿using System.Globalization;
+using AutoMapper;
+using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
+using WorkyOne.AppServices.Interfaces.Stores;
+using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Services.Common;
+using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
 using WorkyOne.Contracts.Services.Requests;
+using WorkyOne.Domain.Entities.Schedule.Common;
+using WorkyOne.Domain.Requests.Schedule.Common;
+using WorkyOne.Domain.Specifications.Common;
 
 namespace WorkyOne.AppServices.Services.Schedule.Common
 {
@@ -12,10 +20,25 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
     public class CalendarService : ICalendarService
     {
         private readonly IDateTimeService _dateTimeService;
+        private readonly IWorkGraphicService _workGraphicService;
+        private readonly ISchedulesRepository _schedulesRepository;
+        private readonly IMapper _mapper;
 
-        public CalendarService(IDateTimeService dateTimeService)
+        private readonly IAccessFiltersStore _accessFiltersStore;
+
+        public CalendarService(
+            IDateTimeService dateTimeService,
+            ISchedulesRepository schedulesRepository,
+            IAccessFiltersStore accessFiltersStore,
+            IMapper mapper,
+            IWorkGraphicService workGraphicService
+        )
         {
             _dateTimeService = dateTimeService;
+            _schedulesRepository = schedulesRepository;
+            _accessFiltersStore = accessFiltersStore;
+            _mapper = mapper;
+            _workGraphicService = workGraphicService;
         }
 
         public CalendarInfo GetCalendarInfo(CalendarInfoRequest request)
@@ -120,6 +143,82 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             result.Add(days[0]);
 
             return result;
+        }
+
+        public Task<MonthGraphicInfo> GetMonthGraphicAsync(
+            CalendarInfoRequest calendarInfoRequest,
+            string scheduleId,
+            CancellationToken cancellation = default
+        )
+        {
+            var calendarInfo = GetCalendarInfo(calendarInfoRequest);
+
+            return GetMonthGraphicAsync(calendarInfo, scheduleId, cancellation);
+        }
+
+        public async Task<MonthGraphicInfo> GetMonthGraphicAsync(
+            CalendarInfo calendarInfo,
+            string scheduleId,
+            CancellationToken cancellation = default
+        )
+        {
+            var filter = new EntityIdFilter<ScheduleEntity>(scheduleId).And(
+                _accessFiltersStore.GetFilter<ScheduleEntity>()
+            );
+
+            var monthGraphicInfo = new MonthGraphicInfo();
+
+            monthGraphicInfo.CalendarInfo = calendarInfo;
+
+            var schedule = await _schedulesRepository.GetAsync(
+                new ScheduleRequest(filter) { IncludeShifts = true, IncludeTemplate = true },
+                cancellation
+            );
+
+            if (schedule == null)
+            {
+                return monthGraphicInfo;
+            }
+
+            monthGraphicInfo.Schedule = _mapper.Map<ScheduleDto>(schedule);
+
+            var graphic = await _workGraphicService.GetGraphicAsync(
+                new PaginatedWorkGraphicRequest
+                {
+                    ScheduleId = scheduleId,
+                    PageIndex = 1,
+                    Amount = calendarInfo.DaysAmount,
+                    StartDate = calendarInfo.Start,
+                    EndDate = calendarInfo.End
+                }
+            );
+
+            for (var date = calendarInfo.Start; date <= calendarInfo.End; date = date.AddDays(1))
+            {
+                var dailyInfo = graphic.FirstOrDefault(d => d.Date == date);
+
+                if (dailyInfo == null)
+                {
+                    dailyInfo = new DailyInfoDto
+                    {
+                        IsBusyDay = false,
+                        Date = date,
+                        Name = "Свободный день",
+                        ColorCode = "#93cfd7"
+                    };
+                }
+
+                monthGraphicInfo.Graphic.Add(dailyInfo);
+
+                if (!monthGraphicInfo.Legend.ContainsKey(dailyInfo.Name))
+                {
+                    monthGraphicInfo.Legend.Add(dailyInfo.Name, dailyInfo.ColorCode);
+                }
+            }
+
+            monthGraphicInfo.Legend = monthGraphicInfo.Legend.OrderBy(x => x.Key).ToDictionary();
+
+            return monthGraphicInfo;
         }
     }
 }

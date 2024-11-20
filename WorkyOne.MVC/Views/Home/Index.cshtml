@@ -1,19 +1,48 @@
 ﻿@using WorkyOne.MVC.Models.Common
+@using WorkyOne.MVC.Models.Schedule
 
 @model HomeViewModel
 
 @{
     ViewData["Title"] = "Home Page";
+
+    var schedules = new List<SelectListItem>();
+
+    if (Model.Schedules != null) {
+        foreach (var schedule in Model.Schedules)
+        {
+            schedules.Add(new SelectListItem(schedule.Name, schedule.Id));
+        }
+    }    
 }
 
 <head>
     <link rel="stylesheet" href="~/css/Pages/Home/Home.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/css/Pages/Home/_Calendar.css" asp-append-version="true" />
-    <script src="~/js/Home/script.js" asp-append-version="true"></script>
+    <link rel="stylesheet" href="~/css/Pages/Home/_Calendar.css" asp-append-version="true" />    
 </head>
 
-<div class="wrapper wrapper--padding">
-    <div data-month="@Model.Month" data-year="@Model.Year" id="calendar" class="home__calendar">
-        
-    </div>
+<div class="home wrapper wrapper--padding">
+    <header class="home__header">
+        @if (schedules.Count > 0) {
+            <div class="card">
+                <section class="card__section">
+                    <select id="schedules" class="select">
+                        @foreach (var schedule in schedules)
+                        {
+                            if (schedules.First() == schedule)
+                            {
+                                <option selected="selected" value="@schedule.Value">@schedule.Text</option>                            
+                            } else {
+                                <option value="@schedule.Value">@schedule.Text</option>
+                            }
+                        }
+                    </select>
+                </section>
+            </div>
+        }        
+    </header>
+    <main class="home__main">
+        @await Html.PartialAsync("Calendar/_CalendarPartial", Model.CalendarViewModel)
+    </main>
+    <footer class="home__footer"></footer>
 </div>

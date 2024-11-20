@@ -22,15 +22,8 @@
             color: $color-primary;
         }
 
-        &__controls {
+        &__control {
             display: flex;
-
-            .control {
-
-
-                &--create {
-                }
-            }
         }
     }
 
@@ -42,65 +35,43 @@
     &__list {
         display: flex;
         flex-direction: column;
+        gap: 30px;
 
         @media(min-width: $bp-tablet) {
             flex-direction: row;
             justify-content: space-between;
         }
-
-        .item {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            border: 3px solid $color-primary;
-            border-radius: 15px;
-            padding: 5px 15px;
-
-            @media(min-width: $bp-tablet) {
-                width: 48%;
-            }
-
-            @media(min-width: $bp-pc) {
-                width: 28%;
-            }
-
-            &__section {
-                display: flex;
-                flex-direction: column;
-
-                &--title {
-                    flex-direction: row;
-
-                    h3 {
-                        flex: 1;
-                        word-wrap: normal;
-                    }
-
-                    .favorite {
-                        background-color: transparent;
-                        border: 0px solid black;
-                        color: $color-secondary;
-                        transition: all 0.3s ease;
-
-                        &--active {
-                            font-variation-settings: 'FILL' 1;
-                            color: $color-primary;
-                        }
-                    }
-                }
-
-                &--controls {
-                    margin: 20px 0 0 0;
-                    flex-direction: row;
-                    gap: 20px;
-
-                    a {
-                    }
-                }
-            }
-        }
     }
 
     &__item {
+        flex: 1 1 auto;
+
+        @media(min-width: $bp-tablet) {
+            min-width: 45%;
+        }
+
+        @media(min-width: $bp-pc) {
+            min-width: 25%;
+        }
+
+        &-controls {
+            flex-direction: row;
+            justify-content: flex-end;
+
+            .favorite {
+                transition: all 0.3s ease;
+
+                &--active {
+                    font-variation-settings: 'FILL' 1;
+                }
+            }
+        }
+
+        &-title {
+
+            h3 {
+                font-weight: 600;
+            }
+        }
     }
 }

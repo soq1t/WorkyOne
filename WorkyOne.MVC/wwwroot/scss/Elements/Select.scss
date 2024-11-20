@@ -1,0 +1,13 @@
+﻿@import "../Imports/_all.scss";
+
+.select {
+    background-color: transparent;
+    border-radius: 3px;
+    color: $color-primary;
+    border: 0px solid $color-primary;
+    border-bottom: 2px solid $color-primary;
+
+    &:focus{
+        outline: 0;
+    }
+}

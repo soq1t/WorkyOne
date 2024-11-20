@@ -6,7 +6,6 @@ using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Enums.Result;
 using WorkyOne.Contracts.Repositories.Result;
-using WorkyOne.Contracts.Services.Common;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
 using WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
 using WorkyOne.Domain.Entities.Abstractions.Shifts;

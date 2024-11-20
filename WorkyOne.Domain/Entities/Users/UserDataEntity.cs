@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using WorkyOne.Domain.Attributes.Updating;
 using WorkyOne.Domain.Entities.Abstractions.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 
@@ -19,6 +21,18 @@ namespace WorkyOne.Domain.Entities.Users
         /// Список рабочих графиков, которые создал пользователь
         /// </summary>
         public List<ScheduleEntity> Schedules { get; set; } = new List<ScheduleEntity>();
+
+        /// <summary>
+        /// Идентификатор избранного расписания
+        /// </summary>
+        [ForeignKey(nameof(FavoriteSchedule))]
+        [AutoUpdated]
+        public string? FavoriteScheduleId { get; set; }
+
+        /// <summary>
+        /// Избранное расписание
+        /// </summary>
+        public ScheduleEntity? FavoriteSchedule { get; set; }
 
         /// <summary>
         /// Конструктор сущности

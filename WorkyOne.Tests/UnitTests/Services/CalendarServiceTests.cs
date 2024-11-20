@@ -1,5 +1,9 @@
-﻿using Moq;
+﻿using AutoMapper;
+using Moq;
+using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services;
+using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
+using WorkyOne.AppServices.Interfaces.Stores;
 using WorkyOne.AppServices.Services.Schedule.Common;
 using WorkyOne.Contracts.Services.Requests;
 using Xunit;
@@ -9,6 +13,13 @@ namespace WorkyOne.Tests.UnitTests.Services
     public class CalendarServiceTests
     {
         private readonly Mock<IDateTimeService> _dateTimeServiceMock = new Mock<IDateTimeService>();
+        private readonly Mock<ISchedulesRepository> _schedulesRepository =
+            new Mock<ISchedulesRepository>();
+        private readonly Mock<IAccessFiltersStore> _accessFiltersStore =
+            new Mock<IAccessFiltersStore>();
+        private readonly Mock<IMapper> _mapper = new Mock<IMapper>();
+        private readonly Mock<IWorkGraphicService> _workGraphicService =
+            new Mock<IWorkGraphicService>();
 
         public CalendarServiceTests()
         {
@@ -31,7 +42,13 @@ namespace WorkyOne.Tests.UnitTests.Services
         )
         {
             // Arrange
-            var calendarService = new CalendarService(_dateTimeServiceMock.Object);
+            var calendarService = new CalendarService(
+                _dateTimeServiceMock.Object,
+                _schedulesRepository.Object,
+                _accessFiltersStore.Object,
+                _mapper.Object,
+                _workGraphicService.Object
+            );
 
             // Act
             var calendarInfo = calendarService.GetCalendarInfo(

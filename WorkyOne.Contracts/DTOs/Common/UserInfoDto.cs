@@ -1,4 +1,5 @@
-﻿using WorkyOne.Contracts.DTOs.Abstractions;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+using WorkyOne.Contracts.DTOs.Abstractions;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 
 namespace WorkyOne.Contracts.DTOs.Common
@@ -32,5 +33,10 @@ namespace WorkyOne.Contracts.DTOs.Common
         /// Список расписаний пользователя
         /// </summary>
         public List<ScheduleDto> Schedules { get; set; }
+
+        /// <summary>
+        /// Идентификатор избранного расписания
+        /// </summary>
+        public string? FavoriteScheduleId { get; set; }
     }
 }
