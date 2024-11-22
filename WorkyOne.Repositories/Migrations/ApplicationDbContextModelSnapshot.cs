@@ -45,7 +45,7 @@ namespace WorkyOne.Repositories.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Shifts");
+                    b.ToTable("Shifts", (string)null);
 
                     b.HasDiscriminator<int>("Type");
 
@@ -87,7 +87,7 @@ namespace WorkyOne.Repositories.Migrations
 
                     b.HasIndex("ScheduleId");
 
-                    b.ToTable("DailyInfos");
+                    b.ToTable("DailyInfos", (string)null);
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.ScheduleEntity", b =>
@@ -108,7 +108,7 @@ namespace WorkyOne.Repositories.Migrations
 
                     b.HasIndex("UserDataId");
 
-                    b.ToTable("Schedules");
+                    b.ToTable("Schedules", (string)null);
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Common.TemplateEntity", b =>
@@ -128,7 +128,7 @@ namespace WorkyOne.Repositories.Migrations
                     b.HasIndex("ScheduleId")
                         .IsUnique();
 
-                    b.ToTable("Templates");
+                    b.ToTable("Templates", (string)null);
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.Special.DatedShiftEntity", b =>
@@ -153,7 +153,7 @@ namespace WorkyOne.Repositories.Migrations
 
                     b.HasIndex("ShiftId");
 
-                    b.ToTable("DatedShifts");
+                    b.ToTable("DatedShifts", (string)null);
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.Special.PeriodicShiftEntity", b =>
@@ -181,7 +181,7 @@ namespace WorkyOne.Repositories.Migrations
 
                     b.HasIndex("ShiftId");
 
-                    b.ToTable("PeriodicShifts");
+                    b.ToTable("PeriodicShifts", (string)null);
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.Special.TemplatedShiftEntity", b =>
@@ -206,7 +206,7 @@ namespace WorkyOne.Repositories.Migrations
 
                     b.HasIndex("TemplateId");
 
-                    b.ToTable("TemplatedShifts");
+                    b.ToTable("TemplatedShifts", (string)null);
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Users.UserDataEntity", b =>
@@ -225,7 +225,7 @@ namespace WorkyOne.Repositories.Migrations
 
                     b.HasIndex("FavoriteScheduleId");
 
-                    b.ToTable("UserDatas");
+                    b.ToTable("UserDatas", (string)null);
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Schedule.Shifts.Basic.PersonalShiftEntity", b =>

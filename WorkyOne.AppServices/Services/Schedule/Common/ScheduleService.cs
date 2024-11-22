@@ -2,6 +2,7 @@
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts.Basic;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
+using WorkyOne.AppServices.Interfaces.Services;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.AppServices.Interfaces.Utilities;
@@ -34,6 +35,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
         private readonly IDailyInfosRepository _dailyInfosRepository;
         private readonly IMapper _mapper;
         private readonly IEntityUpdateUtility _entityUpdateUtility;
+        private readonly IDateTimeService _dateTimeService;
 
         private ScheduleAccessFilter _scheduleAccessFilter;
         private UserDataAccessFilter _userDataAccessFilter;
@@ -45,7 +47,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             IEntityUpdateUtility entityUpdateUtility,
             IUserAccessInfoProvider accessInfoProvider,
             IDailyInfosRepository dailyInfosRepository,
-            ISharedShiftsRepository sharedShiftsRepository
+            ISharedShiftsRepository sharedShiftsRepository,
+            IDateTimeService dateTimeService
         )
         {
             _schedulesRepository = schedulesRepository;
@@ -57,6 +60,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             InitAccessFiltersAsync(accessInfoProvider).Wait();
             _dailyInfosRepository = dailyInfosRepository;
+            _dateTimeService = dateTimeService;
         }
 
         public async Task<RepositoryResult> CreateScheduleAsync(
@@ -88,6 +92,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             }
             var schedule = _mapper.Map<ScheduleEntity>(dto);
             schedule.Id = Guid.NewGuid().ToString();
+            schedule.Template.StartDate = DateOnly.FromDateTime(_dateTimeService.GetNow());
 
             var result = await _schedulesRepository.CreateAsync(schedule, cancellation);
 

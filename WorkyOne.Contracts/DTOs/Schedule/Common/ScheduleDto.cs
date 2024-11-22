@@ -26,7 +26,8 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
         /// <summary>
         /// Шаблон, который используется в текущем расписании
         /// </summary>
-        public TemplateDto? Template { get; set; }
+        [Required]
+        public TemplateDto Template { get; set; } = new TemplateDto();
 
         /// <summary>
         /// Список смен, используемых в текущем расписании

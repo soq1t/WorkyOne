@@ -28,6 +28,12 @@
     &__back {
     }
 
+    &__new {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
     .shifts-table {
         position: relative;
         border: 2px solid $color-primary;

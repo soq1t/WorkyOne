@@ -33,26 +33,23 @@
     }
 
     &__list {
-        display: flex;
-        flex-direction: column;
+        width: 100%;
+        display: grid;
+        grid-template-columns: repeat(1, 1fr);
+        grid-auto-rows: 1fr;
+        grid-auto-flow: row;
         gap: 30px;
 
         @media(min-width: $bp-tablet) {
-            flex-direction: row;
-            justify-content: space-between;
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        @media(min-width: $bp-pc) {
+            grid-template-columns: repeat(3, 1fr);
         }
     }
 
     &__item {
-        flex: 1 1 auto;
-
-        @media(min-width: $bp-tablet) {
-            min-width: 45%;
-        }
-
-        @media(min-width: $bp-pc) {
-            min-width: 25%;
-        }
 
         &-controls {
             flex-direction: row;

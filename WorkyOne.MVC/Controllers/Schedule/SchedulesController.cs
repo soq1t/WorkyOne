@@ -104,17 +104,64 @@ namespace WorkyOne.MVC.Controllers.Schedule
         }
 
         /// <summary>
-        /// Возвращает страницу для создания расписания
+        /// Возвращает страницу для заполнения данных, необходимых для создания расписания
         /// </summary>
         /// <param name="cancellation">Токен отмены задачи</param>
         [HttpGet]
         [Route("create")]
-        public IActionResult CreateScheduleAsync(CancellationToken cancellation = default)
+        public async Task<IActionResult> GetCreationInfoAsync(
+            CancellationToken cancellation = default
+        )
         {
-            var referer = HttpContext.Request.Headers["Referer"].ToString();
+            var userInfo = await _usersService.GetUserInfoAsync(
+                new UserInfoRequest() { IsCurrentUserRequired = true },
+                cancellation
+            );
 
-            ViewData["Referer"] = referer;
-            return View("Schedule", new ScheduleDto() { Name = "Новое расписание" });
+            if (userInfo == null)
+            {
+                return BadRequest("Не найдены данные пользователя");
+            }
+
+            var model = new NewScheduleViewModel { UserDataId = userInfo.UserDataId };
+
+            return PartialView("Schedules/_NewSchedulePartial", model);
+        }
+
+        /// <summary>
+        /// Создаёт новое расписание
+        /// </summary>
+        /// <param name="model">Модель для создания расписания</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+
+        [HttpPost]
+        [Route("create")]
+        public async Task<IActionResult> CreateAsync(
+            [FromForm] NewScheduleViewModel model,
+            CancellationToken cancellation = default
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                return PartialView("Schedules/_NewSchedulePartial", model);
+            }
+
+            var schedule = new ScheduleDto
+            {
+                UserDataId = model.UserDataId,
+                Name = model.ScheduleName
+            };
+
+            var result = await _scheduleService.CreateScheduleAsync(schedule, cancellation);
+
+            if (result.IsSucceed)
+            {
+                return Ok("Success");
+            }
+            else
+            {
+                return BadRequest(result);
+            }
         }
 
         /// <summary>
@@ -144,6 +191,30 @@ namespace WorkyOne.MVC.Controllers.Schedule
                 id,
                 cancellation
             );
+
+            if (result.IsSucceed)
+            {
+                return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+        /// <summary>
+        /// Удаляет расписание
+        /// </summary>
+        /// <param name="id">Идентификатор удаляемого расписания</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        [Route("{id}")]
+        [HttpDelete]
+        public async Task<IActionResult> DeleteAsync(
+            string id,
+            CancellationToken cancellation = default
+        )
+        {
+            var result = await _scheduleService.DeleteAsync(id, cancellation);
 
             if (result.IsSucceed)
             {

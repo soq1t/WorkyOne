@@ -47,13 +47,12 @@ namespace WorkyOne.MVC.Controllers.Schedule
                 SharedShifts = schedule.SharedShifts
             };
 
-            return PartialView("Schedules/_TemplatedShiftsPartial", model);
+            return PartialView("Schedules/_NewSchedulePartial", model);
         }
 
         [HttpGet]
         [Route("templated/{shiftId}/move")]
         public async Task<IActionResult> ChangeTemplatedPositionAsync(
-            [FromRoute] string scheduleId,
             [FromRoute] string shiftId,
             [FromQuery] int steps,
             CancellationToken cancellation = default

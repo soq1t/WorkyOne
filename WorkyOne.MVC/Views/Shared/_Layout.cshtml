@@ -23,7 +23,18 @@
 
 </head>
 <body class="_layout">
-    <div id="modal-global" class="modal">
+    <div id="modal-global" class="modal"></div>
+    <div id="modal-global-confirmation" class="modal">
+        <div class="card modal__confirmation modal__content">
+            <section class="card__section">
+                <h6 class="modal__confirmation__title"></h6>
+            </section>
+            <section class="card__section modal__confirmation-content"></section>
+            <section class="card__section card__section--row modal__confirmation-controls">
+                <button id="modal-global-confirmation-ok" class="material-symbols-outlined btn btn__primary">check</button>
+                <button id="modal-global-confirmation-cancel" class="material-symbols-outlined btn btn__accent">cancel</button>
+            </section>
+        </div>        
     </div>
     <header class="header wrapper wrapper--padding">
         <nav class="nav">

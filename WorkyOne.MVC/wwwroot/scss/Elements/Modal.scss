@@ -12,9 +12,30 @@
     padding: 20px;
 
     opacity: 0;
-    transition: opacity 0.5s ease-in-out;
+    transition: opacity 0.5s ease-in-out;   
+
+    &__content {
+        min-width: 50%;
+        max-width: 90%;
+    }
 
     &--active {
         opacity: 1;
+    }
+
+    &__confirmation {
+
+        &-title {
+
+        }
+
+        &-content {
+            flex: 1;
+        }
+
+        &-controls {
+            flex-direction: row;
+            justify-content: flex-end;
+        }
     }
 }

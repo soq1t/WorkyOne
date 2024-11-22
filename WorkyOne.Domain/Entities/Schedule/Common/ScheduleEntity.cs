@@ -30,7 +30,8 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// <summary>
         /// Шаблон, который используется в текущем расписании
         /// </summary>
-        public TemplateEntity? Template { get; set; }
+        [Required]
+        public TemplateEntity Template { get; set; } = new TemplateEntity();
 
         /// <summary>
         /// Название расписания
