@@ -165,6 +165,16 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
             return result;
         }
 
+        public Task<int> GetAmountAsync(
+            TSingleRequest request,
+            CancellationToken cancellation = default
+        )
+        {
+            return _context
+                .Set<TEntity>()
+                .CountAsync(request.Specification.ToExpression(), cancellation);
+        }
+
         public virtual Task<TEntity?> GetAsync(
             TSingleRequest request,
             CancellationToken cancellation = default

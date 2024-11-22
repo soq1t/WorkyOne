@@ -31,5 +31,15 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.CRUD
             TPaginatedRequest request,
             CancellationToken cancellation = default
         );
+
+        /// <summary>
+        /// Возвращает количество сущностей в базе данных согласно запросу
+        /// </summary>
+        /// <param name="request">Запрос</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        public Task<int> GetAmountAsync(
+            TEntityRequest request,
+            CancellationToken cancellation = default
+        );
     }
 }

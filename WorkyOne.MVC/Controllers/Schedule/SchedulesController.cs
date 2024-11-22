@@ -87,6 +87,14 @@ namespace WorkyOne.MVC.Controllers.Schedule
 
             if (schedule != null)
             {
+                var referer = HttpContext.Request.Headers["Referer"].ToString();
+
+                if (referer.Contains(schedule.Id))
+                {
+                    referer = referer.Replace(schedule.Id, "");
+                }
+
+                ViewData["Referer"] = referer;
                 return View("Schedule", schedule);
             }
             else
@@ -103,6 +111,9 @@ namespace WorkyOne.MVC.Controllers.Schedule
         [Route("create")]
         public IActionResult CreateScheduleAsync(CancellationToken cancellation = default)
         {
+            var referer = HttpContext.Request.Headers["Referer"].ToString();
+
+            ViewData["Referer"] = referer;
             return View("Schedule", new ScheduleDto() { Name = "Новое расписание" });
         }
 

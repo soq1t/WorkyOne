@@ -55,6 +55,14 @@ namespace WorkyOne.Repositories.Repositories.Users
             return result;
         }
 
+        public Task<int> GetAmountAsync(
+            EntityRequest<UserEntity> request,
+            CancellationToken cancellation = default
+        )
+        {
+            return _context.Users.CountAsync(request.Specification.ToExpression(), cancellation);
+        }
+
         public Task<UserEntity?> GetAsync(
             EntityRequest<UserEntity> request,
             CancellationToken cancellation = default

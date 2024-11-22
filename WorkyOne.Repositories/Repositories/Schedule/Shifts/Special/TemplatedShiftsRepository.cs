@@ -46,6 +46,7 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Shifts.Special
             return _context
                 .TemplatedShifts.Where(request.Specification.ToExpression())
                 .Include(x => x.Shift)
+                .Include(x => x.Template)
                 .OrderBy(x => x.Position);
         }
     }

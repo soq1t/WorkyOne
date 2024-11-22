@@ -20,18 +20,27 @@ $font-size-text: var(--font-size-text);
 $font-size-h3: var(--font-size-h3);*/
 .input__text {
   outline: none;
-  border: 1px solid #0fbda6;
-  border-bottom: 3px solid #0fbda6;
-  border-radius: 5px 5px 8px 8px;
   padding: 5px 10px;
-  -webkit-transition: all 0.1s ease;
-  transition: all 0.1s ease;
+  border-color: #0fbda6;
+  background-color: #f4f9f9;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+  border: 0 solid black;
+  border-bottom: 2px solid #0fbda6;
+  /*box-shadow: 0 0 3px $color-primary-transparent-5;*/
 }
 .input__text:focus {
-  border: 1px solid #71a3e5;
-  border-bottom: 3px solid #71a3e5;
+  border-color: #71a3e5;
   -webkit-box-shadow: 0 0 8px #71a3e5;
           box-shadow: 0 0 8px #71a3e5;
+}
+.input__text--outlined {
+  border: 2px solid #0fbda6;
+  /*border-bottom: 3px solid $color-primary;*/
+  border-radius: 5px;
+}
+.input__error {
+  color: #db3232;
 }
 .input__checkbox {
   width: clamp(1rem, 3vw + 0.5rem, 1.5rem);

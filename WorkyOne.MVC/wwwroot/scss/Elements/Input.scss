@@ -4,17 +4,31 @@
 
     &__text {
         outline: none;
-        border: 1px solid $color-primary;
-        border-bottom: 3px solid $color-primary;
-        border-radius: 5px 5px 8px 8px;
         padding: 5px 10px;
-        transition: all 0.1s ease;
+        border-color: $color-primary;
+        background-color: $color-background;
+        transition: all 0.2s ease;
+        border: 0 solid black;
+        border-bottom: 2px solid $color-primary;
+        /*box-shadow: 0 0 3px $color-primary-transparent-5;*/
 
         &:focus {
-            border: 1px solid $color-accent;
-            border-bottom: 3px solid $color-accent;
+            border-color: $color-accent;
             box-shadow: 0 0 8px $color-accent;
         }
+
+        &--outlined {           
+            border: 2px solid $color-primary;
+            /*border-bottom: 3px solid $color-primary;*/
+            border-radius: 5px;
+            
+        }
+    }
+
+
+
+    &__error {
+        color: $color-danger;
     }
 
     &__checkbox {

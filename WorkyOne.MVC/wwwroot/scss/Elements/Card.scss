@@ -3,7 +3,7 @@
 .card {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 15px;
     background-color: $color-background;
     color: $color-background-fg;
     border-radius: $container-border-radius;
@@ -14,9 +14,12 @@
         display: flex;
         flex-direction: column;
         gap: 15px;
+        padding: 3px;
 
         &--row {
             flex-direction: row;
+            align-items: center;
+            overflow-x: auto;
         }
     }
 

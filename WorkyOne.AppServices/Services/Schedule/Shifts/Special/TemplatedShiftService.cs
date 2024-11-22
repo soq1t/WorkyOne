@@ -1,19 +1,21 @@
 ﻿using AutoMapper;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
+using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Special;
 using WorkyOne.AppServices.Interfaces.Services.Users;
+using WorkyOne.AppServices.Interfaces.Stores;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts.Special;
 using WorkyOne.Contracts.Enums.Result;
 using WorkyOne.Contracts.Repositories.Result;
+using WorkyOne.Contracts.Services.Common;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts;
 using WorkyOne.Contracts.Services.GetRequests.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts.Special;
 using WorkyOne.Domain.Requests.Common;
-using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Common;
-using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Shifts;
+using WorkyOne.Domain.Specifications.AccesFilters.Abstractions;
 using WorkyOne.Domain.Specifications.Base;
 using WorkyOne.Domain.Specifications.Common;
 
@@ -25,20 +27,28 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
     public class TemplatedShiftService : ITemplatedShiftService
     {
         private readonly ITemplatedShiftsRepository _shiftsRepo;
-        private readonly IMapper _mapper;
         private readonly ITemplatesRepository _templatesRepo;
+
+        private readonly IWorkGraphicService _workGraphicService;
+
+        private readonly IMapper _mapper;
         private readonly IEntityUpdateUtility _updateUtility;
         private readonly IUserAccessInfoProvider _userAccessInfoProvider;
 
-        private TemplateAccessFilter _templateFilter;
-        private TemplatedShiftAccessFilter _shiftFilter;
+        private readonly IAccessFiltersStore _accessFiltersStore;
+        private AccessFilter<TemplateEntity> _templateFilter =>
+            _accessFiltersStore.GetFilter<TemplateEntity>();
+        private AccessFilter<TemplatedShiftEntity> _shiftFilter =>
+            _accessFiltersStore.GetFilter<TemplatedShiftEntity>();
 
         public TemplatedShiftService(
             ITemplatedShiftsRepository shiftsRepo,
             IMapper mapper,
             ITemplatesRepository templatesRepo,
             IEntityUpdateUtility updateUtility,
-            IUserAccessInfoProvider userAccessInfoProvider
+            IUserAccessInfoProvider userAccessInfoProvider,
+            IAccessFiltersStore accessFiltersStore,
+            IWorkGraphicService workGraphicService
         )
         {
             _shiftsRepo = shiftsRepo;
@@ -46,8 +56,107 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
             _templatesRepo = templatesRepo;
             _updateUtility = updateUtility;
             _userAccessInfoProvider = userAccessInfoProvider;
+            _accessFiltersStore = accessFiltersStore;
+            _workGraphicService = workGraphicService;
+        }
 
-            InitFiltersAsync().Wait();
+        public async Task<ServiceResult> ChangePositionAsync(
+            string id,
+            int steps,
+            CancellationToken cancellation = default
+        )
+        {
+            if (steps == 0)
+            {
+                return ServiceResult.Ok("Позиция изменена");
+            }
+
+            var targetShift = await _shiftsRepo.GetAsync(
+                new EntityRequest<TemplatedShiftEntity>(
+                    new EntityIdFilter<TemplatedShiftEntity>(id).And(
+                        _accessFiltersStore.GetFilter<TemplatedShiftEntity>()
+                    )
+                ),
+                cancellation
+            );
+
+            if (targetShift == null)
+            {
+                return ServiceResult.Error("Смена не найдена");
+            }
+
+            var template = await _templatesRepo.GetAsync(
+                new EntityRequest<TemplateEntity>(
+                    new EntityIdFilter<TemplateEntity>(targetShift.TemplateId)
+                ),
+                cancellation
+            );
+
+            if (template == null)
+            {
+                return ServiceResult.Error("Шаблон не найден");
+            }
+
+            var shifts = template.Shifts.OrderBy(x => x.Position).ToList();
+            var amount = shifts.Count;
+
+            var oldPosition = targetShift.Position;
+            var newPosition = targetShift.Position + steps;
+
+            var direction = steps > 0 ? -1 : 1;
+
+            if (newPosition < 1)
+                newPosition = 1;
+
+            if (newPosition > amount)
+                newPosition = amount;
+
+            if (direction > 0)
+            {
+                shifts
+                    .Where(x => x.Position >= newPosition && x.Position < oldPosition)
+                    .ToList()
+                    .ForEach(x => x.Position++);
+            }
+            else
+            {
+                shifts
+                    .Where(x => x.Position <= newPosition && x.Position > oldPosition)
+                    .ToList()
+                    .ForEach(x => x.Position--);
+            }
+
+            targetShift.Position = newPosition;
+
+            var result = _shiftsRepo.UpdateMany(shifts);
+
+            if (result.IsSucceed)
+            {
+                result = await _workGraphicService.RecalculateAsync(
+                    template.ScheduleId,
+                    cancellation
+                );
+
+                if (result.IsSucceed)
+                {
+                    await _shiftsRepo.SaveChangesAsync(cancellation);
+
+                    if (cancellation.IsCancellationRequested)
+                    {
+                        return ServiceResult.CancellationRequested();
+                    }
+
+                    return ServiceResult.Ok("Позиция изменена");
+                }
+                else
+                {
+                    return ServiceResult.Error("Ошибка");
+                }
+            }
+            else
+            {
+                return ServiceResult.Error("Ошибка");
+            }
         }
 
         public async Task<RepositoryResult> CreateAsync(
@@ -56,6 +165,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
         )
         {
             var filter = new EntityIdFilter<TemplateEntity>(model.ParentId).And(_templateFilter);
+
             var template = await _templatesRepo.GetAsync(
                 new EntityRequest<TemplateEntity>(filter),
                 cancellation
@@ -259,17 +369,6 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
             }
 
             return result;
-        }
-
-        private async Task InitFiltersAsync()
-        {
-            if (_templateFilter == null)
-            {
-                var accessInfo = await _userAccessInfoProvider.GetCurrentAsync();
-
-                _templateFilter = new TemplateAccessFilter(accessInfo);
-                _shiftFilter = new TemplatedShiftAccessFilter(accessInfo);
-            }
         }
     }
 }

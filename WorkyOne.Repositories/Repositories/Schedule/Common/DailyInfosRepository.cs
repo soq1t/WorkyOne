@@ -28,7 +28,7 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             return _context
                 .DailyInfos.Where(request.Specification.ToExpression())
                 .OrderBy(x => x.Date)
-                .AddPagination(request.PageIndex, request.Amount, true)
+                .AddPagination(request.PageIndex, request.Amount, useCustomOrder: true)
                 .ToListAsync(cancellation);
         }
     }

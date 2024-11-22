@@ -41,7 +41,8 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             return _context
                 .Templates.Where(request.Specification.ToExpression())
                 .Include(x => x.Shifts)
-                .ThenInclude(x => x.Shift);
+                .ThenInclude(x => x.Shift)
+                .Include(x => x.Schedule);
         }
     }
 }

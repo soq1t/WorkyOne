@@ -1,0 +1,37 @@
+﻿@import "../Imports/_all.scss";
+
+.table {
+    width: 100%;
+    border: 1px solid $color-primary;
+
+    thead {
+        border-bottom: 1px solid $color-primary;
+        tr {
+
+            th {
+                color: $color-primary;
+                font-weight: 500;
+            }
+        }
+    }
+
+    tr {
+    }
+
+    th {
+        width: auto;
+        font-size: $font-size-text;
+        padding: 10px 15px;
+        font-weight: 400;
+    }
+
+    th.main {
+        width: 100%;
+    }
+
+    th.centered {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+    }
+}

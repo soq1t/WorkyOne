@@ -39,5 +39,15 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
             string scheduleId,
             CancellationToken cancellation = default
         );
+
+        /// <summary>
+        /// Пересчитывает текущий график для заданного расписания
+        /// </summary>
+        /// <param name="scheduleId">Идентификатор расписания</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        public Task<RepositoryResult> RecalculateAsync(
+            string scheduleId,
+            CancellationToken cancellation = default
+        );
     }
 }

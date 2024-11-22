@@ -1,0 +1,42 @@
+﻿@using WorkyOne.Contracts.DTOs.Abstractions
+@using WorkyOne.Contracts.DTOs.Schedule.Shifts.Special
+@using WorkyOne.MVC.Models.Schedule
+
+@model TemplatedShiftsViewModel
+
+<div id="templated-shifts-table" class="shifts-table">
+    <div class="shifts-table__item shifts-table__item--title">Цвет</div>
+    <div class="shifts-table__item shifts-table__item--title">Название</div>
+    <div class="shifts-table__item shifts-table__item--title shifts-table__item--centered">Действия</div>
+    @foreach (var templatedShift in Model.Shifts.OrderBy(x => x.Position))
+    {
+        ShiftDtoBase? shift = Model.PersonalShifts.FirstOrDefault(x => x.Id == templatedShift.ShiftId);
+
+        if (shift == null)
+        {
+            shift = Model.SharedShifts.First(x => x.Id == templatedShift.ShiftId);
+        }
+        <div class="shifts-table__item shifts-table__item--color">
+            <div style="background-color: @shift.ColorCode" class="shift__color"></div>
+        </div>
+        <div class="shifts-table__item shift__name">@shift.Name</div>
+        <div data-position="@templatedShift.Position" data-id="@templatedShift.Id" class="shifts-table__item shift__controls">
+            <button class="material-symbols-outlined btn btn__primary--flat shift__controls-delete">delete</button>
+            @if (templatedShift.Position > 1)
+            {
+                <button class="material-symbols-outlined btn btn__primary--flat shift__controls-up">keyboard_arrow_up</button>
+            }
+            @if (templatedShift.Position < Model.Shifts.Count)
+            {
+                <button class="material-symbols-outlined btn btn__primary--flat shift__controls-down">keyboard_arrow_down</button>
+            }
+        </div>
+    }
+    <button class="material-symbols-outlined btn btn__primary--flat shifts-table__item shifts-table__item--add">add_circle</button>
+
+    <div class="shifts-table__loading">
+        <span class="loading"></span>
+    </div>
+</div>
+
+<script src="~/js/Schedule/templated.js" asp-append-version="true"></script>

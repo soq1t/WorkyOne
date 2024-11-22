@@ -1,15 +1,18 @@
 ﻿function showModal(content) {
-    var modal = $('#modal');
+    var modal = $('#modal-global');
 
     modal.html(content);
-    modal.fadeIn(100);
+
+    modal.css('display', 'flex')
+        .addClass('modal--active');
 }
 
 function hideModal() {
-    var modal = $('#modal');
+    var modal = $('#modal-global');
 
-    modal.fadeOut(100, function () {
-        modal.html("");
-    });
+    modal.removeClass('modal--active')
+        .delay(500)
+        .css('display', 'none')
+        .html('');
 
 }

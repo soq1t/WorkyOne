@@ -3,6 +3,7 @@ using AutoMapper;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Users;
+using WorkyOne.AppServices.Interfaces.Stores;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Enums.Result;
 using WorkyOne.Contracts.Repositories.Result;
@@ -12,6 +13,7 @@ using WorkyOne.Domain.Entities.Abstractions.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
+using WorkyOne.Domain.Specifications.AccesFilters.Abstractions;
 using WorkyOne.Domain.Specifications.AccesFilters.Common;
 using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Common;
 using WorkyOne.Domain.Specifications.Base;
@@ -26,26 +28,31 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
     {
         private readonly IDailyInfosRepository _dailyInfosRepo;
         private readonly ISchedulesRepository _schedulesRepo;
+
         private readonly IMapper _mapper;
         private readonly IUserAccessInfoProvider _userAccessInfoProvider;
 
-        private UserAccessInfo _accessInfo;
-        private ScheduleAccessFilter _scheduleAccessFilter;
-        private DailyInfoAccessFilter _dailyInfoAccessFilter;
+        private readonly IAccessFiltersStore _accessFiltersStore;
+
+        private AccessFilter<ScheduleEntity> _scheduleAccessFilter =>
+            _accessFiltersStore.GetFilter<ScheduleEntity>();
+
+        private AccessFilter<DailyInfoEntity> _dailyInfoAccessFilter =>
+            _accessFiltersStore.GetFilter<DailyInfoEntity>();
 
         public WorkGraphicService(
             IDailyInfosRepository dailyInfosRepo,
             ISchedulesRepository schedulesRepo,
             IMapper mapper,
-            IUserAccessInfoProvider userAccessInfoProvider
+            IUserAccessInfoProvider userAccessInfoProvider,
+            IAccessFiltersStore accessFiltersStore
         )
         {
             _dailyInfosRepo = dailyInfosRepo;
             _schedulesRepo = schedulesRepo;
             _mapper = mapper;
             _userAccessInfoProvider = userAccessInfoProvider;
-
-            InitFiltersAsync().Wait();
+            _accessFiltersStore = accessFiltersStore;
         }
 
         public async Task<RepositoryResult> ClearAsync(
@@ -131,6 +138,49 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                 return RepositoryResult.Ok(message.ToString());
             }
             return result;
+        }
+
+        public async Task<RepositoryResult> RecalculateAsync(
+            string scheduleId,
+            CancellationToken cancellation = default
+        )
+        {
+            var filter = new Specification<DailyInfoEntity>(x => x.ScheduleId == scheduleId).And(
+                _dailyInfoAccessFilter
+            );
+
+            var daysAmount = await _dailyInfosRepo.GetAmountAsync(
+                new EntityRequest<DailyInfoEntity>(filter),
+                cancellation
+            );
+
+            if (daysAmount == 0)
+            {
+                return RepositoryResult.Error("Не найден график для указанного расписания");
+            }
+
+            var first = await _dailyInfosRepo.GetManyAsync(
+                new PaginatedRequest<DailyInfoEntity>(filter, 1, 1),
+                cancellation
+            );
+
+            var last = await _dailyInfosRepo.GetManyAsync(
+                new PaginatedRequest<DailyInfoEntity>(filter, daysAmount, 1),
+                cancellation
+            );
+
+            var startDate = first.Single().Date;
+            var endDate = last.Single().Date;
+
+            return await CreateAsync(
+                new WorkGraphicModel()
+                {
+                    EndDate = endDate,
+                    StartDate = startDate,
+                    ScheduleId = scheduleId
+                },
+                cancellation
+            );
         }
 
         public async Task<List<DailyInfoDto>> GetGraphicAsync(
@@ -249,17 +299,6 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             }
 
             return result;
-        }
-
-        private async Task InitFiltersAsync(CancellationToken cancellation = default)
-        {
-            if (_accessInfo == null)
-            {
-                _accessInfo = await _userAccessInfoProvider.GetCurrentAsync(cancellation);
-
-                _scheduleAccessFilter = new ScheduleAccessFilter(_accessInfo);
-                _dailyInfoAccessFilter = new DailyInfoAccessFilter(_accessInfo);
-            }
         }
     }
 }

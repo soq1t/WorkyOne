@@ -4,8 +4,16 @@
 @import "../../Elements/Modal.scss";
 @import "../../Elements/Card.scss";
 @import "../../Elements/Select.scss";
+@import "../../Elements/Button.scss";
+@import "../../Elements/Input.scss";
 
 html {
+}
+
+h6 {
+    font-size: $font-size-h6;
+    font-weight: 500;
+    color: $color-primary;
 }
 
 h3 {
