@@ -49,24 +49,27 @@ $font-size-h3: var(--font-size-h3);*/
   color: #f3f6f9;
 }
 .btn__primary:hover {
-  border-color: #1accb4;
-  background-color: #1accb4;
+  border-color: #11d4ba;
+  background-color: #11d4ba;
 }
 .btn__primary:active {
-  border-color: #0cb19b;
-  background-color: #0cb19b;
+  border-color: #0da591;
+  background-color: #0da591;
 }
 .btn__primary--flat {
-  border-width: 0;
+  border-width: 2px;
   background-color: transparent;
+  border-color: transparent;
   color: #0fbda6;
 }
 .btn__primary--flat:hover {
-  background-color: #1accb4;
+  background-color: #11d4ba;
+  border-color: transparent;
   color: #f3f6f9;
 }
 .btn__primary--flat:active {
-  background-color: #0cb19b;
+  background-color: #0da591;
+  border-color: transparent;
   color: #f3f6f9;
 }
 .btn__accent {
@@ -75,8 +78,13 @@ $font-size-h3: var(--font-size-h3);*/
   color: #f3f6f9;
 }
 .btn__accent:hover {
-  border: 2px solid #71a3e5;
-  background-color: #71a3e5;
+  border: 2px solid #7eabe7;
+  background-color: #7eabe7;
+  color: #f3f6f9;
+}
+.btn__accent:active {
+  background-color: #689ee3;
+  border-color: #689ee3;
   color: #f3f6f9;
 }
 .btn__accent--flat {

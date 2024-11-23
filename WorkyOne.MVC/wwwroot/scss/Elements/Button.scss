@@ -18,45 +18,54 @@
     &__primary {
         border-width: 2px;
         border-style: solid;
-        border-color: $color-primary;
-        background-color: $color-primary;
+        border-color: $color-primary-500;
+        background-color: $color-primary-500;
         color: $color-primary-fg;
 
         &:hover {
-            border-color: $color-primary-300;
-            background-color: $color-primary-300;
+            border-color: $color-primary-400;
+            background-color: $color-primary-400;
         }
 
         &:active {
-            border-color: $color-primary-800;
-            background-color: $color-primary-800;
+            border-color: $color-primary-600;
+            background-color: $color-primary-600;
         }
 
         &--flat {
-            border-width: 0;
+            border-width: 2px;
             background-color: transparent;
+            border-color: transparent;
             color: $color-primary;
 
             &:hover {
-                background-color: $color-primary-300;
+                background-color: $color-primary-400;
+                border-color: transparent;
                 color: $color-primary-fg;
             }
 
             &:active {
-                background-color: $color-primary-800;
+                background-color: $color-primary-600;
+                border-color: transparent;
                 color: $color-primary-fg;
             }
         }
     }
 
     &__accent {
-        border: 2px solid $color-accent;
-        background-color: $color-accent;
+        border: 2px solid $color-accent-500;
+        background-color: $color-accent-500;
         color: $color-accent-fg;
 
         &:hover {
-            border: 2px solid $color-accent;
-            background-color: $color-accent;
+            border: 2px solid $color-accent-400;
+            background-color: $color-accent-400;
+            color: $color-accent-fg;
+        }
+
+        &:active {
+            background-color: $color-accent-600;
+            border-color: $color-accent-600;
             color: $color-accent-fg;
         }
 

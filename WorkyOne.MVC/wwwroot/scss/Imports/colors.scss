@@ -1,23 +1,34 @@
-﻿$color-background: #f4f9f9;
+﻿// Background
+$color-background: #f4f9f9;
 $color-background-fg: #020808;
 
 // Primary
 $color-primary: #0fbda6;
-$color-primary-300: #1accb4;
-$color-primary-500: $color-primary;
-$color-primary-800: #0cb19b;
+$color-primary-fg: #f3f6f9;
+
+$color-primary-300: #13eccf;
+$color-primary-400: #11d4ba;
+$color-primary-500: #0fbda6;
+$color-primary-600: #0da591;
+$color-primary-700: #0b8e7c;
+$color-primary-800: #0a7667;
 
 $color-primary-transparent-5: rgba(15, 189, 166, 0.5);
 
-$color-primary-fg: #f3f6f9;
-
-// Accent
+// Secondary
 $color-secondary: #93cfd7;
 $color-secondary-fg: #f3f6f9;
 
+// Accent
 $color-accent: #71a3e5;
 $color-accent-fg: #f3f6f9;
 
+$color-accent-300: #93b9eb;
+$color-accent-400: #7eabe7;
+$color-accent-500: #71a3e5;
+$color-accent-600: #689ee3;
+$color-accent-700: #5390df;
+$color-accent-800: #3d82db;
 // Danger
 $color-danger: #db3232;
 $color-danger-fg: #f3f6f9;
