@@ -47,7 +47,7 @@ namespace WorkyOne.MVC.Controllers.Schedule
                 SharedShifts = schedule.SharedShifts
             };
 
-            return PartialView("Schedules/_NewSchedulePartial", model);
+            return PartialView("Schedules/_TemplatedShiftsPartial", model);
         }
 
         [HttpGet]

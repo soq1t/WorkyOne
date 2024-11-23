@@ -8,7 +8,7 @@ function showModal(content) {
     modal.html(content)
 
     modal.css('display', 'flex')
-        .addClass('modal--active');
+        .addClass('modal--active');    
 }
 
 function hideModal() {
