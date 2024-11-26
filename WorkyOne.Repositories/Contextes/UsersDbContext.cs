@@ -19,7 +19,7 @@ namespace WorkyOne.Repositories.Contextes
         {
             base.OnModelCreating(builder);
 
-            builder.ApplyConfigurationsFromAssembly(typeof(SessionEntity).Assembly);
+            builder.ApplyConfigurationsFromAssembly(typeof(UsersDbContext).Assembly);
         }
     }
 }
