@@ -18,8 +18,8 @@ namespace WorkyOne.Infrastructure.Services
 
         public async Task<T?> GetAsync<T>(
             string key,
-            Func<T>? function = null,
-            TimeSpan duration = default,
+            Func<Task<T?>> function,
+            TimeSpan duration,
             CancellationToken cancellation = default
         )
             where T : class
@@ -32,12 +32,7 @@ namespace WorkyOne.Infrastructure.Services
 
             if (json == null)
             {
-                if (function == null)
-                {
-                    return null;
-                }
-
-                var result = function.Invoke();
+                var result = await function.Invoke();
                 await SaveAsync(key, result, duration, cancellation);
 
                 return result;
@@ -46,17 +41,6 @@ namespace WorkyOne.Infrastructure.Services
             {
                 return JsonConvert.DeserializeObject<T>(json);
             }
-        }
-
-        public Task<T?> GetAsync<T>(
-            string key,
-            Func<T>? function = null,
-            TimeSpan? duration = null,
-            CancellationToken cancellation = default
-        )
-            where T : class
-        {
-            throw new NotImplementedException();
         }
 
         public async Task SaveAsync<T>(

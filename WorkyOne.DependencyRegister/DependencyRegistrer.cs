@@ -5,6 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
+using WorkyOne.AppServices.Decorators;
 using WorkyOne.AppServices.Interfaces.Repositories.Auth;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
@@ -12,6 +13,7 @@ using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts.Basic;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services;
 using WorkyOne.AppServices.Interfaces.Services.Auth;
+using WorkyOne.AppServices.Interfaces.Services.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Basic;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Special;
@@ -28,6 +30,7 @@ using WorkyOne.Contracts.Options.Auth;
 using WorkyOne.Contracts.Options.Common;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Schedule.Common;
+using WorkyOne.Infrastructure.Services;
 using WorkyOne.Infrastructure.Stores;
 using WorkyOne.Infrastructure.Utilities;
 using WorkyOne.Repositories.Contextes;
@@ -81,6 +84,8 @@ namespace WorkyOne.DependencyRegister
         /// <param name="services">Сервисы</param>
         private static void RegisterServices(IServiceCollection services)
         {
+            services.AddScoped<ICachingService, CachingService>();
+
             services.AddScoped<IDateTimeService, DateTimeService>();
             services.AddScoped<IUsersService, UsersService>();
 
@@ -89,6 +94,7 @@ namespace WorkyOne.DependencyRegister
             services.AddScoped<ISessionService, SessionService>();
 
             services.AddScoped<IUserAccessInfoProvider, UserAccessInfoProvider>();
+            services.Decorate<IUserAccessInfoProvider, UserAccessInfoCachingDecorator>();
 
             services.AddScoped<IScheduleService, ScheduleService>();
             services.AddScoped<IWorkGraphicService, WorkGraphicService>();

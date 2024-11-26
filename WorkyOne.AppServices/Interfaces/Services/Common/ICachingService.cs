@@ -15,8 +15,8 @@
         /// <param name="cancellation">Токен отмены задачи</param>
         public Task<T?> GetAsync<T>(
             string key,
-            Func<T>? function = null,
-            TimeSpan? duration = null,
+            Func<Task<T?>> function,
+            TimeSpan duration,
             CancellationToken cancellation = default
         )
             where T : class;
