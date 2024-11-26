@@ -11,7 +11,8 @@ namespace WorkyOne.AppServices.Interfaces.Repositories.CRUD
         : ICreateRepository<TEntity>,
             IGetRepository<TEntity, TEntityRequest, TPaginatedRequest>,
             IUpdateRepository<TEntity>,
-            IDeleteRepository<TEntity>
+            IDeleteRepository<TEntity>,
+            IRenewRepository<TEntity>
         where TEntity : class, IEntity
         where TEntityRequest : EntityRequest<TEntity>
         where TPaginatedRequest : PaginatedRequest<TEntity> { }

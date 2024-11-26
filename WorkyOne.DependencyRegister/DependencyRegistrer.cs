@@ -57,7 +57,7 @@ namespace WorkyOne.DependencyRegister
             RegisterAuth(services, configuration);
             RegisterServices(services);
             RegisterStores(services);
-            RegisterOther(services);
+            RegisterOther(services, configuration);
         }
 
         private static void RegisterStores(IServiceCollection services)
@@ -200,7 +200,7 @@ namespace WorkyOne.DependencyRegister
         /// Регистрирует иные компоненты, используемые в приложении
         /// </summary>
         /// <param name="services">Сервисы приложения</param>
-        private static void RegisterOther(IServiceCollection services)
+        private static void RegisterOther(IServiceCollection services, IConfiguration configuration)
         {
             services.AddAutoMapper(typeof(DailyInfoProfile).Assembly);
 
@@ -208,6 +208,11 @@ namespace WorkyOne.DependencyRegister
             services.AddSingleton<IColorUtility, ColorUtility>();
 
             services.AddScoped<IReferenceShiftUtility, ReferenceShiftUtility>();
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = configuration.GetConnectionString("Redis");
+            });
         }
     }
 }

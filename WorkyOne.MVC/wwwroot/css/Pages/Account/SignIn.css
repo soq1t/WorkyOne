@@ -18,25 +18,36 @@ $font-size-h3: var(--font-size-h3);*/
 $font-family: var(--font-family);
 $font-size-text: var(--font-size-text);
 $font-size-h3: var(--font-size-h3);*/
-.input__text {
+.input {
   outline: none;
   padding: 5px 10px;
   border-color: #0fbda6;
-  background-color: #f4f9f9;
-  -webkit-transition: all 0.2s ease;
-  transition: all 0.2s ease;
   border: 0 solid black;
-  border-bottom: 2px solid #0fbda6;
-  /*box-shadow: 0 0 3px $color-primary-transparent-5;*/
 }
-.input__text:focus {
+.input:focus {
   border-color: #71a3e5;
   -webkit-box-shadow: 0 0 8px #71a3e5;
           box-shadow: 0 0 8px #71a3e5;
 }
+.input__text {
+  background-color: #ffffff;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+  border-bottom: 2px solid #0fbda6;
+}
 .input__text--outlined {
   border: 2px solid #0fbda6;
-  /*border-bottom: 3px solid $color-primary;*/
+  border-radius: 5px;
+}
+.input__date {
+  border: 2px solid #0fbda6;
+  border-radius: 5px;
+}
+.input__select {
+  background-color: #ffffff;
+  -webkit-transition: all 0.2s ease;
+  transition: all 0.2s ease;
+  border: 2px solid #0fbda6;
   border-radius: 5px;
 }
 .input__error {
@@ -79,10 +90,9 @@ $font-size-h3: var(--font-size-h3);*/
   border-radius: 8px;
   -webkit-transition: all 0.3s ease;
   transition: all 0.3s ease;
+  border: 2px solid black;
 }
 .btn__primary {
-  border-width: 2px;
-  border-style: solid;
   border-color: #0fbda6;
   background-color: #0fbda6;
   color: #f3f6f9;
@@ -96,7 +106,6 @@ $font-size-h3: var(--font-size-h3);*/
   background-color: #0da591;
 }
 .btn__primary--flat {
-  border-width: 2px;
   background-color: transparent;
   border-color: transparent;
   color: #0fbda6;
@@ -112,12 +121,12 @@ $font-size-h3: var(--font-size-h3);*/
   color: #f3f6f9;
 }
 .btn__accent {
-  border: 2px solid #71a3e5;
+  border-color: #71a3e5;
   background-color: #71a3e5;
   color: #f3f6f9;
 }
 .btn__accent:hover {
-  border: 2px solid #7eabe7;
+  border-color: #7eabe7;
   background-color: #7eabe7;
   color: #f3f6f9;
 }
@@ -127,13 +136,48 @@ $font-size-h3: var(--font-size-h3);*/
   color: #f3f6f9;
 }
 .btn__accent--flat {
-  border: 0px solid #71a3e5;
   background-color: transparent;
+  border-color: transparent;
   color: #71a3e5;
 }
 .btn__accent--flat:hover {
-  border: 0px solid #71a3e5;
-  background-color: #71a3e5;
+  border-color: transparent;
+  background-color: #7eabe7;
+  color: #f3f6f9;
+}
+.btn__accent--flat:active {
+  border-color: transparent;
+  background-color: #689ee3;
+  color: #f3f6f9;
+}
+.btn__danger {
+  border-color: #db3232;
+  background-color: #db3232;
+  color: #f3f6f9;
+}
+.btn__danger:hover {
+  border-color: #e05252;
+  background-color: #e05252;
+  color: #f3f6f9;
+}
+.btn__danger:active {
+  background-color: #c32222;
+  border-color: #c32222;
+  color: #f3f6f9;
+}
+.btn__danger--flat {
+  background-color: transparent;
+  border-color: transparent;
+  color: #db3232;
+}
+.btn__danger--flat:hover {
+  border-color: transparent;
+  background-color: #e05252;
+  color: #f3f6f9;
+}
+.btn__danger--flat:active {
+  border-color: transparent;
+  background-color: #c32222;
   color: #f3f6f9;
 }
 

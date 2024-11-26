@@ -69,6 +69,7 @@ namespace WorkyOne.MVC
             );
 
 #if DEBUG
+            //CreateUserData(app.Services).Wait();
             //Test(app.Services).Wait();
             //CreateUserData(app.Services).Wait();
 #endif
@@ -83,21 +84,8 @@ namespace WorkyOne.MVC
             var usersService = scope.ServiceProvider.GetRequiredService<IUsersService>();
 
             var userInfo = await usersService.GetUserInfoAsync(
-                new UserInfoRequest() { UserName = "soq1t", }
+                new UserInfoRequest() { UserName = "test", }
             );
         }
-
-        //private static async Task Test(IServiceProvider services)
-        //{
-        //    using IServiceScope scope = services.CreateScope();
-
-        //    var mapper = scope.ServiceProvider.GetRequiredService<IMapper>();
-
-        //    var user = new UserEntity();
-        //    var userData = new UserDataEntity();
-
-        //    var dto = mapper.Map<UserInfoDto>(user);
-        //    mapper.Map(userData, dto);
-        //}
     }
 }

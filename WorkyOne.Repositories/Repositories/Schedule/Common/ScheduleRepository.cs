@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
+using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts.Basic;
 using WorkyOne.Domain.Interfaces.Requests.Schedule;
@@ -22,8 +23,8 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
         >,
             ISchedulesRepository
     {
-        public ScheduleRepository(ApplicationDbContext context)
-            : base(context) { }
+        public ScheduleRepository(ApplicationDbContext context, IEntityUpdateUtility entityUpdater)
+            : base(context, entityUpdater) { }
 
         public override Task<ScheduleEntity?> GetAsync(
             ScheduleRequest request,

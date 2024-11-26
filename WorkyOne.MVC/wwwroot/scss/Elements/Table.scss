@@ -6,6 +6,7 @@
 
     thead {
         border-bottom: 1px solid $color-primary;
+
         tr {
 
             th {
@@ -15,7 +16,11 @@
         }
     }
 
-    tr {
+    tbody {
+        tr {
+            align-items: center;
+            
+        }
     }
 
     th {
@@ -33,5 +38,6 @@
         display: flex;
         flex-direction: row;
         justify-content: center;
+        align-items: center;
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
+using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Repositories.Contextes;
@@ -17,8 +18,11 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
         >,
             IDailyInfosRepository
     {
-        public DailyInfosRepository(ApplicationDbContext context)
-            : base(context) { }
+        public DailyInfosRepository(
+            ApplicationDbContext context,
+            IEntityUpdateUtility entityUpdater
+        )
+            : base(context, entityUpdater) { }
 
         public override Task<List<DailyInfoEntity>> GetManyAsync(
             PaginatedRequest<DailyInfoEntity> request,

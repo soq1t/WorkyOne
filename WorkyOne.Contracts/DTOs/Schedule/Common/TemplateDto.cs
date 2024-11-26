@@ -18,7 +18,7 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
         /// <summary>
         /// Дата, с которой начинается отсчёт повторений шаблона
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Укажите дату отсчёта шаблона")]
         public DateOnly? StartDate { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
+using WorkyOne.Domain.Entities.Schedule.Common;
 
 namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
 {
@@ -42,10 +43,12 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Common
         /// <summary>
         /// Обновляет шаблон на основе <see cref="TemplateDto"/>
         /// </summary>
-        /// <param name="dto">DTO, на основе которой обновляется шаблон</param>
+        /// <param name="target">Обновляемая сущность</param>
+        /// <param name="source">Сущность, поля которой обновляются</param>
         /// <param name="cancellation">Токен отмены задачи</param>
         public Task<RepositoryResult> UpdateAsync(
-            TemplateDto dto,
+            TemplateEntity target,
+            TemplateEntity source,
             CancellationToken cancellation = default
         );
     }

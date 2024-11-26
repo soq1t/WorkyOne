@@ -84,17 +84,5 @@ namespace WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Special
             string id,
             CancellationToken cancellation = default
         );
-
-        /// <summary>
-        /// Меняет позицию смены
-        /// </summary>
-        /// <param name="id">Идентификатор смены</param>
-        /// <param name="steps">Количество шагов, на которую сдвигается смена</param>
-        /// <param name="cancellation">Токен отмены задачи</param>
-        public Task<ServiceResult> ChangePositionAsync(
-            string id,
-            int steps,
-            CancellationToken cancellation = default
-        );
     }
 }

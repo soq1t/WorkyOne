@@ -5,17 +5,20 @@ using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Users;
+using WorkyOne.AppServices.Interfaces.Stores;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts.Basic;
 using WorkyOne.Contracts.Enums.Result;
 using WorkyOne.Contracts.Repositories.Result;
+using WorkyOne.Contracts.Services.CreateModels.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts.Basic;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Domain.Requests.Users;
+using WorkyOne.Domain.Specifications.AccesFilters.Abstractions;
 using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Common;
 using WorkyOne.Domain.Specifications.AccesFilters.Users;
 using WorkyOne.Domain.Specifications.Base;
@@ -33,12 +36,20 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
         private readonly ISharedShiftsRepository _sharedShiftsRepository;
         private readonly IUserDatasRepository _userDatasRepository;
         private readonly IDailyInfosRepository _dailyInfosRepository;
+
         private readonly IMapper _mapper;
         private readonly IEntityUpdateUtility _entityUpdateUtility;
-        private readonly IDateTimeService _dateTimeService;
+        private readonly IAccessFiltersStore _accessFiltersStore;
 
-        private ScheduleAccessFilter _scheduleAccessFilter;
-        private UserDataAccessFilter _userDataAccessFilter;
+        private readonly IDateTimeService _dateTimeService;
+        private readonly ITemplateService _templateService;
+        private readonly IWorkGraphicService _workGraphicService;
+
+        private AccessFilter<ScheduleEntity> _scheduleAccessFilter =>
+            _accessFiltersStore.GetFilter<ScheduleEntity>();
+
+        private AccessFilter<UserDataEntity> _userDataAccessFilter =>
+            _accessFiltersStore.GetFilter<UserDataEntity>();
 
         public ScheduleService(
             ISchedulesRepository schedulesRepository,
@@ -48,7 +59,10 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             IUserAccessInfoProvider accessInfoProvider,
             IDailyInfosRepository dailyInfosRepository,
             ISharedShiftsRepository sharedShiftsRepository,
-            IDateTimeService dateTimeService
+            IDateTimeService dateTimeService,
+            ITemplateService templateService,
+            IAccessFiltersStore accessFiltersStore,
+            IWorkGraphicService workGraphicService
         )
         {
             _schedulesRepository = schedulesRepository;
@@ -57,10 +71,11 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             _mapper = mapper;
             _entityUpdateUtility = entityUpdateUtility;
-
-            InitAccessFiltersAsync(accessInfoProvider).Wait();
             _dailyInfosRepository = dailyInfosRepository;
             _dateTimeService = dateTimeService;
+            _templateService = templateService;
+            _accessFiltersStore = accessFiltersStore;
+            _workGraphicService = workGraphicService;
         }
 
         public async Task<RepositoryResult> CreateScheduleAsync(
@@ -262,7 +277,11 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             var filter = new EntityIdFilter<ScheduleEntity>(scheduleDto.Id).And(
                 _scheduleAccessFilter
             );
-            var request = new ScheduleRequest(filter) { IncludeTemplate = true };
+            var request = new ScheduleRequest(filter)
+            {
+                IncludeTemplate = true,
+                IncludeShifts = true
+            };
 
             var target = await _schedulesRepository.GetAsync(request, cancellation);
 
@@ -277,13 +296,38 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             ScheduleEntity source = _mapper.Map<ScheduleEntity>(scheduleDto);
 
+            var result = await _templateService.UpdateAsync(
+                target.Template,
+                source.Template,
+                cancellation
+            );
+
+            if (!result.IsSucceed)
+            {
+                return result;
+            }
+
             _entityUpdateUtility.Update(target, source);
 
-            var result = _schedulesRepository.Update(target);
+            result = _schedulesRepository.Update(target);
 
             if (result.IsSucceed)
             {
                 await _schedulesRepository.SaveChangesAsync(cancellation);
+
+                var now = DateTime.Now;
+
+                var startDate = new DateOnly(now.Year - 1, 1, 1);
+                var endDate = new DateOnly(now.Year + 1, 12, 31);
+
+                await _workGraphicService.CreateAsync(
+                    new WorkGraphicModel
+                    {
+                        ScheduleId = target.Id,
+                        StartDate = startDate,
+                        EndDate = endDate
+                    }
+                );
             }
             return result;
         }
@@ -311,14 +355,6 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                     schedule.SharedShifts = shiftsDtos;
                 }
             }
-        }
-
-        private async Task InitAccessFiltersAsync(IUserAccessInfoProvider provider)
-        {
-            var accessInfo = await provider.GetCurrentAsync();
-
-            _scheduleAccessFilter = new ScheduleAccessFilter(accessInfo);
-            _userDataAccessFilter = new UserDataAccessFilter(accessInfo);
         }
     }
 }

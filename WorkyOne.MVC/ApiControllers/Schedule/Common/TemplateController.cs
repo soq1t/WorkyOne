@@ -67,24 +67,24 @@ namespace WorkyOne.MVC.ApiControllers.Schedule.Common
             }
         }
 
-        [HttpPut]
-        [Route("")]
-        public async Task<IActionResult> UpdateAsync(
-            [FromBody] TemplateDto dto,
-            CancellationToken cancellation = default
-        )
-        {
-            var result = await _templateService.UpdateAsync(dto, cancellation);
+        //[HttpPut]
+        //[Route("")]
+        //public async Task<IActionResult> UpdateAsync(
+        //    [FromBody] TemplateDto dto,
+        //    CancellationToken cancellation = default
+        //)
+        //{
+        //    var result = await _templateService.UpdateAsync(dto, cancellation);
 
-            if (result.IsSucceed)
-            {
-                return Ok(result);
-            }
-            else
-            {
-                return BadRequest(result);
-            }
-        }
+        //    if (result.IsSucceed)
+        //    {
+        //        return Ok(result);
+        //    }
+        //    else
+        //    {
+        //        return BadRequest(result);
+        //    }
+        //}
 
         [HttpDelete]
         [Route("{id}")]

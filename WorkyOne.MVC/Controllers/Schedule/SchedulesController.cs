@@ -87,15 +87,18 @@ namespace WorkyOne.MVC.Controllers.Schedule
 
             if (schedule != null)
             {
+                schedule.Template.Shifts = schedule
+                    .Template.Shifts.OrderBy(x => x.Position)
+                    .ToList();
                 var referer = HttpContext.Request.Headers["Referer"].ToString();
 
                 if (referer.Contains(schedule.Id))
                 {
                     referer = referer.Replace(schedule.Id, "");
                 }
+                var model = new ScheduleViewModel { Schedule = schedule, Referer = referer };
 
-                ViewData["Referer"] = referer;
-                return View("Schedule", schedule);
+                return View("Schedule", model);
             }
             else
             {
@@ -219,6 +222,30 @@ namespace WorkyOne.MVC.Controllers.Schedule
             if (result.IsSucceed)
             {
                 return Ok(result);
+            }
+            else
+            {
+                return BadRequest(result);
+            }
+        }
+
+        [HttpPost]
+        [Route("update")]
+        public async Task<IActionResult> UpdateAsync(
+            [FromForm] ScheduleViewModel model,
+            CancellationToken cancellation = default
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                return View("/Views/Schedules/Schedule.cshtml", model);
+            }
+
+            var result = await _scheduleService.UpdateScheduleAsync(model.Schedule, cancellation);
+
+            if (result.IsSucceed)
+            {
+                return LocalRedirect("/schedules");
             }
             else
             {

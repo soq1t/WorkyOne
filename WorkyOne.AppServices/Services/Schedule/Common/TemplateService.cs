@@ -3,6 +3,7 @@ using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Users;
+using WorkyOne.AppServices.Interfaces.Stores;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 using WorkyOne.Contracts.Enums.Result;
@@ -12,6 +13,7 @@ using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts.Special;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
+using WorkyOne.Domain.Specifications.AccesFilters.Abstractions;
 using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Common;
 using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Shifts;
 using WorkyOne.Domain.Specifications.Base;
@@ -32,10 +34,14 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
         private readonly IMapper _mapper;
         private readonly IEntityUpdateUtility _updateUtility;
+        private readonly IAccessFiltersStore _accessFiltersStore;
 
-        private TemplateAccessFilter _templateFilter;
-        private ScheduleAccessFilter _scheduleFilter;
-        private TemplatedShiftAccessFilter _shiftFilter;
+        private AccessFilter<TemplateEntity> _templateFilter =>
+            _accessFiltersStore.GetFilter<TemplateEntity>();
+        private AccessFilter<ScheduleEntity> _scheduleFilter =>
+            _accessFiltersStore.GetFilter<ScheduleEntity>();
+        private AccessFilter<TemplatedShiftEntity> _shiftFilter =>
+            _accessFiltersStore.GetFilter<TemplatedShiftEntity>();
 
         public TemplateService(
             ITemplatesRepository templatesRepo,
@@ -43,7 +49,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             IEntityUpdateUtility updateUtility,
             ISchedulesRepository schedulesRepo,
             IUserAccessInfoProvider accessInfoProvider,
-            ITemplatedShiftsRepository templatedShiftsRepo
+            ITemplatedShiftsRepository templatedShiftsRepo,
+            IAccessFiltersStore accessFiltersStore
         )
         {
             _templatesRepo = templatesRepo;
@@ -51,8 +58,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             _updateUtility = updateUtility;
             _schedulesRepo = schedulesRepo;
             _templatedShiftsRepo = templatedShiftsRepo;
-
-            InitFiltersAsync(accessInfoProvider).Wait();
+            _accessFiltersStore = accessFiltersStore;
         }
 
         public async Task<RepositoryResult> CreateAsync(
@@ -161,47 +167,40 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
         }
 
         public async Task<RepositoryResult> UpdateAsync(
-            TemplateDto dto,
+            TemplateEntity target,
+            TemplateEntity source,
             CancellationToken cancellation = default
         )
         {
-            var filter = new EntityIdFilter<TemplateEntity>(dto.Id).And(_templateFilter);
-
-            var target = await _templatesRepo.GetAsync(
-                new EntityRequest<TemplateEntity>(filter),
-                cancellation
-            );
-
-            if (target == null)
-            {
-                return RepositoryResult.Error(
-                    ResultType.NotFound,
-                    dto.Id,
-                    nameof(RepositoryResult)
-                );
-            }
-
-            var source = _mapper.Map<TemplateEntity>(dto);
-
             if (!CheckShiftsPositions(source.Shifts))
             {
                 return RepositoryResult.Error(_positionsError);
             }
 
             _updateUtility.Update(target, source);
-            UpdateTemplatedShifts(target, source.Shifts);
+            //UpdateTemplatedShifts(target, source.Shifts);
 
-            await _templatedShiftsRepo.DeleteByConditionAsync(
-                new Specification<TemplatedShiftEntity>(x => x.TemplateId == target.Id).And(
-                    _shiftFilter
-                ),
-                cancellation
-            );
+            source.Shifts.ForEach(x => x.TemplateId = source.Id);
 
-            await _templatedShiftsRepo.CreateManyAsync(target.Shifts, cancellation);
-            await _templatedShiftsRepo.SaveChangesAsync(cancellation);
+            var result = _templatedShiftsRepo.Renew(target.Shifts, source.Shifts);
 
-            var result = _templatesRepo.Update(target);
+            if (!result.IsSucceed)
+            {
+                return result;
+            }
+
+            result = _templatesRepo.Update(target);
+
+            //await _templatedShiftsRepo.DeleteByConditionAsync(
+            //    new Specification<TemplatedShiftEntity>(x => x.TemplateId == target.Id).And(
+            //        _shiftFilter
+            //    ),
+            //    cancellation
+            //);
+
+            //await _templatedShiftsRepo.CreateManyAsync(target.Shifts, cancellation);
+            //await _templatedShiftsRepo.SaveChangesAsync(cancellation);
+
 
             if (result.IsSucceed)
             {
@@ -214,15 +213,6 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             }
 
             return result;
-        }
-
-        private async Task InitFiltersAsync(IUserAccessInfoProvider provider)
-        {
-            var accessInfo = await provider.GetCurrentAsync();
-
-            _templateFilter = new TemplateAccessFilter(accessInfo);
-            _scheduleFilter = new ScheduleAccessFilter(accessInfo);
-            _shiftFilter = new TemplatedShiftAccessFilter(accessInfo);
         }
 
         private Task<List<TemplatedShiftEntity>> GetTemplatedShiftAsync(

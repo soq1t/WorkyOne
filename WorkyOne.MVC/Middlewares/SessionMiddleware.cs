@@ -1,4 +1,5 @@
-﻿using WorkyOne.AppServices.Interfaces.Services.Auth;
+﻿using System.Diagnostics;
+using WorkyOne.AppServices.Interfaces.Services.Auth;
 
 namespace WorkyOne.MVC.Middlewares
 {

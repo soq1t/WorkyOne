@@ -12,12 +12,9 @@
     font-weight: 500;
     border-radius: 8px;
     transition: all 0.3s ease;
-
-
+    border: 2px solid black;
 
     &__primary {
-        border-width: 2px;
-        border-style: solid;
         border-color: $color-primary-500;
         background-color: $color-primary-500;
         color: $color-primary-fg;
@@ -33,7 +30,6 @@
         }
 
         &--flat {
-            border-width: 2px;
             background-color: transparent;
             border-color: transparent;
             color: $color-primary;
@@ -53,12 +49,12 @@
     }
 
     &__accent {
-        border: 2px solid $color-accent-500;
+        border-color: $color-accent-500;
         background-color: $color-accent-500;
         color: $color-accent-fg;
 
         &:hover {
-            border: 2px solid $color-accent-400;
+            border-color: $color-accent-400;
             background-color: $color-accent-400;
             color: $color-accent-fg;
         }
@@ -70,14 +66,56 @@
         }
 
         &--flat {
-            border: 0px solid $color-accent;
             background-color: transparent;
+            border-color: transparent;
             color: $color-accent;
 
             &:hover {
-                border: 0px solid $color-accent;
-                background-color: $color-accent;
+                border-color: transparent;
+                background-color: $color-accent-400;
                 color: $color-accent-fg;
+            }
+
+            &:active {
+                border-color: transparent;
+                background-color: $color-accent-600;
+                color: $color-accent-fg;
+            }
+        }
+    }
+
+    &__danger {
+        border-color: $color-danger-500;
+        background-color: $color-danger-500;
+        color: $color-danger-fg;
+
+        &:hover {
+            border-color: $color-danger-400;
+            background-color: $color-danger-400;
+            color: $color-danger-fg;
+        }
+
+        &:active {
+            background-color: $color-danger-600;
+            border-color: $color-danger-600;
+            color: $color-danger-fg;
+        }
+
+        &--flat {
+            background-color: transparent;
+            border-color: transparent;
+            color: $color-danger;
+
+            &:hover {
+                border-color: transparent;
+                background-color: $color-danger-400;
+                color: $color-danger-fg;
+            }
+
+            &:active {
+                border-color: transparent;
+                background-color: $color-danger-600;
+                color: $color-danger-fg;
             }
         }
     }

@@ -1,0 +1,20 @@
+﻿@using WorkyOne.MVC.Models.Schedule
+
+@model TemplatedShiftViewModel
+
+<div data-index="@(Model.Index + 2)" class="shifts-table__row">
+    <input hidden="hidden" name="Schedule.Template.Shifts[@Model.Index].Id" value="@Model.TemplatedShift.Id" />
+    <input hidden="hidden" name="Schedule.Template.Shifts[@Model.Index].ShiftId" value="@Model.TemplatedShift.ShiftId" />
+    <input class="position" hidden="hidden" name="Schedule.Template.Shifts[@Model.Index].Position" value="@Model.TemplatedShift.Position" />
+    <div class="shifts-table__item shifts-table__item--centered shifts-table__item--color">
+        <span style="background: @Model.ReferenceShift.ColorCode"></span>
+    </div>
+    <div class="shifts-table__item">
+        <span>@Model.ReferenceShift.Name</span>
+    </div>
+    <div class="shifts-table__item shifts-table__item--controls">
+        <button class="material-symbols-outlined btn btn__primary btn__primary--flat up">keyboard_arrow_up</button>
+        <button class="material-symbols-outlined btn btn__primary btn__primary--flat down">keyboard_arrow_down</button>
+        <button class="material-symbols-outlined btn btn__danger btn__danger--flat delete">delete</button>
+    </div>
+</div>

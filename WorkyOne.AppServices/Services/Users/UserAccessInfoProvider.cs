@@ -1,7 +1,9 @@
 ﻿using System.Security.Claims;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services.Auth;
 using WorkyOne.AppServices.Interfaces.Services.Users;
@@ -19,31 +21,39 @@ namespace WorkyOne.AppServices.Services.Users
     {
         private readonly IHttpContextAccessor _contextAccessor;
         private readonly IUserDatasRepository _userDataRepo;
+        private readonly IDistributedCache _cache;
+        private readonly IJwtService _jwtService;
 
         private readonly UserManager<UserEntity> _userManager;
         private readonly IAuthService _authService;
-        private readonly ILogger<UserAccessInfoProvider> _logger;
 
         public UserAccessInfoProvider(
             IHttpContextAccessor contextAccessor,
             IUserDatasRepository userDataRepo,
             UserManager<UserEntity> userManager,
             IAuthService authService,
-            ILogger<UserAccessInfoProvider> logger
+            IDistributedCache cache,
+            IJwtService jwtService
         )
         {
             _contextAccessor = contextAccessor;
             _userDataRepo = userDataRepo;
             _userManager = userManager;
             _authService = authService;
-            _logger = logger;
+            _cache = cache;
+            _jwtService = jwtService;
         }
 
         public async Task<UserAccessInfo> GetCurrentAsync(CancellationToken cancellation = default)
         {
-            //_logger.LogInformation(
-            //    "Запрошена информация об уровне доступа для текущего пользователя"
-            //);
+            var key = _jwtService.GetFromCookies() ?? "non-authorized";
+            var userAccessInfo = await GetFromCache(key);
+
+            if (userAccessInfo != null)
+            {
+                return userAccessInfo;
+            }
+
             if (_contextAccessor.HttpContext == null)
             {
                 return new UserAccessInfo(null, null, false);
@@ -79,7 +89,37 @@ namespace WorkyOne.AppServices.Services.Users
                 await _userDataRepo.SaveChangesAsync(cancellation);
             }
 
-            return new UserAccessInfo(userData.Id, user.Id, isAdmin);
+            userAccessInfo = new UserAccessInfo(userData.Id, user.Id, isAdmin);
+            await SaveToCache(key, userAccessInfo);
+            return userAccessInfo;
+        }
+
+        private async Task SaveToCache(string key, UserAccessInfo userAccessInfo)
+        {
+            var json = JsonConvert.SerializeObject(userAccessInfo);
+
+            await _cache.SetStringAsync(
+                key,
+                json,
+                new DistributedCacheEntryOptions()
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(5)
+                }
+            );
+        }
+
+        private async Task<UserAccessInfo?> GetFromCache(string key)
+        {
+            var json = await _cache.GetStringAsync(key);
+
+            if (json == null)
+            {
+                return null;
+            }
+            else
+            {
+                return JsonConvert.DeserializeObject<UserAccessInfo>(json);
+            }
         }
     }
 }

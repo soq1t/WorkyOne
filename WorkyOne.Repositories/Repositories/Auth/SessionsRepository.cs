@@ -1,4 +1,5 @@
 ﻿using WorkyOne.AppServices.Interfaces.Repositories.Auth;
+using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Domain.Entities.Auth;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Repositories.Contextes;
@@ -15,7 +16,7 @@ namespace WorkyOne.Repositories.Repositories.Auth
         >,
             ISessionsRepository
     {
-        public SessionsRepository(UsersDbContext context)
-            : base(context) { }
+        public SessionsRepository(UsersDbContext context, IEntityUpdateUtility entityUpdater)
+            : base(context, entityUpdater) { }
     }
 }

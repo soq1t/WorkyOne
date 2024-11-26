@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using WorkyOne.Contracts.DTOs.Abstractions;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts.Basic;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts.Special;
@@ -19,8 +20,9 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Common
         /// <summary>
         /// Название расписания
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Укажите название расписания")]
         [MaxLength(100)]
+        [DisplayName("Название расписания")]
         public string Name { get; set; }
 
         /// <summary>

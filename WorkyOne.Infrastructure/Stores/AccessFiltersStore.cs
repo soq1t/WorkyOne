@@ -1,4 +1,6 @@
-﻿using WorkyOne.AppServices.Interfaces.Services.Users;
+﻿using Microsoft.Extensions.Caching.Distributed;
+using WorkyOne.AppServices.Interfaces.Services.Auth;
+using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.AppServices.Interfaces.Stores;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts.Basic;
@@ -21,12 +23,20 @@ namespace WorkyOne.Infrastructure.Stores
     public class AccessFiltersStore : IAccessFiltersStore
     {
         private readonly IUserAccessInfoProvider _accessInfoProvider;
+        private readonly IJwtService _jwtService;
+        private readonly IDistributedCache _cache;
 
         private readonly Dictionary<Type, object> _filters = [];
 
-        public AccessFiltersStore(IUserAccessInfoProvider accessInfoProvider)
+        public AccessFiltersStore(
+            IUserAccessInfoProvider accessInfoProvider,
+            IDistributedCache cache,
+            IJwtService jwtService
+        )
         {
             _accessInfoProvider = accessInfoProvider;
+            _cache = cache;
+            _jwtService = jwtService;
         }
 
         public async Task CreateFiltersAsync(CancellationToken cancellation = default)

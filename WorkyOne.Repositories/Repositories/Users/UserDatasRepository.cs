@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
+using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Domain.Interfaces.Requests.Schedule;
 using WorkyOne.Domain.Requests.Users;
@@ -20,8 +21,8 @@ namespace WorkyOne.Repositories.Repositories.Users
         >,
             IUserDatasRepository
     {
-        public UserDatasRepository(ApplicationDbContext context)
-            : base(context) { }
+        public UserDatasRepository(ApplicationDbContext context, IEntityUpdateUtility entityUpdater)
+            : base(context, entityUpdater) { }
 
         public override Task<UserDataEntity?> GetAsync(
             UserDataRequest request,

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using WorkyOne.AppServices.Interfaces.Repositories.CRUD;
+using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.Enums.Result;
 using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Domain.Entities.Abstractions.Common;
@@ -30,10 +31,12 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
         where TPaginatedRequest : PaginatedRequest<TEntity>
     {
         protected readonly TContext _context;
+        protected readonly IEntityUpdateUtility _entityUpdated;
 
-        public ApplicationBaseRepository(TContext context)
+        public ApplicationBaseRepository(TContext context, IEntityUpdateUtility entityUpdated)
         {
             _context = context;
+            _entityUpdated = entityUpdated;
         }
 
         public async Task<RepositoryResult> CreateAsync(
@@ -84,7 +87,7 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
                 return RepositoryResult.CancellationRequested();
             }
 
-            if (existed.Count == 0)
+            if (existed.Count != 0)
             {
                 foreach (var id in existedIds)
                 {
@@ -198,6 +201,69 @@ namespace WorkyOne.Repositories.Repositories.Abstractions
             query = query.AddPagination(request.PageIndex, request.Amount);
 
             return query.ToListAsync(cancellation);
+        }
+
+        public RepositoryResult Renew(IEnumerable<TEntity> target, IEnumerable<TEntity> source)
+        {
+            var result = new RepositoryResult(true, "Успех");
+
+            var updated = target.Where(x => source.Select(x => x.Id).Contains(x.Id)).ToList();
+
+            var created = source.Where(x => !target.Select(x => x.Id).Contains(x.Id)).ToList();
+
+            var deleted = target.Where(x => !source.Select(x => x.Id).Contains(x.Id)).ToList();
+
+            foreach (var entity in deleted)
+            {
+                if (_context.Entry(entity).State == EntityState.Detached)
+                {
+                    result.AddError(ResultType.NotFound, entity.Id, entity.GetType().ToString());
+                }
+                else
+                {
+                    result.AddSucceed(ResultType.Deleted, entity.Id, entity.GetType().ToString());
+                    _context.Set<TEntity>().Remove(entity);
+                }
+            }
+
+            foreach (var entity in created)
+            {
+                if (_context.Entry(entity).State != EntityState.Detached)
+                {
+                    result.AddError(
+                        ResultType.AlreadyExisted,
+                        entity.Id,
+                        entity.GetType().ToString()
+                    );
+                }
+                else
+                {
+                    result.AddSucceed(ResultType.Created, entity.Id, entity.GetType().ToString());
+                    _context.Set<TEntity>().Add(entity);
+                }
+            }
+
+            foreach (var entity in updated)
+            {
+                if (_context.Entry(entity).State == EntityState.Detached)
+                {
+                    result.AddError(ResultType.NotFound, entity.Id, entity.GetType().ToString());
+                }
+                else
+                {
+                    _entityUpdated.Update(entity, source.First(x => x.Id == entity.Id));
+                    result.AddSucceed(ResultType.Updated, entity.Id, entity.GetType().ToString());
+                    _context.Set<TEntity>().Update(entity);
+                }
+            }
+
+            if (result.ErrorItems.Count > 0)
+            {
+                result.Message = "Ошибка";
+                result.IsSucceed = false;
+            }
+
+            return result;
         }
 
         public Task SaveChangesAsync(CancellationToken cancellation = default)
