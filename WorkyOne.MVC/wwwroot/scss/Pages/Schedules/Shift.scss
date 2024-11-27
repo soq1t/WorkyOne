@@ -1,2 +1,21 @@
-﻿shift {
+﻿.shift {    
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    grid-template-rows: repeat(auto, 7);
+    grid-row-gap: 10px;
+    grid-column-gap: 30px;
+
+    &__row {
+        display: contents;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+
+        &--validation {
+            grid-column: 1 / span 2;
+        }
+    }
+
 }

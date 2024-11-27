@@ -98,10 +98,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             entity.Id = Guid.NewGuid().ToString();
             entity.ScheduleId = schedule.Id;
 
-            if (!CheckShiftsPositions(entity.Shifts))
-            {
-                return RepositoryResult.Error(_positionsError);
-            }
+            CorrectShiftsPositions(entity.Shifts);
 
             var result = await _templatesRepo.CreateAsync(entity, cancellation);
 
@@ -172,10 +169,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             CancellationToken cancellation = default
         )
         {
-            if (!CheckShiftsPositions(source.Shifts))
-            {
-                return RepositoryResult.Error(_positionsError);
-            }
+            CorrectShiftsPositions(source.Shifts);
 
             _updateUtility.Update(target, source);
             //UpdateTemplatedShifts(target, source.Shifts);
@@ -190,17 +184,6 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             }
 
             result = _templatesRepo.Update(target);
-
-            //await _templatedShiftsRepo.DeleteByConditionAsync(
-            //    new Specification<TemplatedShiftEntity>(x => x.TemplateId == target.Id).And(
-            //        _shiftFilter
-            //    ),
-            //    cancellation
-            //);
-
-            //await _templatedShiftsRepo.CreateManyAsync(target.Shifts, cancellation);
-            //await _templatedShiftsRepo.SaveChangesAsync(cancellation);
-
 
             if (result.IsSucceed)
             {
@@ -229,19 +212,16 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             );
         }
 
-        private bool CheckShiftsPositions(IEnumerable<TemplatedShiftEntity> shifts)
+        private void CorrectShiftsPositions(IEnumerable<TemplatedShiftEntity> shifts)
         {
-            var amount = shifts.Count();
+            var ordered = shifts.OrderBy(x => x.Position).ToList();
 
-            for (var i = 1; i <= amount; i++)
+            var i = 1;
+
+            foreach (var shift in ordered)
             {
-                if (shifts.Count(x => x.Position == i) != 1)
-                {
-                    return false;
-                }
+                shift.Position = i++;
             }
-
-            return true;
         }
 
         private void UpdateTemplatedShifts(

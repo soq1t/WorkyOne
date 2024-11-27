@@ -34,6 +34,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
     {
         private readonly ISchedulesRepository _schedulesRepository;
         private readonly ISharedShiftsRepository _sharedShiftsRepository;
+        private readonly IPersonalShiftRepository _personalShiftRepository;
         private readonly IUserDatasRepository _userDatasRepository;
         private readonly IDailyInfosRepository _dailyInfosRepository;
 
@@ -62,7 +63,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             IDateTimeService dateTimeService,
             ITemplateService templateService,
             IAccessFiltersStore accessFiltersStore,
-            IWorkGraphicService workGraphicService
+            IWorkGraphicService workGraphicService,
+            IPersonalShiftRepository personalShiftRepository
         )
         {
             _schedulesRepository = schedulesRepository;
@@ -76,6 +78,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             _templateService = templateService;
             _accessFiltersStore = accessFiltersStore;
             _workGraphicService = workGraphicService;
+            _personalShiftRepository = personalShiftRepository;
         }
 
         public async Task<RepositoryResult> CreateScheduleAsync(
@@ -301,6 +304,13 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                 source.Template,
                 cancellation
             );
+
+            if (!result.IsSucceed)
+            {
+                return result;
+            }
+
+            result = _personalShiftRepository.Renew(target.PersonalShifts, source.PersonalShifts);
 
             if (!result.IsSucceed)
             {

@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using WorkyOne.Contracts.Attributes.Validation;
 
 namespace WorkyOne.Contracts.DTOs.Abstractions
@@ -11,8 +12,9 @@ namespace WorkyOne.Contracts.DTOs.Abstractions
         /// <summary>
         /// Название смены
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Укажите название смены")]
         [Length(1, 30)]
+        [DisplayName("Название")]
         public string Name { get; set; }
 
         /// <summary>
@@ -28,18 +30,21 @@ namespace WorkyOne.Contracts.DTOs.Abstractions
             @"^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
             ErrorMessage = "Цветовой код должен представлять формат HEX (#FFFFFF или #FFF)"
         )]
+        [DisplayName("Цвет")]
         public string? ColorCode { get; set; } = "#FFFFFF";
 
         /// <summary>
         /// Время начала смены
         /// </summary>
-        [ShiftTime(nameof(Ending))]
+        [ShiftTime(nameof(Ending), "Укажите время окончания смены")]
+        [DisplayName("Время начала смены")]
         public TimeOnly? Beginning { get; set; }
 
         /// <summary>
         /// Время окончания смены
         /// </summary>
-        [ShiftTime(nameof(Beginning))]
+        [ShiftTime(nameof(Beginning), "Укажите время начала смены")]
+        [DisplayName("Время окончания смены")]
         public TimeOnly? Ending { get; set; }
 
         /// <summary>

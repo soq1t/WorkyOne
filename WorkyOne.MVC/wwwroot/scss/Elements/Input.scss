@@ -15,6 +15,7 @@
         background-color: $color-background-input;
         transition: all 0.2s ease;
         border-bottom: 2px solid $color-primary;
+        width: 100%;
 
         &--outlined {
             border: 2px solid $color-primary;
@@ -34,7 +35,11 @@
         border-radius: 5px;
     }
 
-
+    &__color {
+        padding: 0;
+        border: 2px solid $color-primary;
+        border-radius: 5px;
+    }
 
     &__error {
         color: $color-danger;

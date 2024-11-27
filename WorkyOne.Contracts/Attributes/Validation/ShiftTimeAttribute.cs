@@ -5,10 +5,12 @@ namespace WorkyOne.Contracts.Attributes.Validation
     public class ShiftTimeAttribute : ValidationAttribute
     {
         private string _comparedPropertyName;
+        private string? _errorMessage;
 
-        public ShiftTimeAttribute(string comparedPropertyName)
+        public ShiftTimeAttribute(string comparedPropertyName, string? errorMessage = null)
         {
             _comparedPropertyName = comparedPropertyName;
+            _errorMessage = errorMessage;
         }
 
         protected override ValidationResult? IsValid(
@@ -23,7 +25,9 @@ namespace WorkyOne.Contracts.Attributes.Validation
 
             if (value != null && comparedValue == null)
             {
-                return new ValidationResult($"Property {_comparedPropertyName} is required");
+                return new ValidationResult(
+                    _errorMessage ?? $"Property {_comparedPropertyName} is required"
+                );
             }
 
             return ValidationResult.Success;

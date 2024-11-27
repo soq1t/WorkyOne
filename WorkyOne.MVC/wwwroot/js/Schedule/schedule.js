@@ -1,7 +1,7 @@
 ﻿$(function () {
     var templatedShifts = $('#schedule-template-shifts');
 
-    updateEvents();    
+    updateTemplatedEvents();   
 
     $('#templated-shift-add').on('click', function (e) {
 
@@ -21,18 +21,19 @@
                 $(templatedShifts).data('amount', amount + 1);
                 $(templatedShifts).append(data);
 
-                updateEvents();
+                updateTemplatedEvents();
             }
         });
     });
-    function updateEvents() {
+
+    function updateTemplatedEvents() {
         var templatedControls = $(templatedShifts)
             .find('.shifts-table__item--controls');
 
         $(templatedControls)
             .find('.btn')
             .off('click')
-            .on('click', function (e) { e.preventDefault(); });        
+            .on('click', function (e) { e.preventDefault(); });
 
         $(templatedControls).find('.delete')
             .on('click', function (e) {
@@ -88,9 +89,12 @@
 
                 i++;
             }
-            
+
         })
 
     }
-});
+});   
+    
+    
+
 

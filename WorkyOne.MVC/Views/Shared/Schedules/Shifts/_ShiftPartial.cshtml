@@ -1,0 +1,67 @@
+﻿@using WorkyOne.Contracts.DTOs.Abstractions
+@using WorkyOne.Contracts.DTOs.Schedule.Shifts.Basic
+
+@model ShiftDtoBase
+@{
+    string? scheduleId = null;
+    if (Model is PersonalShiftDto) {
+        scheduleId = ((PersonalShiftDto)Model).ScheduleId;
+    }
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/Pages/Schedules/Shift.css" asp-append-version="true" />
+</head>
+
+<form id="shift-form" method="post" class="shift">
+    @if (scheduleId != null) {
+        <input hidden="hidden" name="ScheduleId" value="@scheduleId" />
+    }
+    <div class="shift__row">
+        <div class="shift__item">
+            <label asp-for="ColorCode"></label>
+        </div>
+        <div class="shift__item">
+            <input type="color" asp-for="ColorCode" class="input input__color shift__color" />
+        </div>
+    </div>
+    <div class="shift__row">
+        <div class="shift__item">
+            <label asp-for="Name"></label>
+        </div>
+        <div class="shift__item">
+            <input asp-for="Name" class="input input__text input__text--outlined" />
+        </div>
+    </div>
+    <div class="shift__row">
+        <div class="shift__item shift__item--validation">
+            <span asp-validation-for="Name" class="input__error"></span>
+        </div>
+    </div>
+    <div class="shift__row">
+        <div class="shift__item">
+            <label asp-for="Beginning"></label>
+        </div>
+        <div class="shift__item">
+            <input class="input input__date" type="time" asp-for="Beginning" />
+        </div>
+    </div>
+    <div class="shift__row">
+        <div class="shift__item shift__item--validation">
+            <span class="input__error" asp-validation-for="Beginning"></span>
+        </div>
+    </div>
+    <div class="shift__row">
+        <div class="shift__item">
+            <label asp-for="Ending"></label>
+        </div>
+        <div class="shift__item">
+            <input class="input input__date" type="time" asp-for="Ending" />
+        </div>
+    </div>
+    <div class="shift__row">
+        <div class="shift__item shift__item--validation">
+            <span class="input__error" asp-validation-for="Ending"></span>
+        </div>
+    </div>
+</form>

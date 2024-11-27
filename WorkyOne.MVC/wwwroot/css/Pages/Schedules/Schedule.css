@@ -157,6 +157,7 @@ $font-size-h3: var(--font-size-h3);*/
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
   border-bottom: 2px solid #0fbda6;
+  width: 100%;
 }
 .input__text--outlined {
   border: 2px solid #0fbda6;
@@ -170,6 +171,11 @@ $font-size-h3: var(--font-size-h3);*/
   background-color: #ffffff;
   -webkit-transition: all 0.2s ease;
   transition: all 0.2s ease;
+  border: 2px solid #0fbda6;
+  border-radius: 5px;
+}
+.input__color {
+  padding: 0;
   border: 2px solid #0fbda6;
   border-radius: 5px;
 }

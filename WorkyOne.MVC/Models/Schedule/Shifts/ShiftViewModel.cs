@@ -1,8 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using WorkyOne.Contracts.DTOs.Abstractions;
-using WorkyOne.Contracts.Enums.Reposistories;
 
-namespace WorkyOne.MVC.Models.Schedule
+namespace WorkyOne.MVC.Models.Schedule.Shifts
 {
     /// <summary>
     /// Модель для смены
@@ -14,11 +13,5 @@ namespace WorkyOne.MVC.Models.Schedule
         /// </summary>
         [Required]
         public ShiftDtoBase Shift { get; set; }
-
-        /// <summary>
-        /// Тип смены
-        /// </summary>
-        [Required]
-        public ShiftType Type { get; set; }
     }
 }

@@ -16,6 +16,7 @@
 <head>
     <link rel="stylesheet" href="~/css/Pages/Schedules/Schedule.css" asp-append-version="true" />
     <script src="~/js/Schedule/schedule.js" asp-append-version="true"></script>
+    <script src="~/js/Schedule/personalShifts.js" asp-append-version="true"></script>
 </head>
 
 <div id="schedule" data-id="@Model.Schedule.Id" class="schedule wrapper wrapper--padding">
@@ -139,7 +140,7 @@
                 </div>
             </section>
             <section class="card__section">
-                <div class="shifts-table shifts-table--referenced-shifts">
+                <div data-amount="@Model.Schedule.PersonalShifts.Count" data-schedule-id="@Model.Schedule.Id" id="schedule-personal" class="shifts-table shifts-table--referenced-shifts">
                     <div class="shifts-table__row shifts-table__row--header">
                         <div class="shifts-table__item">
                             <span>Цвет</span>
@@ -161,7 +162,7 @@
                         var beginning = shift.Beginning == null ? "-" : shift.Beginning.ToString();
                         var ending = shift.Ending == null ? "-" : shift.Ending.ToString();
 
-                        <div class="shifts-table__row">
+                        <div data-index="@i" data-id="@shift.Id" class="shifts-table__row">
                             <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].ScheduleId" />
                             <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].Id" />
                             <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].Name" />
@@ -179,13 +180,19 @@
                                 <span>@ending</span>
                             </div>
                             <div class="shifts-table__item shifts-table__item--controls">
-                                <button class="material-symbols-outlined btn btn__primary btn__primary--flat">edit</button>
-                                <button class="material-symbols-outlined btn btn__danger btn__danger--flat">delete</button>
+                                <button class="material-symbols-outlined btn btn__primary btn__primary--flat edit">edit</button>
+                                <button class="material-symbols-outlined btn btn__danger btn__danger--flat delete">delete</button>
                             </div>
                         </div>
                     }
                 </div>                
-            </section>   
+            </section>  
+            <section class="card__section card__section--row">
+                <button id="schedule-personal-add" class="btn btn__primary">
+                    <span class="material-symbols-outlined">add</span>
+                    <span>Добавить смену</span>
+                </button>
+            </section>
             <section class="card__section card__section--row">
                 <button class="btn btn__primary" type="submit">
                     <span class="material-symbols-outlined">save</span>
