@@ -3,19 +3,18 @@ using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts.Basic;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Basic;
 using WorkyOne.AppServices.Interfaces.Services.Users;
+using WorkyOne.AppServices.Interfaces.Stores;
 using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Schedule.Shifts.Basic;
 using WorkyOne.Contracts.Enums.Result;
 using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.CreateModels.Schedule.Shifts;
 using WorkyOne.Contracts.Services.GetRequests.Common;
-using WorkyOne.Domain.Entities.Abstractions.Shifts;
 using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Schedule.Shifts.Basic;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
-using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Common;
-using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Shifts.Basic;
+using WorkyOne.Domain.Specifications.AccesFilters.Abstractions;
 using WorkyOne.Domain.Specifications.Base;
 using WorkyOne.Domain.Specifications.Common;
 
@@ -31,16 +30,20 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Basic
 
         private readonly IMapper _mapper;
         private readonly IEntityUpdateUtility _entityUpdater;
+        private readonly IAccessFiltersStore _accessFiltersStore;
 
-        private PersonalShiftAcessFilter _shiftAccessFilter;
-        private ScheduleAccessFilter _scheduleAccessFilter;
+        private AccessFilter<PersonalShiftEntity> _shiftAccessFilter =>
+            _accessFiltersStore.GetFilter<PersonalShiftEntity>();
+        private AccessFilter<ScheduleEntity> _scheduleAccessFilter =>
+            _accessFiltersStore.GetFilter<ScheduleEntity>();
 
         public PersonalShiftsService(
             IUserAccessInfoProvider accessInfoProvider,
             IPersonalShiftRepository shiftRepository,
             ISchedulesRepository schedulesRepository,
             IMapper mapper,
-            IEntityUpdateUtility entityUpdater
+            IEntityUpdateUtility entityUpdater,
+            IAccessFiltersStore accessFiltersStore
         )
         {
             _shiftRepository = shiftRepository;
@@ -48,8 +51,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Basic
 
             _mapper = mapper;
             _entityUpdater = entityUpdater;
-
-            InitAccessFiltersAsync(accessInfoProvider).Wait();
+            _accessFiltersStore = accessFiltersStore;
         }
 
         public async Task<RepositoryResult> CreateAsync(
@@ -181,14 +183,6 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Basic
             }
 
             return result;
-        }
-
-        private async Task InitAccessFiltersAsync(IUserAccessInfoProvider infoProvider)
-        {
-            var accessInfo = await infoProvider.GetCurrentAsync();
-
-            _shiftAccessFilter = new PersonalShiftAcessFilter(accessInfo);
-            _scheduleAccessFilter = new ScheduleAccessFilter(accessInfo);
         }
     }
 }

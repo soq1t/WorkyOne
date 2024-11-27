@@ -14,8 +14,6 @@ using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Domain.Specifications.AccesFilters.Abstractions;
-using WorkyOne.Domain.Specifications.AccesFilters.Common;
-using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Common;
 using WorkyOne.Domain.Specifications.Base;
 using WorkyOne.Domain.Specifications.Common;
 
