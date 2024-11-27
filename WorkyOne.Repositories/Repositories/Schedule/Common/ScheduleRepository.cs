@@ -72,7 +72,7 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
                 query = query.Include(s => s.DatedShifts);
             }
 
-            return query;
+            return query.AsSplitQuery();
         }
     }
 }

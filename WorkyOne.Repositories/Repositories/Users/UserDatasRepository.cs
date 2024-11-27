@@ -68,17 +68,17 @@ namespace WorkyOne.Repositories.Repositories.Users
 
                 query = query.Include(x => x.FavoriteSchedule);
 
-                return query;
+                return query.AsSplitQuery();
             }
 
             if (request.IncludeSchedules)
             {
                 query = query.Include(x => x.Schedules);
                 query = query.Include(x => x.FavoriteSchedule);
-                return query;
+                return query.AsSplitQuery();
             }
 
-            return query;
+            return query.AsSplitQuery();
         }
     }
 }
