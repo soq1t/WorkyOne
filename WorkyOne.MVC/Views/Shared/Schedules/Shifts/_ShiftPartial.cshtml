@@ -14,6 +14,7 @@
 </head>
 
 <form id="shift-form" method="post" class="shift">
+    <input hidden="hidden" asp-for="Id" />
     @if (scheduleId != null) {
         <input hidden="hidden" name="ScheduleId" value="@scheduleId" />
     }

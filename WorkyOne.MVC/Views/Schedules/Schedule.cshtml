@@ -39,8 +39,7 @@
                 <span class="input__error" asp-validation-for="Schedule.Name"></span>
             </section>
             <div class="card__divider card__divider--primary"></div>
-            <!-- #endregion -->  
-            
+            <!-- #endregion -->              
             <!-- #region Шаблон -->
             <section class="card__section">
                 <h3>Шаблон</h3>
@@ -119,13 +118,12 @@
             <section class="card__section">
                 <h6>Отсчёт начинается</h6>
             </section>
-            <section class="card__section">
+            <section class="card__section card__section--row">
                 <input class="input input__date" type="date" asp-for="Schedule.Template.StartDate" />
                 <span asp-validation-for="Schedule.Template.StartDate"></span>
             </section>
             <div class="card__divider card__divider--primary"></div>
-            <!-- #endregion -->
-            
+            <!-- #endregion -->            
             <section class="card__section">
                 <h3>Используемые смены</h3>
                 <div hidden="hidden">
@@ -162,7 +160,7 @@
                         var beginning = shift.Beginning == null ? "-" : shift.Beginning.ToString();
                         var ending = shift.Ending == null ? "-" : shift.Ending.ToString();
 
-                        <div data-index="@i" data-id="@shift.Id" class="shifts-table__row">
+                        <div data-id="@shift.Id" class="shifts-table__row">
                             <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].ScheduleId" />
                             <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].Id" />
                             <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].Name" />
@@ -193,6 +191,11 @@
                     <span>Добавить смену</span>
                 </button>
             </section>
+            <div class="card__divider card__divider--primary"></div>
+            <section class="card__section">
+                <h3>Однодневные смены</h3>
+            </section>
+            <div class="card__divider card__divider--primary"></div>
             <section class="card__section card__section--row">
                 <button class="btn btn__primary" type="submit">
                     <span class="material-symbols-outlined">save</span>

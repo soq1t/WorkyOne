@@ -176,6 +176,8 @@ $font-size-h3: var(--font-size-h3);*/
 }
 .input__color {
   padding: 0;
+  min-height: 40px;
+  width: 100%;
   border: 2px solid #0fbda6;
   border-radius: 5px;
 }

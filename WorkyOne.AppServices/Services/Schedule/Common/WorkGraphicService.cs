@@ -247,7 +247,14 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
         {
             if (template.Shifts.Count == 0)
             {
-                return new DailyInfoEntity { IsBusyDay = false, Date = date };
+                return new DailyInfoEntity
+                {
+                    Name = "Свободный день",
+                    IsBusyDay = false,
+                    Date = date,
+                    Schedule = schedule,
+                    ScheduleId = schedule.Id
+                };
             }
 
             int sequenceLength = template.Shifts.Count;

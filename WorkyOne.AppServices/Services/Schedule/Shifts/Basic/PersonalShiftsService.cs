@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts.Basic;
+using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Basic;
 using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.AppServices.Interfaces.Stores;
@@ -32,6 +33,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Basic
         private readonly IEntityUpdateUtility _entityUpdater;
         private readonly IAccessFiltersStore _accessFiltersStore;
 
+        private readonly IWorkGraphicService _workGraphicService;
+
         private AccessFilter<PersonalShiftEntity> _shiftAccessFilter =>
             _accessFiltersStore.GetFilter<PersonalShiftEntity>();
         private AccessFilter<ScheduleEntity> _scheduleAccessFilter =>
@@ -43,7 +46,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Basic
             ISchedulesRepository schedulesRepository,
             IMapper mapper,
             IEntityUpdateUtility entityUpdater,
-            IAccessFiltersStore accessFiltersStore
+            IAccessFiltersStore accessFiltersStore,
+            IWorkGraphicService workGraphicService
         )
         {
             _shiftRepository = shiftRepository;
@@ -52,6 +56,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Basic
             _mapper = mapper;
             _entityUpdater = entityUpdater;
             _accessFiltersStore = accessFiltersStore;
+            _workGraphicService = workGraphicService;
         }
 
         public async Task<RepositoryResult> CreateAsync(
@@ -105,6 +110,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Basic
             if (result.IsSucceed)
             {
                 await _shiftRepository.SaveChangesAsync(cancellation);
+                await _workGraphicService.RecalculateAsync(entity.ScheduleId);
             }
 
             return result;
@@ -180,6 +186,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Basic
             if (result.IsSucceed)
             {
                 await _shiftRepository.SaveChangesAsync(cancellation);
+
+                await _workGraphicService.RecalculateAsync(target.ScheduleId);
             }
 
             return result;
