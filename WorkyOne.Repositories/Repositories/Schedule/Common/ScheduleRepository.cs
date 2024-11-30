@@ -70,6 +70,7 @@ namespace WorkyOne.Repositories.Repositories.Schedule.Common
             {
                 query = query.Include(s => s.PersonalShifts);
                 query = query.Include(s => s.DatedShifts);
+                query = query.Include(s => s.PeriodicShifts);
             }
 
             return query.AsSplitQuery();

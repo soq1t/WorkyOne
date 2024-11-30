@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using WorkyOne.AppServices.Decorators;
 using WorkyOne.AppServices.Interfaces.Repositories.Auth;
+using WorkyOne.AppServices.Interfaces.Repositories.Context;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts.Basic;
@@ -106,6 +107,8 @@ namespace WorkyOne.DependencyRegister
             services.AddScoped<IDatedShiftsService, DatedShiftsService>();
             services.AddScoped<IPeriodicShiftsService, PeriodicShiftsService>();
             services.AddScoped<ITemplatedShiftService, TemplatedShiftService>();
+
+            services.AddScoped<IApplicationContextService, ApplicationContextService>();
         }
 
         /// <summary>

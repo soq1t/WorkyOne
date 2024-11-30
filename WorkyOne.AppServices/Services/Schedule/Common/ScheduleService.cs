@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using WorkyOne.AppServices.Interfaces.Repositories.Context;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts.Basic;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
@@ -19,8 +20,6 @@ using WorkyOne.Domain.Requests.Common;
 using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Domain.Requests.Users;
 using WorkyOne.Domain.Specifications.AccesFilters.Abstractions;
-using WorkyOne.Domain.Specifications.AccesFilters.Schedule.Common;
-using WorkyOne.Domain.Specifications.AccesFilters.Users;
 using WorkyOne.Domain.Specifications.Base;
 using WorkyOne.Domain.Specifications.Common;
 using Contract = WorkyOne.Contracts.Services.GetRequests.Schedule.Common;
@@ -45,7 +44,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
         private readonly IDateTimeService _dateTimeService;
         private readonly ITemplateService _templateService;
         private readonly IWorkGraphicService _workGraphicService;
-
+        private readonly IApplicationContextService _contextService;
         private AccessFilter<ScheduleEntity> _scheduleAccessFilter =>
             _accessFiltersStore.GetFilter<ScheduleEntity>();
 
@@ -64,7 +63,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             ITemplateService templateService,
             IAccessFiltersStore accessFiltersStore,
             IWorkGraphicService workGraphicService,
-            IPersonalShiftRepository personalShiftRepository
+            IPersonalShiftRepository personalShiftRepository,
+            IApplicationContextService contextService
         )
         {
             _schedulesRepository = schedulesRepository;
@@ -79,6 +79,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             _accessFiltersStore = accessFiltersStore;
             _workGraphicService = workGraphicService;
             _personalShiftRepository = personalShiftRepository;
+            _contextService = contextService;
         }
 
         public async Task<RepositoryResult> CreateScheduleAsync(
@@ -127,6 +128,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             CancellationToken cancellation = default
         )
         {
+            await _contextService.CreateTransactionAsync(cancellation);
+
             var filter = new EntityIdFilter<ScheduleEntity>(id).And(_scheduleAccessFilter);
 
             var deleted = await _schedulesRepository.GetAsync(
@@ -152,12 +155,18 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
                 if (cancellation.IsCancellationRequested)
                 {
+                    await _contextService.RollbackTransactionAsync(cancellation);
                     return RepositoryResult.CancellationRequested();
                 }
 
-                await _dailyInfosRepository.DeleteByConditionAsync(
+                result = await _dailyInfosRepository.DeleteByConditionAsync(
                     new Specification<DailyInfoEntity>(x => x.ScheduleId == deleted.Id)
                 );
+
+                if (result.IsSucceed)
+                {
+                    await _contextService.CommitTransactionAsync(cancellation);
+                }
             }
 
             return result;
@@ -186,6 +195,9 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
             var dto = _mapper.Map<ScheduleDto>(entity);
             await AddSharedShiftsAsync(cancellation, dto);
+
+            dto.DatedShifts = dto.DatedShifts.OrderBy(x => x.Date).ToList();
+            dto.PeriodicShifts = dto.PeriodicShifts.OrderBy(x => x.StartDate).ToList();
 
             return dto;
         }
@@ -277,69 +289,77 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             CancellationToken cancellation = default
         )
         {
-            var filter = new EntityIdFilter<ScheduleEntity>(scheduleDto.Id).And(
-                _scheduleAccessFilter
-            );
-            var request = new ScheduleRequest(filter)
-            {
-                IncludeTemplate = true,
-                IncludeShifts = true
-            };
+            await _contextService.CreateTransactionAsync(cancellation);
 
-            var target = await _schedulesRepository.GetAsync(request, cancellation);
-
-            if (target == null)
+            try
             {
-                return RepositoryResult.Error(
-                    ResultType.NotFound,
-                    scheduleDto.Id,
-                    nameof(ScheduleEntity)
+                var filter = new EntityIdFilter<ScheduleEntity>(scheduleDto.Id).And(
+                    _scheduleAccessFilter
                 );
-            }
+                var request = new ScheduleRequest(filter)
+                {
+                    IncludeTemplate = true,
+                    IncludeShifts = true
+                };
 
-            ScheduleEntity source = _mapper.Map<ScheduleEntity>(scheduleDto);
+                var target = await _schedulesRepository.GetAsync(request, cancellation);
 
-            var result = await _templateService.UpdateAsync(
-                target.Template,
-                source.Template,
-                cancellation
-            );
+                if (target == null)
+                {
+                    return RepositoryResult.Error(
+                        ResultType.NotFound,
+                        scheduleDto.Id,
+                        nameof(ScheduleEntity)
+                    );
+                }
 
-            if (!result.IsSucceed)
-            {
-                return result;
-            }
+                ScheduleEntity source = _mapper.Map<ScheduleEntity>(scheduleDto);
 
-            result = _personalShiftRepository.Renew(target.PersonalShifts, source.PersonalShifts);
+                var result = await _templateService.UpdateAsync(
+                    target.Template,
+                    source.Template,
+                    cancellation
+                );
 
-            if (!result.IsSucceed)
-            {
-                return result;
-            }
+                if (!result.IsSucceed)
+                {
+                    return result;
+                }
 
-            _entityUpdateUtility.Update(target, source);
+                _entityUpdateUtility.Update(target, source);
 
-            result = _schedulesRepository.Update(target);
+                result = _schedulesRepository.Update(target);
 
-            if (result.IsSucceed)
-            {
-                await _schedulesRepository.SaveChangesAsync(cancellation);
+                if (result.IsSucceed)
+                {
+                    await _schedulesRepository.SaveChangesAsync(cancellation);
 
-                var now = DateTime.Now;
+                    var now = DateTime.Now;
 
-                var startDate = new DateOnly(now.Year - 1, 1, 1);
-                var endDate = new DateOnly(now.Year + 1, 12, 31);
+                    var startDate = new DateOnly(now.Year - 1, 1, 1);
+                    var endDate = new DateOnly(now.Year + 1, 12, 31);
 
-                await _workGraphicService.CreateAsync(
-                    new WorkGraphicModel
+                    result = await _workGraphicService.CreateAsync(
+                        new WorkGraphicModel
+                        {
+                            ScheduleId = target.Id,
+                            StartDate = startDate,
+                            EndDate = endDate
+                        }
+                    );
+
+                    if (result.IsSucceed)
                     {
-                        ScheduleId = target.Id,
-                        StartDate = startDate,
-                        EndDate = endDate
+                        await _contextService.CommitTransactionAsync(cancellation);
                     }
-                );
+                }
+                return result;
             }
-            return result;
+            catch (Exception)
+            {
+                await _contextService.RollbackTransactionAsync(cancellation);
+                throw;
+            }
         }
 
         private async Task AddSharedShiftsAsync(

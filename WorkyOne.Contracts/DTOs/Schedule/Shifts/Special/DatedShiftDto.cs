@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using WorkyOne.Contracts.Attributes.Validation;
 using WorkyOne.Contracts.DTOs.Abstractions;
 
@@ -15,5 +16,11 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Shifts.Special
         [Required]
         [DateRequired]
         public DateOnly Date { get; set; }
+
+        /// <summary>
+        /// ID расписания
+        /// </summary>
+        [Required]
+        public string ScheduleId { get; set; }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
+using WorkyOne.AppServices.Interfaces.Repositories.Context;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
+using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Special;
 using WorkyOne.AppServices.Interfaces.Stores;
 using WorkyOne.AppServices.Interfaces.Utilities;
@@ -26,6 +28,9 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
         private readonly IDatedShiftsRepository _datedShiftsRepository;
         private readonly ISchedulesRepository _schedulesRepository;
 
+        private readonly IWorkGraphicService _workGraphicService;
+        private readonly IApplicationContextService _contextService;
+
         private readonly IMapper _mapper;
         private readonly IEntityUpdateUtility _entityUpdateUtility;
         private readonly IReferenceShiftUtility _referenceShiftsUtility;
@@ -38,7 +43,9 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
             ISchedulesRepository schedulesRepository,
             IEntityUpdateUtility entityUpdateUtility,
             IAccessFiltersStore accessFilters,
-            IReferenceShiftUtility referenceShiftsUtility
+            IReferenceShiftUtility referenceShiftsUtility,
+            IWorkGraphicService workGraphicService,
+            IApplicationContextService contextService
         )
         {
             _datedShiftsRepository = datedShiftsRepository;
@@ -47,6 +54,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
             _entityUpdateUtility = entityUpdateUtility;
             _accessFilters = accessFilters;
             _referenceShiftsUtility = referenceShiftsUtility;
+            _workGraphicService = workGraphicService;
+            _contextService = contextService;
         }
 
         public async Task<DatedShiftDto?> GetAsync(
@@ -118,6 +127,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
             CancellationToken cancellation = default
         )
         {
+            await _contextService.CreateTransactionAsync(cancellation);
+
             var schedule = await _schedulesRepository.GetAsync(
                 new ScheduleRequest(
                     new EntityIdFilter<ScheduleEntity>(scheduleId).And(
@@ -168,9 +179,17 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
             if (result.IsSucceed)
             {
                 await _datedShiftsRepository.SaveChangesAsync(cancellation);
+                result = await _workGraphicService.RecalculateAsync(scheduleId, cancellation);
+
                 if (cancellation.IsCancellationRequested)
                 {
+                    await _contextService.RollbackTransactionAsync(cancellation);
                     return RepositoryResult.CancellationRequested();
+                }
+
+                if (result.IsSucceed)
+                {
+                    await _contextService.CommitTransactionAsync(cancellation);
                 }
             }
 
@@ -182,6 +201,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
             CancellationToken cancellation = default
         )
         {
+            await _contextService.CreateTransactionAsync(cancellation);
+
             var filter = new EntityIdFilter<DatedShiftEntity>(dto.Id).And(
                 _accessFilters.GetFilter<DatedShiftEntity>()
             );
@@ -208,10 +229,20 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
             if (result.IsSucceed)
             {
                 await _datedShiftsRepository.SaveChangesAsync(cancellation);
+                result = await _workGraphicService.RecalculateAsync(
+                    target.ScheduleId,
+                    cancellation
+                );
 
                 if (cancellation.IsCancellationRequested)
                 {
+                    await _contextService.RollbackTransactionAsync(cancellation);
                     return RepositoryResult.CancellationRequested();
+                }
+
+                if (result.IsSucceed)
+                {
+                    await _contextService.CommitTransactionAsync(cancellation);
                 }
             }
 
@@ -223,6 +254,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
             CancellationToken cancellation = default
         )
         {
+            await _contextService.CreateTransactionAsync(cancellation);
+
             var filter = new EntityIdFilter<DatedShiftEntity>(id).And(
                 _accessFilters.GetFilter<DatedShiftEntity>()
             );
@@ -241,9 +274,19 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
             if (result.IsSucceed)
             {
                 await _datedShiftsRepository.SaveChangesAsync(cancellation);
+                result = await _workGraphicService.RecalculateAsync(
+                    deleted.ScheduleId,
+                    cancellation
+                );
                 if (cancellation.IsCancellationRequested)
                 {
+                    await _contextService.RollbackTransactionAsync(cancellation);
                     return RepositoryResult.CancellationRequested();
+                }
+
+                if (result.IsSucceed)
+                {
+                    await _contextService.CommitTransactionAsync(cancellation);
                 }
             }
 

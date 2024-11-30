@@ -1,0 +1,79 @@
+﻿@using WorkyOne.Contracts.DTOs.Abstractions
+@using WorkyOne.MVC.Models.Schedule.Shifts
+
+@model PeriodicShiftViewModel
+
+@{
+    var referenceShifts = new List<ShiftDtoBase>();
+
+    referenceShifts.AddRange(Model.SharedShifts);
+    referenceShifts.AddRange(Model.PersonalShifts);
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/Pages/Schedules/Shifts/Periodic.css" asp-append-version="true" />
+</head>
+
+<form id="shifts-periodic-form" class="periodic">
+    <div hidden="hidden">
+        @for (int i = 0; i < Model.PersonalShifts.Count; i++)
+        {
+            var shift = Model.PersonalShifts[i];
+            <input asp-for="PersonalShifts[i].Id" />
+            <input asp-for="PersonalShifts[i].Name" />
+            <input asp-for="PersonalShifts[i].ScheduleId" />
+        }
+        @for (int i = 0; i < Model.SharedShifts.Count; i++)
+        {
+            var shift = Model.SharedShifts[i];
+            <input asp-for="SharedShifts[i].Id" />
+            <input asp-for="SharedShifts[i].Name" />
+        }
+    </div>
+    <input hidden="hidden" asp-for="Shift.Id" />
+    <input hidden="hidden" asp-for="Shift.ScheduleId" />
+    <div class="periodic__row">
+        <div class="periodic__item">
+            <h3>Тип смены</h3>
+        </div>
+        <div class="periodic__item">
+            <select asp-for="Shift.ShiftId" class="input input__select">
+                @foreach (var shift in referenceShifts)
+                {
+                    <option value="@shift.Id">@shift.Name</option>
+                }
+            </select>
+        </div>
+    </div>
+    <div class="periodic__row">
+        <div class="periodic__item periodic__item__validation">
+            <span class="input__error" asp-validation-for="Shift.ShiftId"></span>
+        </div>
+    </div>
+    <div class="periodic__row">
+        <div class="periodic__item">
+            <h3>Начинается</h3>
+        </div>
+        <div class="periodic__item">
+            <input class="input input__date" type="date" asp-for="Shift.StartDate" />
+        </div>
+    </div>
+    <div class="periodic__row">
+        <div class="periodic__item periodic__item__validation">
+            <span class="input__error" asp-validation-for="Shift.StartDate"></span>
+        </div>
+    </div>
+    <div class="periodic__row">
+        <div class="periodic__item">
+            <h3>Заканчивается</h3>
+        </div>
+        <div class="periodic__item">
+            <input class="input input__date" type="date" asp-for="Shift.EndDate" />
+        </div>
+    </div>
+    <div class="periodic__row">
+        <div class="periodic__item periodic__item__validation">
+            <span class="input__error" asp-validation-for="Shift.EndDate"></span>
+        </div>
+    </div>
+</form>

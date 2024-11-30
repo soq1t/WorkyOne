@@ -31,15 +31,22 @@ namespace WorkyOne.MVC.Middlewares
                 if (sessionToken != null && await sessionService.VerifyTokenAsync(sessionToken))
                 {
                     sessionToken = await sessionService.RefreshTokenAsync(sessionToken);
-                    sessionService.WriteTokenToCookies(sessionToken);
 
-                    var session = await sessionService.GetSessionByTokenAsync(sessionToken);
-                    jwtToken = await jwtService.GenerateJwtTokenAsync(session.UserId);
-
-                    if (jwtToken != null)
+                    if (sessionToken != null)
                     {
-                        jwtService.WriteToCookies(jwtToken);
-                        jwtService.WriteToHeaders(jwtToken);
+                        sessionService.WriteTokenToCookies(sessionToken);
+                        var session = await sessionService.GetSessionByTokenAsync(sessionToken);
+
+                        if (session != null)
+                        {
+                            jwtToken = await jwtService.GenerateJwtTokenAsync(session.UserId);
+
+                            if (jwtToken != null)
+                            {
+                                jwtService.WriteToCookies(jwtToken);
+                                jwtService.WriteToHeaders(jwtToken);
+                            }
+                        }
                     }
                 }
             }

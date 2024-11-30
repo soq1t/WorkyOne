@@ -9,14 +9,15 @@
     ViewData["Title"] = Model.Schedule.Name;
 
     List<ShiftDtoBase> shifts = new List<ShiftDtoBase>();
-
-    Model.Schedule.SharedShifts.ForEach(shifts.Add);
-    Model.Schedule.PersonalShifts.ForEach(shifts.Add);
+    shifts.AddRange(Model.Schedule.PersonalShifts);
+    shifts.AddRange(Model.Schedule.SharedShifts);
 }
 <head>
     <link rel="stylesheet" href="~/css/Pages/Schedules/Schedule.css" asp-append-version="true" />
     <script src="~/js/Schedule/schedule.js" asp-append-version="true"></script>
     <script src="~/js/Schedule/personalShifts.js" asp-append-version="true"></script>
+    <script src="~/js/Schedule/Shifts/dated.js" asp-append-version="true"></script>
+    <script src="~/js/Schedule/Shifts/periodic.js" asp-append-version="true"></script>
 </head>
 
 <div id="schedule" data-id="@Model.Schedule.Id" class="schedule wrapper wrapper--padding">
@@ -57,61 +58,63 @@
                             <span>Действия</span>
                         </div>
                     </div>
-                    @{
-                        var ordered = Model.Schedule.Template.Shifts.OrderBy(x => x.Position).ToList();
+                    <div class="shifts-table__body">
+                        @{
+                            var ordered = Model.Schedule.Template.Shifts.OrderBy(x => x.Position).ToList();
 
-                        for (int i = 0; i < ordered.Count; i++)
-                        {
-                            var templated = ordered[i];
-                            ShiftDtoBase? shift = Model.Schedule.PersonalShifts.FirstOrDefault(x => x.Id == templated.ShiftId);
-
-                            if (shift == null)
+                            for (int i = 0; i < ordered.Count; i++)
                             {
-                                shift = Model.Schedule.SharedShifts.First(x => x.Id == templated.ShiftId);
-                            }
+                                var templated = ordered[i];
+                                ShiftDtoBase? shift = Model.Schedule.PersonalShifts.FirstOrDefault(x => x.Id == templated.ShiftId);
 
-                            <div data-index="@(i + 2)" class="shifts-table__row">
-                                <input hidden="hidden" asp-for="@Model.Schedule.Template.Shifts[i].Id" />
-                                <input hidden="hidden" asp-for="@Model.Schedule.Template.Shifts[i].ShiftId" />
-                                <input class="position" hidden="hidden" asp-for="@Model.Schedule.Template.Shifts[i].Position" />
-                                <div class="shifts-table__item shifts-table__item--centered shifts-table__item--color">
-                                    <span style="background: @shift.ColorCode"></span>
+                                if (shift == null)
+                                {
+                                    shift = Model.Schedule.SharedShifts.First(x => x.Id == templated.ShiftId);
+                                }
+
+                                <div data-index="@(i + 2)" class="shifts-table__row">
+                                    <input hidden="hidden" asp-for="@Model.Schedule.Template.Shifts[i].Id" />
+                                    <input hidden="hidden" asp-for="@Model.Schedule.Template.Shifts[i].ShiftId" />
+                                    <input class="position" hidden="hidden" asp-for="@Model.Schedule.Template.Shifts[i].Position" />
+                                    <div class="shifts-table__item shifts-table__item--centered shifts-table__item--color">
+                                        <span style="background: @shift.ColorCode"></span>
+                                    </div>
+                                    <div class="shifts-table__item">
+                                        <span>@shift.Name</span>
+                                    </div>
+                                    <div class="shifts-table__item shifts-table__item--controls">
+                                        <button class="material-symbols-outlined btn btn__primary btn__primary--flat up">keyboard_arrow_up</button>
+                                        <button class="material-symbols-outlined btn btn__primary btn__primary--flat down">keyboard_arrow_down</button>
+                                        <button class="material-symbols-outlined btn btn__danger btn__danger--flat delete">delete</button>
+                                    </div>
                                 </div>
-                                <div class="shifts-table__item">
-                                    <span>@shift.Name</span>
-                                </div>
-                                <div class="shifts-table__item shifts-table__item--controls">
-                                    <button class="material-symbols-outlined btn btn__primary btn__primary--flat up">keyboard_arrow_up</button>
-                                    <button class="material-symbols-outlined btn btn__primary btn__primary--flat down">keyboard_arrow_down</button>
-                                    <button class="material-symbols-outlined btn btn__danger btn__danger--flat delete">delete</button>
-                                </div>
-                            </div>
+                            }
                         }
-                    }
+                    </div>                    
                 </div>
             </section>
             <section class="card__section card__section--row card__section--items-stretch">
                 <select id="templated-shift-select" class="input input__select">
-                    @foreach (var shift in shifts)
-                    {
-
-                        var background = _colorUtility.GetRgbaFromHex(shift.ColorCode, 1);
-                        var foreground = _colorUtility.GetForegroundColor(shift.ColorCode);
-                        var color = $"background-color: {background}; color: {foreground}";
-
-                        if (shifts.First() == shift)
+                    @{
+                        var isSelected = true;
+                        foreach (var shift in shifts)
                         {
-                            <option selected="selected" style="@color" value="@shift.Id">
-                                @shift.Name
-                            </option>
+                            var background = _colorUtility.GetRgbaFromHex(shift.ColorCode, 1);
+                            var foreground = _colorUtility.GetForegroundColor(shift.ColorCode);
+                            var color = $"background-color: {background}; color: {foreground}";
+
+                            @if (isSelected)
+                            {
+                                <option selected="selected" style="@color" value="@shift.Id">@shift.Name</option>
+                            }
+                            else
+                            {
+                                <option style="@color" value="@shift.Id">@shift.Name</option>
+                            }
+
+                            isSelected = false;
                         }
-                        else
-                        {
-                            <option style="@color" value="@shift.Id">
-                                @shift.Name
-                            </option>
-                        }
-                    }
+                    }                    
                 </select>
                 <button id="templated-shift-add" class="material-symbols-outlined btn btn__primary">add</button>
             </section>
@@ -153,49 +156,180 @@
                             <span>Действия</span>
                         </div>
                     </div>
-                    @for (int i = 0; i < Model.Schedule.PersonalShifts.Count; i++)
-                    {
-                        var shift = Model.Schedule.PersonalShifts[i];
+                    <div class="shifts-table__body">
+                        @for (int i = 0; i < Model.Schedule.PersonalShifts.Count; i++)
+                        {
+                            var shift = Model.Schedule.PersonalShifts[i];
 
-                        var beginning = shift.Beginning == null ? "-" : shift.Beginning.ToString();
-                        var ending = shift.Ending == null ? "-" : shift.Ending.ToString();
+                            var beginning = shift.Beginning == null ? "-" : shift.Beginning.ToString();
+                            var ending = shift.Ending == null ? "-" : shift.Ending.ToString();
 
-                        <div data-id="@shift.Id" class="shifts-table__row">
-                            <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].ScheduleId" />
-                            <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].Id" />
-                            <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].Name" />
-                            <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].Beginning" />
-                            <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].Ending" />
-                            <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].ColorCode" />
-                            <div class="shifts-table__item shifts-table__item--color shifts-table__item--centered">
-                                <span style="background-color: @shift.ColorCode"></span>
+                            <div data-id="@shift.Id" class="shifts-table__row">
+                                <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].ScheduleId" />
+                                <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].Id" />
+                                <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].Name" />
+                                <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].Beginning" />
+                                <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].Ending" />
+                                <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].ColorCode" />
+                                <div class="shifts-table__item shifts-table__item--color shifts-table__item--centered">
+                                    <span style="background-color: @shift.ColorCode"></span>
+                                </div>
+                                <div class="shifts-table__item">
+                                    <span>@shift.Name</span>
+                                </div>
+                                <div class="shifts-table__item shifts-table__item--time">
+                                    <span>@beginning</span>
+                                    <span>@ending</span>
+                                </div>
+                                <div class="shifts-table__item shifts-table__item--controls">
+                                    <button class="material-symbols-outlined btn btn__primary btn__primary--flat edit">edit</button>
+                                    <button class="material-symbols-outlined btn btn__danger btn__danger--flat delete">delete</button>
+                                </div>
                             </div>
-                            <div class="shifts-table__item">
-                                <span>@shift.Name</span>
-                            </div>
-                            <div class="shifts-table__item shifts-table__item--time">
-                                <span>@beginning</span>
-                                <span>@ending</span>
-                            </div>
-                            <div class="shifts-table__item shifts-table__item--controls">
-                                <button class="material-symbols-outlined btn btn__primary btn__primary--flat edit">edit</button>
-                                <button class="material-symbols-outlined btn btn__danger btn__danger--flat delete">delete</button>
-                            </div>
-                        </div>
-                    }
+                        }
+                    </div>                    
                 </div>                
             </section>  
             <section class="card__section card__section--row">
                 <button id="schedule-personal-add" class="btn btn__primary">
                     <span class="material-symbols-outlined">add</span>
-                    <span>Добавить смену</span>
+                    <span>Добавить</span>
                 </button>
             </section>
             <div class="card__divider card__divider--primary"></div>
+            @* Датированные смены *@
             <section class="card__section">
-                <h3>Однодневные смены</h3>
+                <h3>Смены на определённую дату</h3>
+            </section>
+            <section class="card__section">
+                <div data-schedule-id="@Model.Schedule.Id" id="schedule-shifts-dated" class="shifts-table shifts-table--dated-shifts">
+                    <div class="shifts-table__row shifts-table__row--header">
+                        <div class="shifts-table__item">
+                            <span>Цвет</span>
+                        </div>
+                        <div class="shifts-table__item">
+                            <span>Название</span>
+                        </div>
+                        <div class="shifts-table__item">
+                            <span>Дата</span>
+                        </div>
+                        <div class="shifts-table__item">
+                            <span>Действия</span>
+                        </div>
+                    </div>
+                    <div class="shifts-table__body">
+                        @for (int i = 0; i < Model.Schedule.DatedShifts.Count; i++)
+                        {
+                            var shift = Model.Schedule.DatedShifts[i];
+                            ShiftDtoBase? referenced = Model.Schedule.PersonalShifts.FirstOrDefault(x => x.Id == shift.ShiftId);
+
+                            if (referenced == null)
+                            {
+                                referenced = Model.Schedule.SharedShifts.First(x => x.Id == shift.ShiftId);
+                            }
+
+                            <div data-id="@shift.Id" class="shifts-table__row">
+                                <input hidden="hidden" asp-for="Schedule.DatedShifts[i].Id" />
+                                <input hidden="hidden" asp-for="Schedule.DatedShifts[i].ScheduleId" />
+                                <input hidden="hidden" asp-for="Schedule.DatedShifts[i].ShiftId" />
+                                <input hidden="hidden" asp-for="Schedule.DatedShifts[i].Date" />
+                                <div class="shifts-table__item shifts-table__item--color shifts-table__item--centered">
+                                    <span style="background-color: @referenced.ColorCode"></span>
+                                </div>
+                                <div class="shifts-table__item">
+                                    <span>@referenced.Name</span>
+                                </div>
+                                <div class="shifts-table__item">
+                                    <span>@shift.Date.ToString("dd.MM.yyyy")</span>
+                                </div>
+                                <div class="shifts-table__item shifts-table__item--controls">
+                                    <button class="material-symbols-outlined btn btn__primary btn__primary--flat edit">edit</button>
+                                    <button class="material-symbols-outlined btn btn__danger btn__danger--flat delete">delete</button>
+                                </div>
+                            </div>
+                        }
+                    </div>                    
+                </div>
+            </section>
+            <section class="card__section">
+                <button id="schedule-shifts-dated-add" class="btn btn__primary">
+                    <span class="material-symbols-outlined">add</span>
+                    <span>Добавить</span>
+                </button>
             </section>
             <div class="card__divider card__divider--primary"></div>
+            @* Периодические смены *@
+            <section class="card__section">
+                <h3>Смены на определённый период</h3>
+            </section>
+            <section class="card__section">
+                <div 
+                    data-schedule-id="@Model.Schedule.Id"
+                    id="schedule-shifts-periodic"
+                     class="shifts-table shifts-table--periodic-shifts">
+                    <div class="shifts-table__row shifts-table__row--header">
+                        <div class="shifts-table__item">
+                            <span>Цвет</span>
+                        </div>
+                        <div class="shifts-table__item">
+                            <span>Название</span>
+                        </div>
+                        <div class="shifts-table__item">
+                            <span>Начинается</span>
+                        </div>
+                        <div class="shifts-table__item">
+                            <span>Заканчивается</span>
+                        </div>
+                        <div class="shifts-table__item">
+                            <span>Действия</span>
+                        </div>
+                    </div>
+                    <div class="shifts-table__body">
+                        @for (int i = 0; i < Model.Schedule.PeriodicShifts.Count; i++)
+                        {
+                            var shift = Model.Schedule.PeriodicShifts[i];
+
+                            ShiftDtoBase? referenced = Model.Schedule.PersonalShifts.FirstOrDefault(x => x.Id == shift.ShiftId);
+                            if (referenced == null)
+                            {
+                                referenced = Model.Schedule.SharedShifts.First(x => x.Id == shift.ShiftId);
+                            }
+
+                            <div data-id="@shift.Id" class="shifts-table__row">
+                                <input hidden="hidden" asp-for="Schedule.PeriodicShifts[i].Id" />
+                                <input hidden="hidden" asp-for="Schedule.PeriodicShifts[i].ScheduleId" />
+                                <input hidden="hidden" asp-for="Schedule.PeriodicShifts[i].ShiftId" />
+                                <input hidden="hidden" asp-for="Schedule.PeriodicShifts[i].StartDate" />
+                                <input hidden="hidden" asp-for="Schedule.PeriodicShifts[i].EndDate" />
+                                <div class="shifts-table__item shifts-table__item--color">
+                                    <span style="background-color: @referenced.ColorCode"></span>
+                                </div>
+                                <div class="shifts-table__item">
+                                    <span>@referenced.Name</span>
+                                </div>
+                                <div class="shifts-table__item shifts-table__item--centered">
+                                    <span>@shift.StartDate.Value.ToString("dd.MM.yyyy")</span>
+                                </div>
+                                <div class="shifts-table__item shifts-table__item--centered">
+                                    <span>@shift.EndDate.Value.ToString("dd.MM.yyyy")</span>
+                                </div>
+                                <div class="shifts-table__item shifts-table__item--controls">
+                                    <button class="material-symbols-outlined btn btn__primary btn__primary--flat edit">edit</button>
+                                    <button class="material-symbols-outlined btn btn__danger btn__danger--flat delete">delete</button>
+                                </div>
+                            </div>
+                        }
+                    </div>                    
+                </div>
+            </section>
+            <section class="card__section">
+                <button id="schedule-shifts-periodic-add" class="btn btn__primary">
+                    <span class="material-symbols-outlined">add</span>
+                    <span>Добавить</span>
+                </button>
+            </section>
+            <div class="card__divider card__divider--primary"></div>
+            @* Сохранение *@
             <section class="card__section card__section--row">
                 <button class="btn btn__primary" type="submit">
                     <span class="material-symbols-outlined">save</span>

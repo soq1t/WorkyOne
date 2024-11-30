@@ -50,10 +50,21 @@
             grid-template-columns: auto 1fr auto auto;
         }
 
+        &--dated-shifts {
+            grid-template-columns: auto 1fr auto auto;
+        }
+
+        &--periodic-shifts {
+            grid-template-columns: auto 1fr auto auto auto;
+        }
+
+        &__body {
+            display: contents;
+        }
+
         &__row {
             display: contents;
-            align-items: center;
-
+            /*align-items: center;*/
 
             &:hover {
 

@@ -1,0 +1,26 @@
+.periodic {
+  display: -ms-grid;
+  display: grid;
+  -ms-grid-columns: 1fr 20px auto;
+  grid-template-columns: 1fr auto;
+  -ms-grid-rows: ;
+  grid-template-rows: repeat(auto, 6);
+  grid-column-gap: 20px;
+  grid-row-gap: 15px;
+}
+.periodic__row {
+  display: contents;
+}
+.periodic__item {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+.periodic__item__validation {
+  -ms-grid-column: 1;
+  -ms-grid-column-span: 2;
+  grid-column: 1/span 2;
+}

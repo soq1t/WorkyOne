@@ -347,11 +347,20 @@ $font-size-h3: var(--font-size-h3);*/
   -ms-grid-columns: auto 1fr auto auto;
   grid-template-columns: auto 1fr auto auto;
 }
+.schedule .shifts-table--dated-shifts {
+  -ms-grid-columns: auto 1fr auto auto;
+  grid-template-columns: auto 1fr auto auto;
+}
+.schedule .shifts-table--periodic-shifts {
+  -ms-grid-columns: auto 1fr auto auto auto;
+  grid-template-columns: auto 1fr auto auto auto;
+}
+.schedule .shifts-table__body {
+  display: contents;
+}
 .schedule .shifts-table__row {
   display: contents;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
+  /*align-items: center;*/
 }
 .schedule .shifts-table__row:hover .shifts-table__item {
   background-color: rgba(113, 163, 229, 0.1);

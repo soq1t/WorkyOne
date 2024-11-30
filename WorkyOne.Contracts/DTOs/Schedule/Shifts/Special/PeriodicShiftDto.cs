@@ -13,15 +13,21 @@ namespace WorkyOne.Contracts.DTOs.Schedule.Shifts.Special
         /// <summary>
         /// Дата начала действия смены
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Укажите дату начала")]
         [DateCompare(DateCompareMode.LessOrEquial, nameof(EndDate))]
         public DateOnly? StartDate { get; set; }
 
         /// <summary>
         /// Дата окончания действия смены
         /// </summary>
-        [Required]
+        [Required(ErrorMessage = "Укажите дату окончания")]
         [DateCompare(DateCompareMode.MoreOrEquial, nameof(StartDate))]
         public DateOnly? EndDate { get; set; }
+
+        /// <summary>
+        /// ID расписания
+        /// </summary>
+        [Required]
+        public string ScheduleId { get; set; }
     }
 }

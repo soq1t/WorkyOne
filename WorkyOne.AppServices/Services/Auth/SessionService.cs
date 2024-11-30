@@ -123,12 +123,22 @@ namespace WorkyOne.AppServices.Services.Auth
             CancellationToken cancellation = default
         )
         {
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
             var session = await _sessionsRepository.GetAsync(
                 new EntityRequest<SessionEntity>(
                     new Specification<SessionEntity>(x => x.Token == token)
                 ),
                 cancellation
             );
+
+            if (session == null)
+            {
+                return null;
+            }
 
             var ipAddress = _contextAccessor.HttpContext.Connection.RemoteIpAddress.ToString();
 
@@ -154,6 +164,11 @@ namespace WorkyOne.AppServices.Services.Auth
             CancellationToken cancellation = default
         )
         {
+            if (token == null)
+            {
+                throw new ArgumentNullException(nameof(token));
+            }
+
             var session = await _sessionsRepository.GetAsync(
                 new EntityRequest<SessionEntity>(
                     new Specification<SessionEntity>(x => x.Token == token)

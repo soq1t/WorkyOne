@@ -1,0 +1,20 @@
+﻿.periodic {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: repeat(auto, 6);
+    grid-column-gap: 20px;
+    grid-row-gap: 15px;
+
+    &__row {
+        display: contents;
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+
+        &__validation {
+            grid-column: 1 / span 2;
+        }
+    }
+}

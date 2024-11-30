@@ -28,7 +28,15 @@ namespace WorkyOne.Infrastructure.Services
 
             string prefixedKey = prefix + "_" + key;
 
-            var json = await _cache.GetStringAsync(prefixedKey, cancellation);
+            string? json;
+            try
+            {
+                json = await _cache.GetStringAsync(prefixedKey, cancellation);
+            }
+            catch (Exception)
+            {
+                json = null;
+            }
 
             if (json == null)
             {
@@ -54,12 +62,19 @@ namespace WorkyOne.Infrastructure.Services
             var prefixedKey = prefix + "_" + key;
             var json = JsonConvert.SerializeObject(value);
 
-            await _cache.SetStringAsync(
-                prefixedKey,
-                json,
-                new DistributedCacheEntryOptions() { AbsoluteExpirationRelativeToNow = duration },
-                cancellation
-            );
+            try
+            {
+                await _cache.SetStringAsync(
+                    prefixedKey,
+                    json,
+                    new DistributedCacheEntryOptions()
+                    {
+                        AbsoluteExpirationRelativeToNow = duration
+                    },
+                    cancellation
+                );
+            }
+            catch (Exception) { }
         }
     }
 }
