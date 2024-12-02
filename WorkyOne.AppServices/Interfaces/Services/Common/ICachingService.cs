@@ -35,5 +35,13 @@
             TimeSpan duration,
             CancellationToken cancellation = default
         );
+
+        /// <summary>
+        /// Очищает кеш
+        /// </summary>
+        /// <param name="key">Ключ объекта в кеше</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        public Task ClearAsync<T>(string key, CancellationToken cancellation = default)
+            where T : class;
     }
 }

@@ -59,6 +59,10 @@
                 {
                     <a href="#">Профиль</a>
                     <a asp-controller="Schedules" asp-action="Index">Управление расписаниями</a>
+                    if (authService.IsUserInRoles("Admin"))
+                    {
+                        <a asp-controller="Admin" asp-action="Index">Администрирование</a>
+                    }
                     <a asp-controller="Account" asp-action="SignOut">Выйти из аккаунта</a>
                 }
                 else

@@ -29,6 +29,7 @@ using WorkyOne.AppServices.Services.Schedule.Shifts.Special;
 using WorkyOne.AppServices.Services.Users;
 using WorkyOne.Contracts.Options.Auth;
 using WorkyOne.Contracts.Options.Common;
+using WorkyOne.Contracts.Options.Schedules;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Infrastructure.Mappers.AutoMapperProfiles.Schedule.Common;
 using WorkyOne.Infrastructure.Services;
@@ -77,6 +78,7 @@ namespace WorkyOne.DependencyRegister
             services.Configure<JwtOptions>(configuration.GetSection("JwtOptions"));
             services.Configure<SessionOptions>(configuration.GetSection("SessionOptions"));
             services.Configure<PaginationOptions>(configuration.GetSection("PaginationOptions"));
+            services.Configure<WorkGraphicOptions>(configuration.GetSection("WorkGraphicOptions"));
         }
 
         /// <summary>

@@ -21,8 +21,11 @@ namespace WorkyOne.MVC.Middlewares
             var timer = new Stopwatch();
             timer.Start();
             await filtersStore.CreateFiltersAsync();
-            logger.LogDebug("Фильтр доступа получен ({1} ms)", timer.ElapsedMilliseconds);
             timer.Stop();
+            if (timer.ElapsedMilliseconds > 500)
+            {
+                logger.LogDebug("Фильтр доступа получен ({1} ms)", timer.ElapsedMilliseconds);
+            }
 
             await _next(context);
         }

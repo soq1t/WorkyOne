@@ -16,6 +16,20 @@ namespace WorkyOne.Infrastructure.Services
             _cache = cache;
         }
 
+        public async Task ClearAsync<T>(string key, CancellationToken cancellation = default)
+            where T : class
+        {
+            var prefix = typeof(T).Name;
+
+            string prefixedKey = prefix + "_" + key;
+
+            try
+            {
+                await _cache.RemoveAsync(prefixedKey, cancellation);
+            }
+            catch (Exception) { }
+        }
+
         public async Task<T?> GetAsync<T>(
             string key,
             Func<Task<T?>> function,
