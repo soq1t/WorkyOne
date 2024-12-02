@@ -327,6 +327,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                 }
 
                 _entityUpdateUtility.Update(target, source);
+                target.IsGraphicUpdateRequired = true;
 
                 result = _schedulesRepository.Update(target);
 
@@ -334,19 +335,19 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                 {
                     await _schedulesRepository.SaveChangesAsync(cancellation);
 
-                    var now = DateTime.Now;
+                    //var now = DateTime.Now;
 
-                    var startDate = new DateOnly(now.Year - 1, 1, 1);
-                    var endDate = new DateOnly(now.Year + 1, 12, 31);
+                    //var startDate = new DateOnly(now.Year - 1, 1, 1);
+                    //var endDate = new DateOnly(now.Year + 1, 12, 31);
 
-                    result = await _workGraphicService.CreateAsync(
-                        new WorkGraphicModel
-                        {
-                            ScheduleId = target.Id,
-                            StartDate = startDate,
-                            EndDate = endDate
-                        }
-                    );
+                    //result = await _workGraphicService.CreateAsync(
+                    //    new WorkGraphicModel
+                    //    {
+                    //        ScheduleId = target.Id,
+                    //        StartDate = startDate,
+                    //        EndDate = endDate
+                    //    }
+                    //);
 
                     if (result.IsSucceed)
                     {

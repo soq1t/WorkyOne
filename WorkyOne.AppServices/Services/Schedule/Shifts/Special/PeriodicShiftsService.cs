@@ -2,7 +2,6 @@
 using WorkyOne.AppServices.Interfaces.Repositories.Context;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Shifts;
-using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Shifts.Special;
 using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.AppServices.Interfaces.Stores;
@@ -32,7 +31,6 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
         private readonly IAccessFiltersStore _accessFiltersStore;
 
         private readonly IApplicationContextService _contextService;
-        private readonly IWorkGraphicService _workGraphicService;
 
         private AccessFilter<ScheduleEntity> _scheduleAccessFilter =>
             _accessFiltersStore.GetFilter<ScheduleEntity>();
@@ -46,8 +44,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
             IUserAccessInfoProvider userAccessInfoProvider,
             IEntityUpdateUtility entityUpdater,
             IAccessFiltersStore accessFiltersStore,
-            IApplicationContextService contextService,
-            IWorkGraphicService workGraphicService
+            IApplicationContextService contextService
         )
         {
             _scheduleRepo = scheduleRepo;
@@ -57,7 +54,6 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
             _entityUpdater = entityUpdater;
             _accessFiltersStore = accessFiltersStore;
             _contextService = contextService;
-            _workGraphicService = workGraphicService;
         }
 
         public async Task<RepositoryResult> CreateAsync(
@@ -90,16 +86,15 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
 
             if (result.IsSucceed)
             {
-                await _shiftsRepo.SaveChangesAsync(cancellation);
-                result = await _workGraphicService.RecalculateAsync(
-                    model.Shift.ScheduleId,
-                    cancellation
-                );
+                schedule.IsGraphicUpdateRequired = true;
+                _scheduleRepo.Update(schedule);
 
-                if (result.IsSucceed)
-                {
-                    await _contextService.CommitTransactionAsync(cancellation);
-                }
+                await _contextService.SaveChangesAsync(cancellation);
+                await _contextService.CommitTransactionAsync(cancellation);
+            }
+            else
+            {
+                await _contextService.RollbackTransactionAsync(cancellation);
             }
 
             return result;
@@ -128,16 +123,21 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
 
             if (result.IsSucceed)
             {
-                await _shiftsRepo.SaveChangesAsync(cancellation);
-                result = await _workGraphicService.RecalculateAsync(
-                    deleted.ScheduleId,
+                var schedule = await _scheduleRepo.GetAsync(
+                    new ScheduleRequest(new EntityIdFilter<ScheduleEntity>(deleted.ScheduleId)),
                     cancellation
                 );
 
-                if (result.IsSucceed)
+                if (schedule != null)
                 {
-                    await _contextService.CommitTransactionAsync(cancellation);
+                    schedule.IsGraphicUpdateRequired = true;
                 }
+                await _contextService.SaveChangesAsync(cancellation);
+                await _contextService.CommitTransactionAsync(cancellation);
+            }
+            else
+            {
+                await _contextService.RollbackTransactionAsync(cancellation);
             }
 
             return result;
@@ -235,17 +235,21 @@ namespace WorkyOne.AppServices.Services.Schedule.Shifts.Special
 
             if (result.IsSucceed)
             {
-                await _shiftsRepo.SaveChangesAsync(cancellation);
-
-                result = await _workGraphicService.RecalculateAsync(
-                    target.ScheduleId,
+                var schedule = await _scheduleRepo.GetAsync(
+                    new ScheduleRequest(new EntityIdFilter<ScheduleEntity>(target.ScheduleId)),
                     cancellation
                 );
 
-                if (result.IsSucceed)
+                if (schedule != null)
                 {
-                    await _contextService.CommitTransactionAsync(cancellation);
+                    schedule.IsGraphicUpdateRequired = true;
                 }
+                await _contextService.SaveChangesAsync(cancellation);
+                await _contextService.CommitTransactionAsync(cancellation);
+            }
+            else
+            {
+                await _contextService.RollbackTransactionAsync(cancellation);
             }
 
             return result;

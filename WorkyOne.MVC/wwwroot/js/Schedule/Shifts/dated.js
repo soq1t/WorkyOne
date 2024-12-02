@@ -46,43 +46,43 @@
             });
         });        
     });
+    function create(data) {
+        showConfirmation("Создание смены на определённую дату", data, function () {
+            var form = $('#shifts-dated-form');
+            var shift = form.serialize();
+
+            $.ajax({
+                method: 'POST',
+                url: '/shifts/dated',
+                data: shift,
+                success: function (data) {
+                    if (data.length > 0) {
+                        create(data);
+                    } else {
+                        location.reload();
+                    }
+                }
+            });
+        });
+    }
+    function update(data) {
+        showConfirmation("Обновление смены на определённую дату", data, function () {
+            var form = $('#shifts-dated-form');
+            var shift = form.serialize();
+
+            $.ajax({
+                method: 'PUT',
+                url: '/shifts/dated',
+                data: shift,
+                success: function (data) {
+                    if (data.length > 0) {
+                        update(data);
+                    } else {
+                        location.reload();
+                    }
+                }
+            });
+        });
+    }
 });
 
-function create(data) {
-    showConfirmation("Создание смены на определённую дату", data, function () {
-        var form = $('#shifts-dated-form');
-        var shift = form.serialize();
-
-        $.ajax({
-            method: 'POST',
-            url: '/shifts/dated',
-            data: shift,
-            success: function (data) {
-                if (data.length > 0) {
-                    create(data);
-                } else {
-                    location.reload();
-                }
-            }
-        });
-    });
-}
-function update(data) {
-    showConfirmation("Обновление смены на определённую дату", data, function () {
-        var form = $('#shifts-dated-form');
-        var shift = form.serialize();
-
-        $.ajax({
-            method: 'PUT',
-            url: '/shifts/dated',
-            data: shift,
-            success: function (data) {
-                if (data.length > 0) {
-                    update(data);
-                } else {
-                    location.reload();
-                }
-            }
-        });
-    });
-}

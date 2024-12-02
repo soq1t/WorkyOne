@@ -46,43 +46,43 @@
             });
         });
     });
+    function create(data) {
+        showConfirmation("Создание смены на определённый период", data, function () {
+            var form = $('#shifts-periodic-form');
+            var shift = form.serialize();
+
+            $.ajax({
+                method: 'POST',
+                url: '/shifts/periodic',
+                data: shift,
+                success: function (data) {
+                    if (data.length > 0) {
+                        create(data);
+                    } else {
+                        location.reload();
+                    }
+                }
+            });
+        });
+    }
+    function update(data) {
+        showConfirmation("Обновление смены на определённый период", data, function () {
+            var form = $('#shifts-periodic-form');
+            var shift = form.serialize();
+
+            $.ajax({
+                method: 'PUT',
+                url: '/shifts/periodic',
+                data: shift,
+                success: function (data) {
+                    if (data.length > 0) {
+                        update(data);
+                    } else {
+                        location.reload();
+                    }
+                }
+            });
+        });
+    }
 });
 
-function create(data) {
-    showConfirmation("Создание смены на определённый период", data, function () {
-        var form = $('#shifts-periodic-form');
-        var shift = form.serialize();
-
-        $.ajax({
-            method: 'POST',
-            url: '/shifts/periodic',
-            data: shift,
-            success: function (data) {
-                if (data.length > 0) {
-                    create(data);
-                } else {
-                    location.reload();
-                }
-            }
-        });
-    });
-}
-function update(data) {
-    showConfirmation("Обновление смены на определённый период", data, function () {
-        var form = $('#shifts-periodic-form');
-        var shift = form.serialize();
-
-        $.ajax({
-            method: 'PUT',
-            url: '/shifts/periodic',
-            data: shift,
-            success: function (data) {
-                if (data.length > 0) {
-                    update(data);
-                } else {
-                    location.reload();
-                }
-            }
-        });
-    });
-}

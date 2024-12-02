@@ -25,5 +25,11 @@
         /// <param name="cancellation">Токен отмены задачи</param>
 
         public Task RollbackTransactionAsync(CancellationToken cancellation = default);
+
+        /// <summary>
+        /// Сохраняет изменения в контексте
+        /// </summary>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        public Task SaveChangesAsync(CancellationToken cancellation = default);
     }
 }

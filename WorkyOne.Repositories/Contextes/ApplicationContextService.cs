@@ -47,5 +47,10 @@ namespace WorkyOne.Repositories.Contextes
                 await _transaction.RollbackAsync(cancellation);
             }
         }
+
+        public Task SaveChangesAsync(CancellationToken cancellation = default)
+        {
+            return _context.SaveChangesAsync(cancellation);
+        }
     }
 }

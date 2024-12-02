@@ -61,5 +61,10 @@ namespace WorkyOne.Domain.Entities.Schedule.Common
         /// Рабочий график, сформированный по данному расписанию
         /// </summary>
         public List<DailyInfoEntity> Timetable { get; set; } = new List<DailyInfoEntity>();
+
+        /// <summary>
+        /// Указывает, требуется ли обновление рабочего графика
+        /// </summary>
+        public bool IsGraphicUpdateRequired { get; set; } = true;
     }
 }

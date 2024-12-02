@@ -161,8 +161,8 @@
                         {
                             var shift = Model.Schedule.PersonalShifts[i];
 
-                            var beginning = shift.Beginning == null ? "-" : shift.Beginning.ToString();
-                            var ending = shift.Ending == null ? "-" : shift.Ending.ToString();
+                            var beginning = shift.Beginning == null ? "-" : shift.Beginning.Value.ToString("HH:mm");
+                            var ending = shift.Ending == null ? "-" : shift.Ending.Value.ToString("HH:mm");
 
                             <div data-id="@shift.Id" class="shifts-table__row">
                                 <input hidden="hidden" asp-for="Schedule.PersonalShifts[i].ScheduleId" />

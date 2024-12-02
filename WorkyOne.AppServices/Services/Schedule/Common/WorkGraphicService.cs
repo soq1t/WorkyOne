@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using AutoMapper;
+using WorkyOne.AppServices.Interfaces.Repositories.Context;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Services.Users;
@@ -32,6 +33,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
 
         private readonly IAccessFiltersStore _accessFiltersStore;
 
+        private readonly IApplicationContextService _contextService;
+
         private AccessFilter<ScheduleEntity> _scheduleAccessFilter =>
             _accessFiltersStore.GetFilter<ScheduleEntity>();
 
@@ -43,7 +46,8 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             ISchedulesRepository schedulesRepo,
             IMapper mapper,
             IUserAccessInfoProvider userAccessInfoProvider,
-            IAccessFiltersStore accessFiltersStore
+            IAccessFiltersStore accessFiltersStore,
+            IApplicationContextService contextService
         )
         {
             _dailyInfosRepo = dailyInfosRepo;
@@ -51,6 +55,7 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             _mapper = mapper;
             _userAccessInfoProvider = userAccessInfoProvider;
             _accessFiltersStore = accessFiltersStore;
+            _contextService = contextService;
         }
 
         public async Task<RepositoryResult> ClearAsync(
@@ -190,6 +195,32 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
             var startDate = request.StartDate.Value;
             var endDate = request.EndDate.Value;
 
+            var schedule = await _schedulesRepo.GetAsync(
+                new ScheduleRequest(
+                    new EntityIdFilter<ScheduleEntity>(scheduleId).And(_scheduleAccessFilter)
+                )
+                {
+                    IncludeShifts = true,
+                    IncludeTemplate = true
+                }
+            );
+
+            if (schedule == null)
+            {
+                return [];
+            }
+
+            if (schedule.IsGraphicUpdateRequired)
+            {
+                var graphic = await RecalculateAsync(schedule, cancellation);
+
+                schedule.IsGraphicUpdateRequired = false;
+                _schedulesRepo.Update(schedule);
+                await _schedulesRepo.SaveChangesAsync(cancellation);
+
+                return graphic.Where(x => x.Date >= startDate && x.Date <= endDate).ToList();
+            }
+
             var filter = new Specification<DailyInfoEntity>(x =>
                 x.ScheduleId == scheduleId && x.Date >= startDate && x.Date <= endDate
             ).And(_dailyInfoAccessFilter);
@@ -199,9 +230,72 @@ namespace WorkyOne.AppServices.Services.Schedule.Common
                 cancellation
             );
 
-            var dtos = _mapper.Map<List<DailyInfoDto>>(entities);
+            return _mapper.Map<List<DailyInfoDto>>(entities).OrderBy(x => x.Date).ToList();
+        }
 
-            return dtos.OrderBy(x => x.Date).ToList();
+        private async Task<List<DailyInfoDto>> RecalculateAsync(
+            ScheduleEntity schedule,
+            CancellationToken cancellation = default
+        )
+        {
+            var filter = new Specification<DailyInfoEntity>(x => x.ScheduleId == schedule.Id).And(
+                _dailyInfoAccessFilter
+            );
+
+            var daysAmount = await _dailyInfosRepo.GetAmountAsync(
+                new EntityRequest<DailyInfoEntity>(filter),
+                cancellation
+            );
+
+            if (daysAmount == 0)
+            {
+                return [];
+            }
+
+            var first = await _dailyInfosRepo.GetManyAsync(
+                new PaginatedRequest<DailyInfoEntity>(filter, 1, 1),
+                cancellation
+            );
+
+            var last = await _dailyInfosRepo.GetManyAsync(
+                new PaginatedRequest<DailyInfoEntity>(filter, daysAmount, 1),
+                cancellation
+            );
+
+            var startDate = first.Single().Date;
+            var endDate = last.Single().Date;
+
+            var graphic = new List<DailyInfoEntity>();
+
+            for (var date = startDate; date <= endDate; date = date.AddDays(1))
+            {
+                var info = GetDailyInfo(schedule, date);
+
+                graphic.Add(info);
+            }
+
+            await _contextService.CreateTransactionAsync(cancellation);
+
+            await _dailyInfosRepo.DeleteByConditionAsync(
+                new Specification<DailyInfoEntity>(x => x.ScheduleId == schedule.Id),
+                cancellation
+            );
+
+            var result = await _dailyInfosRepo.CreateManyAsync(graphic, cancellation);
+
+            if (result.IsSucceed)
+            {
+                await _dailyInfosRepo.SaveChangesAsync(cancellation);
+
+                await _contextService.CommitTransactionAsync(cancellation);
+
+                return _mapper.Map<List<DailyInfoDto>>(graphic).OrderBy(x => x.Date).ToList();
+            }
+            else
+            {
+                await _contextService.RollbackTransactionAsync(cancellation);
+                return [];
+            }
         }
 
         private static DailyInfoEntity GetDailyInfo(ScheduleEntity schedule, DateOnly date)
