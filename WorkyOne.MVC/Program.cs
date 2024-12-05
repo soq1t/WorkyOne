@@ -30,8 +30,6 @@ namespace WorkyOne.MVC
             builder.Services.AddHttpContextAccessor();
             builder.Services.AddReCaptcha(builder.Configuration.GetSection("ReCaptcha"));
 
-            DependencyRegistrer.RegisterAll(builder.Services, builder.Configuration);
-
             builder.Host.UseSerilog(
                 (context, services, configuration) =>
                     configuration
@@ -41,6 +39,7 @@ namespace WorkyOne.MVC
                         .WriteTo.File("logs/log-.txt", rollingInterval: RollingInterval.Day)
             );
 
+            DependencyRegistrer.RegisterAll(builder.Services, builder.Configuration);
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

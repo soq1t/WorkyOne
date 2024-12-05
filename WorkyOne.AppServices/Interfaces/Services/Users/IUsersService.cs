@@ -1,5 +1,6 @@
 ﻿using WorkyOne.Contracts.DTOs.Common;
 using WorkyOne.Contracts.Services.Common;
+using WorkyOne.Contracts.Services.GetRequests.Common;
 using WorkyOne.Contracts.Services.GetRequests.Users;
 
 namespace WorkyOne.AppServices.Interfaces.Services.Users
@@ -29,6 +30,18 @@ namespace WorkyOne.AppServices.Interfaces.Services.Users
         public Task<ServiceResult> SetFavoriteScheduleAsync(
             string userDataId,
             string scheduleId,
+            CancellationToken cancellation = default
+        );
+
+        /// <summary>
+        /// Возвращает некоторое количество пользователей из базы данных
+        /// </summary>
+        /// <param name="request">Пагинированный запрос</param>
+        /// <param name="filter">Фильтр</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        public Task<PaginatedResponse<List<UserInfoDto>>> GetUsersAsync(
+            PaginatedRequest request,
+            UserFilter? filter,
             CancellationToken cancellation = default
         );
     }

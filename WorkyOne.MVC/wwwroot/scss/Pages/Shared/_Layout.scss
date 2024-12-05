@@ -61,8 +61,12 @@ form {
     height: 100dvh;
     background-color: $color-background;
     color: $color-background-fg;
-    display: flex;
-    flex-direction: column;
+    /*display: flex;
+    flex-direction: column;*/
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr auto;
+    grid-row-gap: 15px;
     font-family: $font-family;
     font-size: $font-size-text;
 
@@ -167,8 +171,9 @@ form {
     }
 
     .main {
-        flex: 1 0 auto;
-        padding: 15px 0;
+        /*flex: 1 0 auto;*/
+        /*padding: 15px 0;*/
+        /*overflow: hidden;*/
     }
 
     .footer {

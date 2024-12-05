@@ -4,10 +4,10 @@ using WorkyOne.Contracts.Enums.Result;
 using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Domain.Requests.Common;
-using WorkyOne.Repositories.Contextes;
 using WorkyOne.Repositories.Extensions;
+using WorkyOne.Repositories.Users.Contextes;
 
-namespace WorkyOne.Repositories.Repositories.Users
+namespace WorkyOne.Repositories.Users.Repositories.Users
 {
     public sealed class UsersRepository : IUsersRepository
     {

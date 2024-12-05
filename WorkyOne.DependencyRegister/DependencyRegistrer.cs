@@ -36,11 +36,12 @@ using WorkyOne.Infrastructure.Services;
 using WorkyOne.Infrastructure.Stores;
 using WorkyOne.Infrastructure.Utilities;
 using WorkyOne.Repositories.Contextes;
-using WorkyOne.Repositories.Repositories.Auth;
 using WorkyOne.Repositories.Repositories.Schedule.Common;
 using WorkyOne.Repositories.Repositories.Schedule.Shifts.Basic;
 using WorkyOne.Repositories.Repositories.Schedule.Shifts.Special;
-using WorkyOne.Repositories.Repositories.Users;
+using WorkyOne.Repositories.Users.Contextes;
+using WorkyOne.Repositories.Users.Repositories.Auth;
+using WorkyOne.Repositories.Users.Repositories.Users;
 
 namespace WorkyOne.DependencyRegister
 {

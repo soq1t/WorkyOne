@@ -5,22 +5,22 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using WorkyOne.Repositories.Contextes;
+using WorkyOne.Repositories.Users.Contextes;
 
 #nullable disable
 
-namespace WorkyOne.Repositories.Migrations.UsersDb
+namespace WorkyOne.Repositories.Users.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
-    [Migration("20241104144205_AddUserSessions")]
-    partial class AddUserSessions
+    [Migration("20241205153128_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -178,9 +178,29 @@ namespace WorkyOne.Repositories.Migrations.UsersDb
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Token")
+                        .IsUnique();
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Sessions");
+                });
+
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Users.UserDataEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FavoriteScheduleId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserDataEntity");
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Users.UserEntity", b =>

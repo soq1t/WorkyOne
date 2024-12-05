@@ -1,5 +1,4 @@
-﻿using System.Security.Claims;
-using AutoMapper;
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
@@ -8,15 +7,12 @@ using WorkyOne.AppServices.Interfaces.Stores;
 using WorkyOne.Contracts.DTOs.Common;
 using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.Common;
+using WorkyOne.Contracts.Services.GetRequests.Common;
 using WorkyOne.Contracts.Services.GetRequests.Users;
-using WorkyOne.Domain.Entities.Schedule.Common;
 using WorkyOne.Domain.Entities.Users;
 using WorkyOne.Domain.Interfaces.Specification;
 using WorkyOne.Domain.Requests.Common;
-using WorkyOne.Domain.Requests.Schedule.Common;
 using WorkyOne.Domain.Requests.Users;
-using WorkyOne.Domain.Specifications.AccesFilters.Abstractions;
-using WorkyOne.Domain.Specifications.AccesFilters.Users;
 using WorkyOne.Domain.Specifications.Base;
 using WorkyOne.Domain.Specifications.Common;
 
@@ -28,7 +24,6 @@ namespace WorkyOne.AppServices.Services.Users
     public sealed class UsersService : IUsersService
     {
         private readonly IUsersRepository _usersRepo;
-        private readonly ISchedulesRepository _schedulesRepository;
         private readonly IUserDatasRepository _userDatasRepo;
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _contextAccessor;
@@ -41,7 +36,6 @@ namespace WorkyOne.AppServices.Services.Users
             IMapper mapper,
             IHttpContextAccessor contextAccessor,
             IUserAccessInfoProvider accessInfoProvider,
-            ISchedulesRepository schedulesRepository,
             IAccessFiltersStore accessFiltersStore
         )
         {
@@ -50,7 +44,6 @@ namespace WorkyOne.AppServices.Services.Users
             _mapper = mapper;
             _contextAccessor = contextAccessor;
 
-            _schedulesRepository = schedulesRepository;
             _accessFiltersStore = accessFiltersStore;
         }
 
@@ -115,6 +108,40 @@ namespace WorkyOne.AppServices.Services.Users
             _mapper.Map(userData, dto);
 
             return dto;
+        }
+
+        public async Task<PaginatedResponse<List<UserInfoDto>>> GetUsersAsync(
+            PaginatedRequest request,
+            UserFilter? filter,
+            CancellationToken cancellation = default
+        )
+        {
+            var response = new PaginatedResponse<List<UserInfoDto>>();
+            var specification = CreateSpecification(filter);
+
+            var users = await _usersRepo.GetManyAsync(
+                new PaginatedRequest<UserEntity>(specification, request.PageIndex, request.Amount),
+                cancellation
+            );
+
+            var amount = await _usersRepo.GetAmountAsync(
+                new EntityRequest<UserEntity>(specification),
+                cancellation
+            );
+
+            response.Value = _mapper.Map<List<UserInfoDto>>(users);
+            response.PageIndex = request.PageIndex;
+            response.PageSize = request.Amount;
+
+            double pageAmount = amount / request.Amount;
+
+            if (amount % request.Amount > 0)
+            {
+                pageAmount++;
+            }
+            response.PageAmount = (int)Math.Floor(pageAmount);
+
+            return response;
         }
 
         public async Task<ServiceResult> SetFavoriteScheduleAsync(
@@ -194,6 +221,30 @@ namespace WorkyOne.AppServices.Services.Users
             {
                 return ServiceResult.Error("Error");
             }
+        }
+
+        private ISpecification<UserEntity> CreateSpecification(UserFilter? filter)
+        {
+            if (filter == null)
+            {
+                return new Specification<UserEntity>(x => true);
+            }
+
+            ISpecification<UserEntity>? specification = null;
+
+            if (filter.UserName != null)
+            {
+                specification = new Specification<UserEntity>(x =>
+                    x.NormalizedUserName == filter.UserName.ToUpper()
+                );
+            }
+
+            if (specification == null)
+            {
+                specification = new Specification<UserEntity>(x => true);
+            }
+
+            return specification;
         }
     }
 }

@@ -1,0 +1,17 @@
+﻿@using WorkyOne.MVC.Models.Common
+
+@model PaginationViewModel
+
+<div class="pagination card card--border-primary">
+    <div class="pagination__arrow pagination__arrow--left">
+        <span class="pagination__arrow-line pagination__arrow-line--top"></span>
+        <span class="pagination__arrow-line pagination__arrow-line--bottom"></span>
+    </div>
+    <div class="pagination__info">
+        <span data-amount="@Model.PagesAmount" data-page="@Model.PageIndex" class="pagination__info-page">@Model.PageIndex из @Model.PagesAmount</span>
+    </div>
+    <div class="pagination__arrow pagination__arrow--right">
+        <span class="pagination__arrow-line pagination__arrow-line--top"></span>
+        <span class="pagination__arrow-line pagination__arrow-line--bottom"></span>
+    </div>
+</div>

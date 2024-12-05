@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WorkyOne.Domain.Entities.Auth;
 
-namespace WorkyOne.Repositories.Configurations.Auth
+namespace WorkyOne.Repositories.Users.Configurations.Auth
 {
     /// <summary>
     /// Конфигурация Entity Framework для <see cref="SessionEntity"/>

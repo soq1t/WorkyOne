@@ -4,11 +4,11 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
-using WorkyOne.Repositories.Contextes;
+using WorkyOne.Repositories.Users.Contextes;
 
 #nullable disable
 
-namespace WorkyOne.Repositories.Migrations.UsersDb
+namespace WorkyOne.Repositories.Users.Migrations
 {
     [DbContext(typeof(UsersDbContext))]
     partial class UsersDbContextModelSnapshot : ModelSnapshot
@@ -17,7 +17,7 @@ namespace WorkyOne.Repositories.Migrations.UsersDb
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.10")
+                .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
@@ -175,9 +175,29 @@ namespace WorkyOne.Repositories.Migrations.UsersDb
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Token")
+                        .IsUnique();
+
                     b.HasIndex("UserId");
 
                     b.ToTable("Sessions");
+                });
+
+            modelBuilder.Entity("WorkyOne.Domain.Entities.Users.UserDataEntity", b =>
+                {
+                    b.Property<string>("Id")
+                        .HasColumnType("text");
+
+                    b.Property<string>("FavoriteScheduleId")
+                        .HasColumnType("text");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("UserDataEntity");
                 });
 
             modelBuilder.Entity("WorkyOne.Domain.Entities.Users.UserEntity", b =>

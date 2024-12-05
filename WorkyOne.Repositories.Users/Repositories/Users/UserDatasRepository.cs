@@ -7,7 +7,7 @@ using WorkyOne.Domain.Requests.Users;
 using WorkyOne.Repositories.Contextes;
 using WorkyOne.Repositories.Repositories.Abstractions;
 
-namespace WorkyOne.Repositories.Repositories.Users
+namespace WorkyOne.Repositories.Users.Repositories.Users
 {
     /// <summary>
     /// Репозиторий по работе с <see cref="UserDataEntity"/>

@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using WorkyOne.Domain.Entities.Users;
 
-namespace WorkyOne.Repositories.Configurations.User
+namespace WorkyOne.Repositories.Users.Configurations.Users
 {
     public class UserDataEntityConfiguration : IEntityTypeConfiguration<UserDataEntity>
     {

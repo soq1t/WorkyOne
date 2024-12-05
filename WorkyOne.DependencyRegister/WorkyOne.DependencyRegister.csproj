@@ -24,6 +24,7 @@
     <ProjectReference Include="..\WorkyOne.AppServices\WorkyOne.AppServices.csproj" />
     <ProjectReference Include="..\WorkyOne.Domain\WorkyOne.Domain.csproj" />
     <ProjectReference Include="..\WorkyOne.Infrastructure\WorkyOne.Infrastructure.csproj" />
+    <ProjectReference Include="..\WorkyOne.Repositories.Users\WorkyOne.Repositories.Users.csproj" />
     <ProjectReference Include="..\WorkyOne.Repositories\WorkyOne.Repositories.csproj" />
   </ItemGroup>
 

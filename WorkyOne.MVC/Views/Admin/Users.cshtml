@@ -1,0 +1,26 @@
+﻿@using WorkyOne.MVC.Models.Admin
+
+@model UsersViewModel
+
+@{
+    ViewData["Title"] = "Управление пользователями";
+}
+
+<head>
+    <link rel="stylesheet" href="~/css/Pages/Admin/Users.css" />
+    <script src="~/js/Admin/Users/script.js" asp-append-version="true"></script>
+</head>
+
+<div id="admin-users" class="users wrapper wrapper--padding">
+    <header class="users__header card">
+        <h3 class="users__title">Управление пользователями</h3>
+    </header>
+    <main class="users__main">
+        <div class="users__filters">
+        </div>        
+        @await Html.PartialAsync("/Views/Admin/Users/_UsersTablePartial.cshtml", Model.Users)
+    </main>
+    <footer class="users__footer">
+        @await Html.PartialAsync("_PaginationPartial", Model.Pagination)
+    </footer> 
+</div>

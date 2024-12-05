@@ -26,7 +26,7 @@ namespace WorkyOne.MVC.Controllers.Account
             }
             else
             {
-                return View(new LogInViewModel());
+                return View(new LogInViewModel() { });
             }
         }
 

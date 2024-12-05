@@ -1,0 +1,18 @@
+﻿@using WorkyOne.Contracts.DTOs.Common
+
+@model List<UserInfoDto>
+
+
+<div class="users__table">
+    <div class="users__table-row users__table-row--header">
+        <div class="users__table-item">Имя пользователя</div>
+        <div class="users__table-item">Почта</div>
+        <div class="users__table-item">Действия</div>
+    </div>
+    @foreach (var user in Model)
+    {
+        <div class="users__table-item">@user.UserName</div>
+        <div class="users__table-item">@user.Email</div>
+        <div class="users__table-item">Actions</div>
+    }
+</div>
