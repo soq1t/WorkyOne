@@ -10,7 +10,7 @@ namespace WorkyOne.Contracts.Services.Requests
         /// <summary>
         /// Фильтр пользователей
         /// </summary>
-        public UserFilter Filter { get; set; }
+        public UserFilter Filter { get; set; } = new UserFilter();
 
         /// <summary>
         /// Страница списка пользователей

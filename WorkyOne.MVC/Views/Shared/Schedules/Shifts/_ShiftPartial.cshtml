@@ -44,7 +44,7 @@
             <label asp-for="Beginning"></label>
         </div>
         <div class="shift__item">
-            <input class="input input__date" type="time" asp-for="Beginning" />
+            <input class="input input__date" type="time" name="Beginning" value="@Model.Beginning.Value.ToString("HH:mm")" />
         </div>
     </div>
     <div class="shift__row">
@@ -57,7 +57,7 @@
             <label asp-for="Ending"></label>
         </div>
         <div class="shift__item">
-            <input class="input input__date" type="time" asp-for="Ending" />
+            <input class="input input__date" type="time" name="Ending" value="@Model.Ending.Value.ToString("HH:mm")" />
         </div>
     </div>
     <div class="shift__row">

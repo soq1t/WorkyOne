@@ -11,16 +11,46 @@
     <script src="~/js/Admin/Users/script.js" asp-append-version="true"></script>
 </head>
 
-<div id="admin-users" class="users wrapper wrapper--padding">
-    <header class="users__header card">
+<form method="POST" id="admin-users" class="users wrapper wrapper--padding">
+    <header class="users__header card__section">
         <h3 class="users__title">Управление пользователями</h3>
     </header>
-    <main class="users__main">
-        <div class="users__filters">
-        </div>        
+    <main class="users__main card__section">
+        <div class="users__filters dropdown users__filters-dropdown ">
+            <div class="dropdown__header">
+                <div class="dropdown__caption">
+                    <h3>Фильтр</h3>
+                </div>
+                <div class="dropdown__arrow">
+                    <span class="dropdown__arrow-line dropdown__arrow-line--left"></span>
+                    <span class="dropdown__arrow-line dropdown__arrow-line--right"></span>
+                </div>
+            </div>
+            <div class="dropdown__body users__filters-body">
+                <div class="users__filters-list">
+                    <div class="users__filters-item">
+                        <label asp-for="Filter.UserName"></label>
+                        <input id="users-filters-username" class="input input__text input__text--outlined" type="text" asp-for="Filter.UserName" />
+                    </div>
+                    <div class="users__filters-item users__filters-item--activated">
+                        <div>
+                            <label asp-for="Filter.ShowActivated"></label>
+                            <input id="users-filters-showactivated" class="input input__checkbox" type="checkbox" asp-for="Filter.ShowActivated" />
+                        </div>
+                        <div>
+                            <label asp-for="Filter.ShowInactivated"></label>
+                            <input id="users-filters-showinactivated" class="input input__checkbox" type="checkbox" asp-for="Filter.ShowInactivated" />
+                        </div>
+                    </div>
+                </div>
+                <div class="users__filters-controls">
+                    <button class="btn btn__primary">Применить</button>
+                </div>
+            </div>
+        </div>
         @await Html.PartialAsync("/Views/Admin/Users/_UsersTablePartial.cshtml", Model.Users)
     </main>
-    <footer class="users__footer">
+    <footer class="users__footer card__section">
         @await Html.PartialAsync("_PaginationPartial", Model.Pagination)
-    </footer> 
-</div>
+    </footer>
+</form>

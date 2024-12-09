@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
 using WorkyOne.AppServices.Interfaces.Services.Users;
@@ -29,6 +30,7 @@ namespace WorkyOne.AppServices.Services.Users
         private readonly IHttpContextAccessor _contextAccessor;
 
         private readonly IAccessFiltersStore _accessFiltersStore;
+        private readonly UserManager<UserEntity> _userManager;
 
         public UsersService(
             IUsersRepository usersRepo,
@@ -36,7 +38,8 @@ namespace WorkyOne.AppServices.Services.Users
             IMapper mapper,
             IHttpContextAccessor contextAccessor,
             IUserAccessInfoProvider accessInfoProvider,
-            IAccessFiltersStore accessFiltersStore
+            IAccessFiltersStore accessFiltersStore,
+            UserManager<UserEntity> userManager
         )
         {
             _usersRepo = usersRepo;
@@ -45,6 +48,7 @@ namespace WorkyOne.AppServices.Services.Users
             _contextAccessor = contextAccessor;
 
             _accessFiltersStore = accessFiltersStore;
+            _userManager = userManager;
         }
 
         public async Task<UserInfoDto?> GetUserInfoAsync(
@@ -107,6 +111,7 @@ namespace WorkyOne.AppServices.Services.Users
             var dto = _mapper.Map<UserInfoDto>(user);
             _mapper.Map(userData, dto);
 
+            dto.Roles = (await _userManager.GetRolesAsync(user)).ToList();
             return dto;
         }
 
@@ -132,6 +137,13 @@ namespace WorkyOne.AppServices.Services.Users
             response.Value = _mapper.Map<List<UserInfoDto>>(users);
             response.PageIndex = request.PageIndex;
             response.PageSize = request.Amount;
+
+            foreach (var user in response.Value)
+            {
+                user.Roles = (
+                    await _userManager.GetRolesAsync(users.FirstOrDefault(x => x.Id == user.Id))
+                ).ToList();
+            }
 
             double pageAmount = amount / request.Amount;
 
@@ -235,8 +247,32 @@ namespace WorkyOne.AppServices.Services.Users
             if (filter.UserName != null)
             {
                 specification = new Specification<UserEntity>(x =>
-                    x.NormalizedUserName == filter.UserName.ToUpper()
+                    x.NormalizedUserName.Contains(filter.UserName.ToUpper())
                 );
+            }
+
+            if (filter.ShowActivated && !filter.ShowInactivated)
+            {
+                if (specification == null)
+                {
+                    specification = new Specification<UserEntity>(x => x.IsActivated);
+                }
+                else
+                {
+                    specification.And(new Specification<UserEntity>(x => x.IsActivated));
+                }
+            }
+
+            if (!filter.ShowActivated && filter.ShowInactivated)
+            {
+                if (specification == null)
+                {
+                    specification = new Specification<UserEntity>(x => !x.IsActivated);
+                }
+                else
+                {
+                    specification.And(new Specification<UserEntity>(x => !x.IsActivated));
+                }
             }
 
             if (specification == null)

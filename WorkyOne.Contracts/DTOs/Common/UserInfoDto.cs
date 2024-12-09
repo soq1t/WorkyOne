@@ -35,8 +35,18 @@ namespace WorkyOne.Contracts.DTOs.Common
         public List<ScheduleDto> Schedules { get; set; }
 
         /// <summary>
+        /// Активирован ли пользователь
+        /// </summary>
+        public bool IsActivated { get; set; }
+
+        /// <summary>
         /// Идентификатор избранного расписания
         /// </summary>
         public string? FavoriteScheduleId { get; set; }
+
+        /// <summary>
+        /// Роли пользователя
+        /// </summary>
+        public List<string> Roles { get; set; } = [];
     }
 }

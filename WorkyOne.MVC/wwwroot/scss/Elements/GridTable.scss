@@ -1,0 +1,38 @@
+﻿@import "../Imports/_all.scss";
+
+.grid-table {
+    display: grid;
+    overflow: auto;
+    border: 2px solid $color-primary;
+    border-radius: $container-border-radius;
+
+    &__row {
+        display: contents;
+
+        &--header {
+
+            .grid-table__item {
+
+                background-color: $color-primary;
+                color: $color-primary-fg;
+                font-weight: 500;
+            }
+        }
+    }
+
+    &__item {
+        display: flex;
+        align-items: center;
+        padding: 5px 15px;
+        white-space: nowrap;
+        
+        &--centered {
+            justify-content: center;
+        }
+
+        &--controls {
+            gap: 8px;
+            justify-content: space-between;
+        }
+    }
+}

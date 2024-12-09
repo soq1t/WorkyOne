@@ -6,8 +6,7 @@
 
     &__tools {
         display: grid;
-        /*grid-template-columns: repeat(1, 1fr);*/
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
         justify-content: center;
         align-content: center;
         grid-auto-rows: 1fr;
@@ -15,7 +14,6 @@
         grid-gap: 15px;
 
         &-item {
-            /*max-width: 300px;*/
             cursor: pointer;
             padding: 20px 30px;
             display: grid;
@@ -23,7 +21,6 @@
             grid-column-gap: 15px;
             align-items: center;
             border: 3px solid $color-primary;
-            /*border-bottom: 6px solid $color-primary;*/
             border-radius: $container-border-radius;
             text-decoration: none;
             box-shadow: 0 0px 0px $color-primary;

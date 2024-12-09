@@ -3,16 +3,33 @@
 @model List<UserInfoDto>
 
 
-<div class="users__table">
-    <div class="users__table-row users__table-row--header">
-        <div class="users__table-item">Имя пользователя</div>
-        <div class="users__table-item">Почта</div>
-        <div class="users__table-item">Действия</div>
+<div class="users__table grid-table">
+    <div class="grid-table__row grid-table__row--header">
+        <div class="grid-table__item">Имя пользователя</div>
+        <div class="grid-table__item">Роли</div>
+        <div class="grid-table__item">Активирован</div>
+        <div class="grid-table__item">Действия</div>
     </div>
     @foreach (var user in Model)
     {
-        <div class="users__table-item">@user.UserName</div>
-        <div class="users__table-item">@user.Email</div>
-        <div class="users__table-item">Actions</div>
+        <div data-id="@user.Id" class="grid-table__row">
+            <div class="grid-table__item">@user.UserName</div>
+            <div class="grid-table__item users__table-item--roles">
+                @foreach(var role in user.Roles) {
+                    <span>@role</span>
+                }
+            </div>
+            <div class="grid-table__item grid-table__item--centered">
+                <input class="input input__checkbox" type="checkbox" onclick="return false;" @(user.IsActivated ? "checked=\"checked\"" : "") />
+            </div>
+            <div class="grid-table__item grid-table__item--controls">
+                @if (!user.IsActivated)
+                {
+                    <button class="material-symbols-outlined btn btn__primary">check</button>
+                }
+                <button class="material-symbols-outlined btn btn__primary edit">edit</button>
+                <button class="material-symbols-outlined btn btn__danger">delete</button>
+            </div>
+        </div>        
     }
 </div>
