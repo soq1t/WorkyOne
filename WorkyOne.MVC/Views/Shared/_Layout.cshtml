@@ -58,7 +58,7 @@
                 <a asp-controller="Home" asp-action="Index">Главная</a>
                 @if (authService.IsAuthenticated())
                 {
-                    <a href="#">Профиль</a>
+                    @* <a href="#">Профиль</a> *@
                     <a asp-controller="Schedules" asp-action="Index">Управление расписаниями</a>
                     if (authService.IsUserInRoles("Admin"))
                     {
