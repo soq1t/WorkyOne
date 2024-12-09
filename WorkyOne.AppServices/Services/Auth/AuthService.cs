@@ -78,7 +78,11 @@ namespace WorkyOne.AppServices.Services.Auth
         {
             var user = await _userManager.FindByNameAsync(request.Username);
 
-            if (user == null || !(await _userManager.CheckPasswordAsync(user, request.Password)))
+            if (
+                user == null
+                || !await _userManager.CheckPasswordAsync(user, request.Password)
+                || !user.IsActivated
+            )
             {
                 return SignInResult.Failed;
             }
@@ -111,6 +115,21 @@ namespace WorkyOne.AppServices.Services.Auth
         {
             _jwtService.ClearCookies();
             return _sessionService.DeleteCurrentSessionAsync(cancellation);
+        }
+
+        public Task<IdentityResult> RegisterAsync(
+            RegistrationRequest request,
+            CancellationToken cancellation = default
+        )
+        {
+            var user = new UserEntity()
+            {
+                UserName = request.Username,
+                IsActivated = false,
+                FirstName = request.FirstName
+            };
+
+            return _userManager.CreateAsync(user, request.Password);
         }
     }
 }

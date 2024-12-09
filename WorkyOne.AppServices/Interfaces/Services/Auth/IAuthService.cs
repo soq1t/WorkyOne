@@ -39,6 +39,16 @@ namespace WorkyOne.AppServices.Interfaces.Services.Auth
         );
 
         /// <summary>
+        /// Регистрация нового пользователя
+        /// </summary>
+        /// <param name="request">Запрос с данными регистрируемого пользователя</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        public Task<IdentityResult> RegisterAsync(
+            RegistrationRequest request,
+            CancellationToken cancellation = default
+        );
+
+        /// <summary>
         /// Выходит из текущего аккаунта
         /// </summary>
         /// <param name="cancellation">Токен отмены задачи</param>

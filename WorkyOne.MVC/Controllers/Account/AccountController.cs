@@ -64,7 +64,60 @@ namespace WorkyOne.MVC.Controllers.Account
             }
             else
             {
-                ModelState.AddModelError("", "Неверный логин или пароль");
+                ModelState.AddModelError(
+                    "",
+                    "Неверный логин или пароль (либо ваш аккаунт не активирован)"
+                );
+                return View(model);
+            }
+        }
+
+        [HttpGet]
+        [Route("register")]
+        public IActionResult Register()
+        {
+            if (_authService.IsAuthenticated())
+            {
+                return LocalRedirect("/");
+            }
+
+            return View(new RegistrationViewModel());
+        }
+
+        [HttpPost]
+        [ValidateReCaptcha]
+        [Route("register")]
+        public async Task<IActionResult> RegisterAsync(
+            [FromForm] RegistrationViewModel model,
+            CancellationToken cancellation = default
+        )
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var result = await _authService.RegisterAsync(
+                new RegistrationRequest()
+                {
+                    Username = model.Username,
+                    FirstName = model.FirstName,
+                    Password = model.Password
+                },
+                cancellation
+            );
+
+            if (result.Succeeded)
+            {
+                return Ok();
+            }
+            else
+            {
+                foreach (var error in result.Errors)
+                {
+                    ModelState.AddModelError("", error.Description);
+                }
+
                 return View(model);
             }
         }

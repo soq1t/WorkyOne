@@ -1,0 +1,49 @@
+﻿@using WorkyOne.MVC.Models.Authentification
+@using AspNetCore.ReCaptcha
+
+@{
+    ViewData["Title"] = "Регистрация";
+}
+
+@model RegistrationViewModel
+
+<head>
+    <link rel="stylesheet" href="~/css/Pages/Account/Register.css" asp-append-version="true" />
+    <script src="~/js/Account/register.js" asp-append-version="true"></script>
+</head>
+
+<form method="post" id="register-form" asp-action="register" class="register wrappper wrapper--padding">
+    <div class="card register__body">
+        <header class="card__section register__header">
+            <h3>Регистрация</h3>
+        </header>
+        <div class="card__divider card__divider--primary"></div>
+        <main class="card__section register__main">
+            <div class="register__option">
+                <label class="register__option-title" asp-for="Username"></label>
+                <input class="input input__text input__text--outlined" type="text" asp-for="Username" />
+                <span class="input__error" asp-validation-for="Username"></span>
+            </div>
+            <div class="register__option">
+                <label asp-for="Password"></label>
+                <input class="input input__text input__text--outlined" type="password" asp-for="Password" />
+                <span class="input__error" asp-validation-for="Password"></span>
+            </div>
+            <div class="register__option">
+                <label asp-for="RepeatedPassword"></label>
+                <input class="input input__text input__text--outlined" type="password" asp-for="RepeatedPassword" />
+                <span class="input__error" asp-validation-for="RepeatedPassword"></span>
+            </div>
+            <div class="register__option">
+                <label asp-for="FirstName"></label>
+                <input class="input input__text input__text--outlined" type="text" asp-for="FirstName" />
+                <span class="input__error" asp-validation-for="FirstName"></span>
+            </div>
+            <div class="input__error" asp-validation-summary="ModelOnly"></div>
+        </main>
+        <div class="card__divider card__divider--primary"></div>
+        <footer class="card__section register__footer">
+            <recaptcha class-name="btn btn__primary" text="Регистрация" callback="submitRegistration" />
+        </footer>
+    </div>
+</form>

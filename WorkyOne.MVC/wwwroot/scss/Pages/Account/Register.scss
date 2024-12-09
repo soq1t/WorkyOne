@@ -1,0 +1,31 @@
+﻿.register {
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    &__option {
+
+        &-title {
+
+        }
+    }
+
+    &__body {
+        max-width: 500px;
+        width: 100%;
+        margin: 1px auto;
+    }
+
+    &__header {
+
+    }
+
+    &__main {
+
+    }
+
+    &__footer {
+
+    }
+}
