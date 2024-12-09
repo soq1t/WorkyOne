@@ -7,6 +7,17 @@
     if (Model is PersonalShiftDto) {
         scheduleId = ((PersonalShiftDto)Model).ScheduleId;
     }
+
+    string? beginning = null;
+    if (Model.Beginning != null) {
+        beginning = Model.Beginning.Value.ToString("HH:mm");
+    }
+
+    string? ending = null;
+    if (Model.Ending != null)
+    {
+        ending = Model.Ending.Value.ToString("HH:mm");
+    }
 }
 
 <head>
@@ -44,7 +55,7 @@
             <label asp-for="Beginning"></label>
         </div>
         <div class="shift__item">
-            <input class="input input__date" type="time" name="Beginning" value="@Model.Beginning.Value.ToString("HH:mm")" />
+            <input class="input input__date" type="time" name="Beginning" value="@beginning" />
         </div>
     </div>
     <div class="shift__row">
@@ -57,7 +68,7 @@
             <label asp-for="Ending"></label>
         </div>
         <div class="shift__item">
-            <input class="input input__date" type="time" name="Ending" value="@Model.Ending.Value.ToString("HH:mm")" />
+            <input class="input input__date" type="time" name="Ending" value="@ending" />
         </div>
     </div>
     <div class="shift__row">

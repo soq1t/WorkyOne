@@ -966,6 +966,7 @@ $font-size-h3: var(--font-size-h3);*/
           align-items: center;
   padding: 5px 15px;
   white-space: nowrap;
+  gap: 5px;
 }
 .grid-table__item--centered {
   -webkit-box-pack: center;

@@ -1,0 +1,67 @@
+﻿@using WorkyOne.MVC.Models.Admin
+
+@model ShiftsViewModel
+
+@{
+    ViewData["Title"] = "Управление сменами";
+}
+<head>
+    <link rel="stylesheet" href="~/css/Pages/Admin/Shifts.css" asp-append-version="true" />
+    <script src="~/js/Admin/Shifts/script.js" asp-append-version="true"></script>
+</head>
+
+<div id="admin-shifts" class="shifts wrapper wrapper--padding">
+    <div class="shifts__body card">
+        <section class="card__section">
+            <h3>Смены приложения</h3>
+        </section>
+        <section class="card__section">
+            <div class="grid-table shifts__table">
+                <div class="grid-table__row grid-table__row--header">
+                    <div class="grid-table__item">Цвет</div>
+                    <div class="grid-table__item">Название</div>
+                    <div class="grid-table__item">Начинается</div>
+                    <div class="grid-table__item">Заканчивается</div>
+                    <div class="grid-table__item">Действия</div>
+                </div>
+                <div class="grid-table__body">
+                    @for (var i = 0; i < Model.Shifts.Count; i++) {
+                        var shift = Model.Shifts[i];
+
+                        var color = shift.ColorCode != null ? shift.ColorCode : "transparent";
+
+                        var beginning = "-";
+                        var ending = "-";
+
+                        if (shift.Beginning != null) {
+                            beginning = shift.Beginning.Value.ToString("HH:mm");
+                        }
+                        if (shift.Ending != null)
+                        {
+                            ending = shift.Ending.Value.ToString("HH:mm");
+                        }
+
+                        <div data-id="@shift.Id" class="grid-table__row">
+                            <div class="grid-table__item shifts__table-color">
+                                <span style="background-color: @color"></span>
+                            </div>
+                            <div @color class="grid-table__item">@shift.Name</div>
+                            <div @color class="grid-table__item">@beginning</div>
+                            <div @color class="grid-table__item">@ending</div>
+                            <div @color class="grid-table__item ">
+                                <button class="material-symbols-outlined btn btn__primary btn__primary--flat edit">edit</button>
+                                <button class="material-symbols-outlined btn btn__danger btn__danger--flat delete">delete_forever</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        </section>
+        <section class="card__section card__section--row">
+            <button class="btn btn__primary create">
+                <span class="material-symbols-outlined">create</span>
+                <span>Создать</span>
+            </button>
+        </section>
+    </div>
+</div>
