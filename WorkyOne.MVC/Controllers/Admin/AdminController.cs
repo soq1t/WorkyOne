@@ -169,5 +169,22 @@ namespace WorkyOne.MVC.Controllers.Admin
 
             return Ok();
         }
+
+        /// <summary>
+        /// Удаляет пользователя
+        /// </summary>
+        /// <param name="id">Идентификатор пользователя</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        [HttpDelete]
+        [Route("users/{id}")]
+        public async Task<IActionResult> DeleteUserAsync(
+            [FromRoute] [FromQuery] string id,
+            CancellationToken cancellation = default
+        )
+        {
+            var result = await _usersService.DeleteUserAsync(id, cancellation);
+
+            return Ok();
+        }
     }
 }

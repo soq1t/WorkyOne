@@ -84,6 +84,37 @@ namespace WorkyOne.AppServices.Services.Users
             return ServiceResult.Ok("Пользователь активирован");
         }
 
+        public async Task<ServiceResult> DeleteUserAsync(
+            string id,
+            CancellationToken cancellation = default
+        )
+        {
+            var user = await _usersRepo.GetAsync(
+                new EntityRequest<UserEntity>(new EntityIdFilter<UserEntity>(id)),
+                cancellation
+            );
+
+            if (user == null)
+            {
+                return ServiceResult.Error("Пользователь не найден");
+            }
+
+            var userData = await _userDatasRepo.GetAsync(
+                new UserDataRequest(new Specification<UserDataEntity>(x => x.UserId == user.Id)),
+                cancellation
+            );
+
+            if (userData != null)
+            {
+                _userDatasRepo.Delete(userData);
+                await _userDatasRepo.SaveChangesAsync(cancellation);
+            }
+
+            await _userManager.DeleteAsync(user);
+
+            return ServiceResult.Ok("Пользователь удалён");
+        }
+
         public async Task<UserInfoDto?> GetUserInfoAsync(
             UserInfoRequest request,
             CancellationToken cancellation = default

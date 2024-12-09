@@ -66,6 +66,21 @@
         });
     });
 
+    $(controls).find(".delete").on('click', function (e) {
+        e.preventDefault();
+        var id = $(this.parentElement.parentElement).data('id');
+
+        showConfirmation(null, "Удалить пользователя?", function () {
+            $.ajax({
+                method: 'DELETE',
+                url: `users/${id}`,
+                success: function (data) {
+                    location.reload();
+                }
+            });
+        });        
+    });
+
     $(controls).find(".activate").on('click', function (e) {
         e.preventDefault();
         var id = $(this.parentElement.parentElement).data('id');

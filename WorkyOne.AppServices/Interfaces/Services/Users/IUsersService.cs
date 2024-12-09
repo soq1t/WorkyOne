@@ -64,5 +64,15 @@ namespace WorkyOne.AppServices.Interfaces.Services.Users
             string id,
             CancellationToken cancellation = default
         );
+
+        /// <summary>
+        /// Удаляет пользователя
+        /// </summary>
+        /// <param name="id">Идентификатор пользователя</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        public Task<ServiceResult> DeleteUserAsync(
+            string id,
+            CancellationToken cancellation = default
+        );
     }
 }
