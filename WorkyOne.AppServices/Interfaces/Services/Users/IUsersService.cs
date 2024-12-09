@@ -44,5 +44,25 @@ namespace WorkyOne.AppServices.Interfaces.Services.Users
             UserFilter? filter,
             CancellationToken cancellation = default
         );
+
+        /// <summary>
+        /// Обновляет указанного пользователя
+        /// </summary>
+        /// <param name="user">Обновляемый пользователь</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        public Task<ServiceResult> UpdateUserAsync(
+            UserInfoDto user,
+            CancellationToken cancellation = default
+        );
+
+        /// <summary>
+        /// Активирует указанного пользователя
+        /// </summary>
+        /// <param name="id">Идентификатор пользователя</param>
+        /// <param name="cancellation">Токен отмены задачи</param>
+        public Task<ServiceResult> ActivateUserAsync(
+            string id,
+            CancellationToken cancellation = default
+        );
     }
 }

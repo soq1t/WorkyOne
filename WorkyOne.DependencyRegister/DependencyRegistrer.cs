@@ -95,6 +95,7 @@ namespace WorkyOne.DependencyRegister
 
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddScoped<IRolesService, RolesService>();
             services.AddScoped<ISessionService, SessionService>();
 
             services.AddScoped<IUserAccessInfoProvider, UserAccessInfoProvider>();
@@ -112,6 +113,7 @@ namespace WorkyOne.DependencyRegister
             services.AddScoped<ITemplatedShiftService, TemplatedShiftService>();
 
             services.AddScoped<IApplicationContextService, ApplicationContextService>();
+            services.AddScoped<IUsersContextService, UsersContextService>();
         }
 
         /// <summary>

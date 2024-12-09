@@ -7,6 +7,13 @@ namespace WorkyOne.Domain.Entities.Users
 {
     public class UserEntity : IdentityUser, IEntity
     {
+        [AutoUpdated]
+        public override string? UserName
+        {
+            get => base.UserName;
+            set => base.UserName = value;
+        }
+
         /// <summary>
         /// Имя пользователя
         /// </summary>

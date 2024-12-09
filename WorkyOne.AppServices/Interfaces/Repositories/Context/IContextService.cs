@@ -31,5 +31,11 @@
         /// </summary>
         /// <param name="cancellation">Токен отмены задачи</param>
         public Task SaveChangesAsync(CancellationToken cancellation = default);
+
+        /// <summary>
+        /// Указывает, создана ли транзакция
+        /// </summary>
+        /// <returns></returns>
+        public bool TransactionCreated();
     }
 }

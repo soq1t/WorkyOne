@@ -6,6 +6,10 @@
     border: 2px solid $color-primary;
     border-radius: $container-border-radius;
 
+    &__body {
+        display: contents;
+    }
+
     &__row {
         display: contents;
 

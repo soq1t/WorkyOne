@@ -1,3 +1,91 @@
-﻿<div class="user card">
-    
-</div>
+﻿@using WorkyOne.AppServices.Interfaces.Services.Auth
+@using WorkyOne.Contracts.DTOs.Common
+@using WorkyOne.MVC.Models.Admin
+
+@inject IAuthService _authService
+
+@model UserViewModel
+
+<head>
+    <script src="~/js/Admin/Users/userEdit.js" asp-append-version="true"></script>
+</head>
+
+<form method="post" data-id="@Model.User.Id" id="admin-user" class="user card">
+    <input hidden="hidden" asp-for="SchedulesAmount" />
+    <input hidden="hidden" asp-for="User.Id" />
+    <header class="user__header card__section">
+        <h3>Пользователь: @Model.User.UserName</h3>
+        <span>Расписаний у пользователя: @Model.SchedulesAmount</span>        
+    </header>
+    <div class="card__divider card__divider--primary"></div>
+    <main class="user__main card__section">
+        <div class="user__option">
+            <label asp-for="User.UserName" class="user__option-title"></label>
+            <input class="input input__text input__text--outlined"
+                   type="text" asp-for="User.UserName" />
+            <span class="input__error user__validation"
+                  asp-validation-for="User.UserName"></span>
+        </div>
+        <div class="user__option">
+            <label asp-for="User.FirstName" class="user__option-title"></label>
+            <input class="input input__text input__text--outlined"
+                   type="text" asp-for="User.FirstName" />
+            <span class="input__error user__validation"
+                  asp-validation-for="User.FirstName"></span>
+        </div>
+        <div class="user__option">
+            <label asp-for="User.IsActivated" class="user__option-title"></label>
+            <input class="input input__checkbox"
+                   type="checkbox" asp-for="User.IsActivated" />
+            <span class="input__error user__validation"
+                  asp-validation-for="User.IsActivated"></span>
+        </div>
+        @if (_authService.IsUserInRoles("God")) {
+            <div class="card__divider card__divider--primary"></div>
+            <div data-amount="@Model.User.Roles.Count" class="user__option user__roles">
+                <label class="user__option-title">Роли пользователя</label>
+                <div class="grid-table user__roles-table">
+                    <div class="grid-table__row grid-table__row--header">
+                        <div class="grid-table__item">Роль</div>
+                        <div class="grid-table__item">Действия</div>
+                    </div>
+                    <div class="grid-table__body">
+                        @for (int i = 0; i < Model.User.Roles.Count; i++)
+                        {
+                            var role = Model.User.Roles[i];
+
+                            <div data-name="@role" class="grid-table__row">
+                                <input hidden="hidden" type="text" name="User.Roles[@i]" value="@role" />
+                                <div class="grid-table__item">@role</div>
+                                <div class="grid-table__item grid-table__item--centered">
+                                    <button class="material-symbols-outlined btn btn__danger btn__danger--flat delete">
+                                        delete_forever
+                                    </button>
+                                </div>
+                            </div>
+                        }
+                    </div>                    
+                </div>
+                <div class="user__roles-add">
+                    <select class="input input__select">
+                        @foreach(var role in Model.Roles) {
+                            <option value="@role">@role</option>
+                        }
+                    </select>
+                    <button class="material-symbols-outlined btn btn__primary">add</button>
+                </div>
+            </div>
+        }        
+    </main>
+    <div class="card__divider card__divider--primary"></div>
+    <footer class="user__footer card__section card__section--row">
+        <button class="btn btn__primary save">
+            <span class="material-symbols-outlined">save</span>
+            <span>Сохранить</span>
+        </button>
+        <button class="btn btn__accent close">
+            <span class="material-symbols-outlined">close</span>
+            <span>Закрыть</span>
+        </button>
+    </footer>    
+</form>

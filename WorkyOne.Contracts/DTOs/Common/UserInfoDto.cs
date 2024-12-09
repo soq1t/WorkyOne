@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
+﻿using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using WorkyOne.Contracts.DTOs.Abstractions;
 using WorkyOne.Contracts.DTOs.Schedule.Common;
 
@@ -17,11 +19,15 @@ namespace WorkyOne.Contracts.DTOs.Common
         /// <summary>
         /// Пользовательский юзернейм
         /// </summary>
+        [DisplayName("Имя пользователя")]
+        [Required(ErrorMessage = "Введите имя пользователя")]
         public string UserName { get; set; }
 
         /// <summary>
         /// Имя пользователя
         /// </summary>
+        [DisplayName("Имя")]
+        [Required(ErrorMessage = "Введите имя")]
         public string FirstName { get; set; }
 
         /// <summary>
@@ -37,6 +43,7 @@ namespace WorkyOne.Contracts.DTOs.Common
         /// <summary>
         /// Активирован ли пользователь
         /// </summary>
+        [DisplayName("Статус активации")]
         public bool IsActivated { get; set; }
 
         /// <summary>

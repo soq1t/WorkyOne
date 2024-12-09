@@ -18,12 +18,6 @@
         $(dropdown).toggleClass('active');
     });
 
-    //$(dropdown).find('.users__filters-controls')
-    //    .children('.btn').on('click', function (e) {
-    //        e.preventDefault();
-    //        GetUsers();
-    //    });
-
     $(pagination)
         .children('.pagination__arrow--left')
         .on('click', function (e) {
@@ -60,32 +54,52 @@
         });
 
     $(controls).find(".edit").on('click', function (e) {
+        e.preventDefault();
         var id = $(this.parentElement.parentElement).data('id');
-
-
-    });
-
-    function GetUsers() {        
-
-        var data = {
-            Page: parseInt(pageIndex),
-            Filter: {
-                UserName: $('#users-filters-username').val(),
-                ShowActivated: $('#users-filters-showactivated').val(),
-                ShowInactivated: $('#users-filters-showinactivated').val(),
-            }
-        };
 
         $.ajax({
             method: 'GET',
-            url: '',
-            contentType: 'application/json',
-            data: data,
+            url: `users/${id}`,
             success: function (data) {
-                document.open();
-                document.write(data);
-                document.close();
+                showModal(data);
             }
         });
-    }
+    });
+
+    $(controls).find(".activate").on('click', function (e) {
+        e.preventDefault();
+        var id = $(this.parentElement.parentElement).data('id');
+
+        $.ajax({
+            method: 'GET',
+            url: `users/${id}/activate`,
+            success: function (data) {
+                document.getElementById("admin-users").submit();
+            }
+        });
+    });
+
+    //function GetUsers() {        
+
+    //    var data = {
+    //        Page: parseInt(pageIndex),
+    //        Filter: {
+    //            UserName: $('#users-filters-username').val(),
+    //            ShowActivated: $('#users-filters-showactivated').val(),
+    //            ShowInactivated: $('#users-filters-showinactivated').val(),
+    //        }
+    //    };
+
+    //    $.ajax({
+    //        method: 'GET',
+    //        url: '',
+    //        contentType: 'application/json',
+    //        data: data,
+    //        success: function (data) {
+    //            document.open();
+    //            document.write(data);
+    //            document.close();
+    //        }
+    //    });
+    //}
 });

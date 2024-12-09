@@ -1,10 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using WorkyOne.AppServices.Interfaces.Repositories.Context;
 using WorkyOne.AppServices.Interfaces.Repositories.Schedule.Common;
 using WorkyOne.AppServices.Interfaces.Repositories.Users;
+using WorkyOne.AppServices.Interfaces.Services.Auth;
 using WorkyOne.AppServices.Interfaces.Services.Users;
 using WorkyOne.AppServices.Interfaces.Stores;
+using WorkyOne.AppServices.Interfaces.Utilities;
 using WorkyOne.Contracts.DTOs.Common;
 using WorkyOne.Contracts.Repositories.Result;
 using WorkyOne.Contracts.Services.Common;
@@ -29,6 +32,10 @@ namespace WorkyOne.AppServices.Services.Users
         private readonly IMapper _mapper;
         private readonly IHttpContextAccessor _contextAccessor;
 
+        private readonly IUsersContextService _contextService;
+        private readonly IRolesService _rolesService;
+        private readonly IEntityUpdateUtility _entityUpdater;
+
         private readonly IAccessFiltersStore _accessFiltersStore;
         private readonly UserManager<UserEntity> _userManager;
 
@@ -39,7 +46,10 @@ namespace WorkyOne.AppServices.Services.Users
             IHttpContextAccessor contextAccessor,
             IUserAccessInfoProvider accessInfoProvider,
             IAccessFiltersStore accessFiltersStore,
-            UserManager<UserEntity> userManager
+            UserManager<UserEntity> userManager,
+            IUsersContextService contextService,
+            IRolesService rolesService,
+            IEntityUpdateUtility entityUpdater
         )
         {
             _usersRepo = usersRepo;
@@ -49,6 +59,29 @@ namespace WorkyOne.AppServices.Services.Users
 
             _accessFiltersStore = accessFiltersStore;
             _userManager = userManager;
+            _contextService = contextService;
+            _rolesService = rolesService;
+            _entityUpdater = entityUpdater;
+        }
+
+        public async Task<ServiceResult> ActivateUserAsync(
+            string id,
+            CancellationToken cancellation = default
+        )
+        {
+            var user = await _usersRepo.GetAsync(
+                new EntityRequest<UserEntity>(new EntityIdFilter<UserEntity>(id)),
+                cancellation
+            );
+
+            if (user == null)
+            {
+                return ServiceResult.Error("Пользователь не найден");
+            }
+
+            user.IsActivated = true;
+            await _userManager.UpdateAsync(user);
+            return ServiceResult.Ok("Пользователь активирован");
         }
 
         public async Task<UserInfoDto?> GetUserInfoAsync(
@@ -232,6 +265,54 @@ namespace WorkyOne.AppServices.Services.Users
             else
             {
                 return ServiceResult.Error("Error");
+            }
+        }
+
+        public async Task<ServiceResult> UpdateUserAsync(
+            UserInfoDto user,
+            CancellationToken cancellation = default
+        )
+        {
+            var target = await _usersRepo.GetAsync(
+                new EntityRequest<UserEntity>(new EntityIdFilter<UserEntity>(user.Id)),
+                cancellation
+            );
+
+            if (target == null)
+            {
+                return ServiceResult.Error("Пользователь не найден");
+            }
+
+            var source = _mapper.Map<UserEntity>(user);
+
+            await _contextService.CreateTransactionAsync(cancellation);
+
+            _entityUpdater.Update(target, source);
+
+            var result = await _userManager.UpdateAsync(target);
+
+            if (!result.Succeeded)
+            {
+                await _contextService.RollbackTransactionAsync(cancellation);
+                return ServiceResult.Error("Ошибка");
+            }
+
+            var rolesResult = await _rolesService.SetRolesToUserAsync(
+                target.Id,
+                cancellation,
+                user.Roles.ToArray()
+            );
+
+            if (rolesResult)
+            {
+                await _contextService.SaveChangesAsync(cancellation);
+                await _contextService.CommitTransactionAsync(cancellation);
+                return ServiceResult.Ok("Пользователь обновлён");
+            }
+            else
+            {
+                await _contextService.RollbackTransactionAsync(cancellation);
+                return ServiceResult.Error("Ошибка");
             }
         }
 

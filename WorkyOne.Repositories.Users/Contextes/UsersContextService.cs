@@ -1,17 +1,17 @@
 ﻿using Microsoft.EntityFrameworkCore.Storage;
 using WorkyOne.AppServices.Interfaces.Repositories.Context;
 
-namespace WorkyOne.Repositories.Contextes
+namespace WorkyOne.Repositories.Users.Contextes
 {
     /// <summary>
-    /// Сервис по взаимодействию с контекстом приложения
+    /// Сервис по взаимодействию с контекстом базы данных пользователей
     /// </summary>
-    public class ApplicationContextService : IApplicationContextService
+    public class UsersContextService : IUsersContextService
     {
-        private readonly ApplicationDbContext _context;
+        private readonly UsersDbContext _context;
         private IDbContextTransaction? _transaction;
 
-        public ApplicationContextService(ApplicationDbContext context)
+        public UsersContextService(UsersDbContext context)
         {
             _context = context;
         }
@@ -32,7 +32,8 @@ namespace WorkyOne.Repositories.Contextes
         public void Dispose()
         {
             _transaction?.Dispose();
-            _context?.Dispose();
+
+            _context.Dispose();
         }
 
         public async Task RollbackTransactionAsync(CancellationToken cancellation = default)
